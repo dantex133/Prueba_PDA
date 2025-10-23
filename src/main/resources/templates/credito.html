@@ -1,272 +1,701 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="es" xmlns:th="http://www.w3.org/1999/xhtml" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crédito Automotriz - NexGen Motors Concesionario Oficial</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link th:href="@{/css/credito.css}" rel="stylesheet">
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings:
+                "FILL" 0,
+                "wght" 400,
+                "GRAD" 0,
+                "opsz" 24;
+        }
+        
+        /* Estilos personalizados para la calculadora */
+        .calculator-form input,
+        .calculator-form select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            background-color: #fff;
+            transition: border-color 0.3s;
+        }
+        
+        .calculator-form input:focus,
+        .calculator-form select:focus {
+            outline: none;
+            border-color: #0f66bd;
+            box-shadow: 0 0 0 3px rgba(15, 102, 189, 0.1);
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background-color: #f3f4f6;
+            border-radius: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .result-label {
+            font-weight: 500;
+            color: #4b5563;
+        }
+        
+        .result-value {
+            font-weight: 700;
+            font-size: 1.125rem;
+            color: #0f66bd;
+        }
+        
+        .calculator-button {
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            background-color: #0f66bd;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .calculator-button:hover {
+            background-color: #0a4d8c;
+        }
+        
+        .reset-button {
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            background-color: #6b7280;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 0.5rem;
+        }
+        
+        .reset-button:hover {
+            background-color: #4b5563;
+        }
+        
+        .option-card,
+        .requirement-card,
+        .testimonial-card {
+            padding: 1.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            background-color: #f6f7f8;
+            transition: all 0.3s ease;
+        }
+        
+        .option-card:hover,
+        .requirement-card:hover,
+        .testimonial-card:hover {
+            border-color: #0f66bd;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .option-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 4rem;
+            height: 4rem;
+            background-color: rgba(15, 102, 189, 0.1);
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .option-icon i {
+            font-size: 1.5rem;
+            color: #0f66bd;
+        }
+        
+        .option-button {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background-color: #0f66bd;
+            color: white;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        
+        .option-button:hover {
+            background-color: #0a4d8c;
+        }
+        
+        .requirement-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+        
+        .requirement-title i {
+            color: #0f66bd;
+        }
+        
+        .requirement-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .requirement-list li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .requirement-list li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #0f66bd;
+            font-weight: bold;
+        }
+        
+        .partner-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+        
+        .partner-logo img {
+            max-height: 3rem;
+            max-width: 100%;
+            filter: grayscale(100%);
+            transition: filter 0.3s;
+        }
+        
+        .partner-logo:hover img {
+            filter: grayscale(0%);
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .author-avatar {
+            width: 3rem;
+            height: 3rem;
+            background-color: #d1d5db;
+            border-radius: 9999px;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background-color: #0f66bd;
+            color: white;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        
+        .cta-button:hover {
+            background-color: #0a4d8c;
+        }
+        
+        /* Modo oscuro */
+        .dark .calculator-form input,
+        .dark .calculator-form select {
+            background-color: #1f2937;
+            border-color: #374151;
+            color: #e5e7eb;
+        }
+        
+        .dark .result-item {
+            background-color: #1f2937;
+        }
+        
+        .dark .result-label {
+            color: #d1d5db;
+        }
+        
+        .dark .option-card,
+        .dark .requirement-card,
+        .dark .testimonial-card {
+            background-color: #1f2937;
+            border-color: #374151;
+        }
+        
+        .dark .partner-logo {
+            background-color: #1f2937;
+        }
+        
+        .dark .author-avatar {
+            background-color: #4b5563;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#0f66bd",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        display: ["Manrope", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px",
+                    },
+                },
+            },
+        };
+    </script>
 </head>
-<body>
-<nav>
-    <div class="nav-logo">
-        <img src="https://via.placeholder.com/150x50?text=NexGen+Motors" alt="NexGen Motors Logo">
-    </div>
-    <div class="nav-links">
-        <a href="/vehiculos">Vehículos</a>
-        <a th:href="@{/usuario/agendamiento}">Agendamiento online</a>
-        <a href="/login">Iniciar sesión</a>
-        <a href="/usuario/cita">Cita</a>
-    </div>
-</nav>
-
-<section class="hero">
-    <div class="hero-content">
-        <h1>Crédito Automotriz NexGen Motors</h1>
-        <p>Obtén las mejores condiciones de financiamiento para tu nuevo vehículo. ¡Aprobación rápida y tasas competitivas!</p>
-        <a href="#calculator" class="hero-button">Calcula tu crédito</a>
-    </div>
-</section>
-
-<section class="financing-options">
-    <h2 class="section-title">Opciones de Financiamiento</h2>
-    <p class="section-subtitle">Encuentra el plan que mejor se adapte a tus necesidades y haz realidad tu sueño de tener un vehículo NexGen</p>
-
-    <div class="options-grid">
-        <div class="option-card">
-            <div class="option-icon">
-                <i class="fas fa-hand-holding-usd"></i>
-            </div>
-            <h3 class="option-name">Crédito Tradicional</h3>
-            <p class="option-description">Financiamiento a plazos fijos con pagos mensuales. Elige entre 12 a 60 meses con tasas desde el 8.9% anual.</p>
-            <a href="#calculator" class="option-button">Más información</a>
-        </div>
-
-        <div class="option-card">
-            <div class="option-icon">
-                <i class="fas fa-business-time"></i>
-            </div>
-            <h3 class="option-name">Plan Empresarial</h3>
-            <p class="option-description">Soluciones especiales para empresas y flotillas con beneficios fiscales y planes personalizados según tus necesidades.</p>
-            <a href="#calculator" class="option-button">Más información</a>
-        </div>
-
-        <div class="option-card">
-            <div class="option-icon">
-                <i class="fas fa-exchange-alt"></i>
-            </div>
-            <h3 class="option-name">Plan Renovación</h3>
-            <p class="option-description">Cambia tu auto usado por un nuevo NexGen con facilidad. Aplicamos el valor de tu auto como enganche.</p>
-            <a href="#calculator" class="option-button">Más información</a>
-        </div>
-
-        <div class="option-card">
-            <div class="option-icon">
-                <i class="fas fa-chart-line"></i>
-            </div>
-            <h3 class="option-name">Leasing Operativo</h3>
-            <p class="option-description">Ideal para empresas que buscan deducciones fiscales. Paga solo la depreciación del vehículo durante el contrato.</p>
-            <a href="#calculator" class="option-button">Más información</a>
-        </div>
-    </div>
-</section>
-
-<section class="calculator" id="calculator">
-    <h2 class="section-title">Calculadora de Pagos</h2>
-    <p class="section-subtitle">Simula tu crédito y descubre cuál es el plan de pagos que mejor se ajusta a tu presupuesto</p>
-
-    <div class="calculator-container">
-        <div class="calculator-grid">
-            <div class="calculator-form">
-                <label for="vehicle-price">Precio del vehículo (MXN)</label>
-                <input type="number" id="vehicle-price" placeholder="Ej: 450,000" min="100000" max="3000000">
-
-                <label for="down-payment">Enganche (MXN)</label>
-                <input type="number" id="down-payment" placeholder="Ej: 90,000" min="0" max="3000000">
-
-                <label for="loan-term">Plazo (meses)</label>
-                <select id="loan-term">
-                    <option value="12">12 meses</option>
-                    <option value="24">24 meses</option>
-                    <option value="36" selected>36 meses</option>
-                    <option value="48">48 meses</option>
-                    <option value="60">60 meses</option>
-                </select>
-
-                <label for="interest-rate">Tasa de interés anual (%)</label>
-                <input type="number" id="interest-rate" placeholder="Ej: 9.5" step="0.1" min="5" max="25" value="9.5">
-            </div>
-
-            <div class="calculator-results">
-                <div class="result-item">
-                    <div class="result-label">Monto a financiar</div>
-                    <div class="result-value" id="financed-amount">$0</div>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+<div class="flex min-h-screen flex-col">
+    <!-- Barra de navegación -->
+    <header class="sticky top-0 z-50 border-b border-gray-200/50 dark:border-gray-700/50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="flex h-16 items-center justify-between">
+                <div class="flex items-center gap-8">
+                    <a class="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white" href="/">
+                        <div class="h-20 w-20 rounded-lg flex items-center justify-center overflow-hidden">
+                            <img src="/images/LOGO.png" alt="NextGenMotors" class="h-full w-full object-contain">
+                        </div>
+                        <span class="font-display"><span class="text-primary">NextGen</span>Motors</span>
+                    </a>
+                    <nav class="hidden md:flex items-center gap-6">
+                        <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="/vehiculos">Vehículos</a>
+                        <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" th:href="@{/usuario/agendamiento}">Agendamiento online</a>
+                        <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="/usuario/cita">Cita</a>
+                        <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="/usuario/perfil">Perfil</a>
+                    </nav>
                 </div>
-                <div class="result-item">
-                    <div class="result-label">Pago mensual estimado</div>
-                    <div class="result-value" id="monthly-payment">$0</div>
-                </div>
-                <div class="result-item">
-                    <div class="result-label">Intereses totales</div>
-                    <div class="result-value" id="total-interest">$0</div>
-                </div>
-                <div class="result-item">
-                    <div class="result-label">Costo total del crédito</div>
-                    <div class="result-value" id="total-cost">$0</div>
-                </div>
-                <button class="calculator-button" id="calculate-button">Calcular</button>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="requirements">
-    <h2 class="section-title">Requisitos para tu Crédito</h2>
-    <p class="section-subtitle">Prepara tu documentación para un proceso de aprobación rápido y sencillo</p>
-
-    <div class="requirements-grid">
-        <div class="requirement-card">
-            <h3 class="requirement-title"><i class="fas fa-user-tie"></i> Personas Físicas</h3>
-            <ul class="requirement-list">
-                <li>Identificación oficial vigente (INE/IFE, pasaporte)</li>
-                <li>Comprobante de domicilio no mayor a 3 meses</li>
-                <li>Comprobante de ingresos (3 últimos recibos de nómina o estados de cuenta)</li>
-                <li>Referencias personales y bancarias</li>
-                <li>Historial crediticio positivo</li>
-                <li>Edad mínima: 18 años, máxima: 70 al término del crédito</li>
-            </ul>
-        </div>
-
-        <div class="requirement-card">
-            <h3 class="requirement-title"><i class="fas fa-building"></i> Personas Morales</h3>
-            <ul class="requirement-list">
-                <li>Acta constitutiva de la empresa</li>
-                <li>Identificación oficial del representante legal</li>
-                <li>Comprobante de domicilio fiscal</li>
-                <li>Estados financieros del último año</li>
-                <li>Declaraciones de impuestos</li>
-                <li>Referencias comerciales y bancarias</li>
-            </ul>
-        </div>
-    </div>
-</section>
-
-<section class="partners">
-    <h2 class="section-title">Bancos Aliados</h2>
-    <p class="section-subtitle">Trabajamos con las instituciones financieras más sólidas del país</p>
-
-    <div class="partners-grid">
-        <div class="partner-logo">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Bancomer_logo.svg/1200px-Bancomer_logo.svg.png" alt="BBVA">
-        </div>
-        <div class="partner-logo">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Santander_Bank_logo.svg/1200px-Santander_Bank_logo.svg.png" alt="Santander">
-        </div>
-        <div class="partner-logo">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/HSBC_logo.svg/1200px-HSBC_logo.svg.png" alt="HSBC">
-        </div>
-        <div class="partner-logo">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Scotiabank_Logo_2012.svg/1200px-Scotiabank_Logo_2012.svg.png" alt="Scotiabank">
-        </div>
-        <div class="partner-logo">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Banamex_logo.svg/1200px-Banamex_logo.svg.png" alt="Citibanamex">
-        </div>
-    </div>
-</section>
-
-<section class="testimonials">
-    <h2 class="section-title">Lo que dicen nuestros clientes</h2>
-    <p class="section-subtitle">Experiencias reales de personas que financiaron su vehículo con nosotros</p>
-
-    <div class="testimonials-grid">
-        <div class="testimonial-card">
-            <p class="testimonial-text">"El proceso de financiamiento fue muy sencillo y rápido. Me aprobaron el crédito en menos de 24 horas y con una tasa mejor de lo que esperaba. ¡Ahora disfruto de mi NexGen X1!"</p>
-            <div class="testimonial-author">
-                <div class="author-avatar"></div>
-                <div class="author-info">
-                    <h4>Roberto Sánchez</h4>
-                    <p>Dueño de NexGen X1 2023</p>
+                <div class="flex items-center gap-4">
+                    <button class="rounded-full p-2 text-gray-600 dark:text-gray-300 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors">
+                        <a class="fas fa-user" href="/usuario/perfil"></a>
+                    </button>
                 </div>
             </div>
         </div>
+    </header>
 
-        <div class="testimonial-card">
-            <p class="testimonial-text">"Como empresario, el plan de leasing operativo me ha permitido renovar mi flotilla con beneficios fiscales importantes. Excelente asesoría por parte del equipo de NexGen Motors."</p>
-            <div class="testimonial-author">
-                <div class="author-avatar"></div>
-                <div class="author-info">
-                    <h4>Carlos Mendoza</h4>
-                    <p>Dueño de 5 NexGen E1 para su empresa</p>
+    <!-- Hero Section -->
+    <section class="relative h-[50vh] min-h-[400px] w-full bg-cover bg-center">
+        <div class="absolute inset-0 bg-cover bg-center" style='background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("/images/jpg.jpeg");'></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-background-dark/80 via-background-dark/30 to-transparent"></div>
+        <div class="relative z-10 flex h-full flex-col items-center justify-center px-4 text-white sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">Crédito Automotriz NexGen Motors</h1>
+            <p class="mt-4 max-w-2xl text-lg text-gray-200">Obtén las mejores condiciones de financiamiento para tu nuevo vehículo. ¡Aprobación rápida y tasas competitivas!</p>
+            <a href="#calculator" class="mt-8 inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Calcula tu crédito</a>
+        </div>
+    </section>
+
+    <!-- Opciones de Financiamiento -->
+    <section class="py-16">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Opciones de Financiamiento</h2>
+                <p class="mt-4 text-lg text-gray-600 dark:text-gray-400">Encuentra el plan que mejor se adapte a tus necesidades y haz realidad tu sueño de tener un vehículo NexGen</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="option-card">
+                    <div class="option-icon">
+                        <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+                    <h3 class="option-name text-xl font-bold text-gray-900 dark:text-white mb-2">Crédito Tradicional</h3>
+                    <p class="option-description text-gray-600 dark:text-gray-400">Financiamiento a plazos fijos con pagos mensuales. Elige entre 12 a 60 meses con tasas desde el 8.9% anual.</p>
+                    <a href="#calculator" class="option-button">Más información</a>
+                </div>
+
+                <div class="option-card">
+                    <div class="option-icon">
+                        <i class="fas fa-business-time"></i>
+                    </div>
+                    <h3 class="option-name text-xl font-bold text-gray-900 dark:text-white mb-2">Plan Empresarial</h3>
+                    <p class="option-description text-gray-600 dark:text-gray-400">Soluciones especiales para empresas y flotillas con beneficios fiscales y planes personalizados según tus necesidades.</p>
+                    <a href="#calculator" class="option-button">Más información</a>
+                </div>
+
+                <div class="option-card">
+                    <div class="option-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <h3 class="option-name text-xl font-bold text-gray-900 dark:text-white mb-2">Plan Renovación</h3>
+                    <p class="option-description text-gray-600 dark:text-gray-400">Cambia tu auto usado por un nuevo NexGen con facilidad. Aplicamos el valor de tu auto como enganche.</p>
+                    <a href="#calculator" class="option-button">Más información</a>
+                </div>
+
+                <div class="option-card">
+                    <div class="option-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="option-name text-xl font-bold text-gray-900 dark:text-white mb-2">Leasing Operativo</h3>
+                    <p class="option-description text-gray-600 dark:text-gray-400">Ideal para empresas que buscan deducciones fiscales. Paga solo la depreciación del vehículo durante el contrato.</p>
+                    <a href="#calculator" class="option-button">Más información</a>
                 </div>
             </div>
         </div>
+    </section>
 
-        <div class="testimonial-card">
-            <p class="testimonial-text">"Aprobamos el crédito para mi NexGen S1 con mi historial crediticio que no era perfecto. Trabajaron conmigo para encontrar un plan de pagos que pudiera manejar cómodamente."</p>
-            <div class="testimonial-author">
-                <div class="author-avatar"></div>
-                <div class="author-info">
-                    <h4>Laura González</h4>
-                    <p>Dueña de NexGen S1 2022</p>
+    <!-- Calculadora -->
+    <section class="py-16 bg-gray-50 dark:bg-gray-900" id="calculator">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Calculadora de Pagos</h2>
+                <p class="mt-4 text-lg text-gray-600 dark:text-gray-400">Simula tu crédito y descubre cuál es el plan de pagos que mejor se ajusta a tu presupuesto</p>
+            </div>
+
+            <div class="max-w-4xl mx-auto">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="calculator-form space-y-4">
+                        <div>
+                            <label for="vehicle-price" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Precio del vehículo (MXN)</label>
+                            <input type="number" id="vehicle-price" placeholder="Ej: 450,000" min="100000" max="3000000">
+                        </div>
+
+                        <div>
+                            <label for="down-payment" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Enganche (MXN)</label>
+                            <input type="number" id="down-payment" placeholder="Ej: 90,000" min="0" max="3000000">
+                        </div>
+
+                        <div>
+                            <label for="loan-term" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Plazo (meses)</label>
+                            <select id="loan-term">
+                                <option value="12">12 meses</option>
+                                <option value="24">24 meses</option>
+                                <option value="36" selected>36 meses</option>
+                                <option value="48">48 meses</option>
+                                <option value="60">60 meses</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="interest-rate" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tasa de interés anual (%)</label>
+                            <input type="number" id="interest-rate" placeholder="Ej: 9.5" step="0.1" min="5" max="25" value="9.5">
+                        </div>
+                    </div>
+
+                    <div class="calculator-results">
+                        <div class="result-item">
+                            <div class="result-label">Monto a financiar</div>
+                            <div class="result-value" id="financed-amount">$0</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Pago mensual estimado</div>
+                            <div class="result-value" id="monthly-payment">$0</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Intereses totales</div>
+                            <div class="result-value" id="total-interest">$0</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Costo total del crédito</div>
+                            <div class="result-value" id="total-cost">$0</div>
+                        </div>
+                        <button class="calculator-button" id="calculate-button">Calcular</button>
+                        <button class="reset-button" id="reset-button" style="display: none;">Calcular otro</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<section class="cta">
-    <h2>¿Listo para adquirir tu NexGen?</h2>
-    <p>Nuestros asesores financieros están disponibles para ayudarte a encontrar la mejor opción de crédito para tu nuevo vehículo.</p>
-    <a href="#" class="cta-button">Solicitar crédito ahora</a>
-</section>
+    <!-- Requisitos -->
+    <section class="py-16">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Requisitos para tu Crédito</h2>
+                <p class="mt-4 text-lg text-gray-600 dark:text-gray-400">Prepara tu documentación para un proceso de aprobación rápido y sencillo</p>
+            </div>
 
-<footer>
-    <div class="footer-content">
-        <div class="footer-column">
-            <h3>Vehículos</h3>
-            <ul>
-                <li><a href="/vehiculos">Nuevos modelos</a></li>
-                <li><a href="/vehiculos">Promociones</a></li>
-            </ul>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="requirement-card">
+                    <h3 class="requirement-title"><i class="fas fa-user-tie"></i> Personas Físicas</h3>
+                    <ul class="requirement-list">
+                        <li>Identificación oficial vigente (INE/IFE, pasaporte)</li>
+                        <li>Comprobante de domicilio no mayor a 3 meses</li>
+                        <li>Comprobante de ingresos (3 últimos recibos de nómina o estados de cuenta)</li>
+                        <li>Referencias personales y bancarias</li>
+                        <li>Historial crediticio positivo</li>
+                        <li>Edad mínima: 18 años, máxima: 70 al término del crédito</li>
+                    </ul>
+                </div>
+
+                <div class="requirement-card">
+                    <h3 class="requirement-title"><i class="fas fa-building"></i> Personas Morales</h3>
+                    <ul class="requirement-list">
+                        <li>Acta constitutiva de la empresa</li>
+                        <li>Identificación oficial del representante legal</li>
+                        <li>Comprobante de domicilio fiscal</li>
+                        <li>Estados financieros del último año</li>
+                        <li>Declaraciones de impuestos</li>
+                        <li>Referencias comerciales y bancarias</li>
+                    </ul>
+                </div>
+            </div>
         </div>
+    </section>
 
-        <div class="footer-column">
-            <h3>Servicios</h3>
-            <ul>
-                <li><a th:href="@{/usuario/Inicio#services}">Agendar servicio</a></li>
-                <li><a href="/garantias">Garantías</a></li>
+    <!-- Bancos Aliados -->
+    <section class="py-16 bg-gray-50 dark:bg-gray-900">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Bancos Aliados</h2>
+                <p class="mt-4 text-lg text-gray-600 dark:text-gray-400">Trabajamos con las instituciones financieras más sólidas del país</p>
+            </div>
 
-
-            </ul>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-6">
+                <div class="partner-logo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Bancomer_logo.svg/1200px-Bancomer_logo.svg.png" alt="BBVA">
+                </div>
+                <div class="partner-logo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Santander_Bank_logo.svg/1200px-Santander_Bank_logo.svg.png" alt="Santander">
+                </div>
+                <div class="partner-logo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/HSBC_logo.svg/1200px-HSBC_logo.svg.png" alt="HSBC">
+                </div>
+                <div class="partner-logo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Scotiabank_Logo_2012.svg/1200px-Scotiabank_Logo_2012.svg.png" alt="Scotiabank">
+                </div>
+                <div class="partner-logo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Banamex_logo.svg/1200px-Banamex_logo.svg.png" alt="Citibanamex">
+                </div>
+            </div>
         </div>
+    </section>
 
-        <div class="footer-column">
-            <h3>Concesionario</h3>
-            <ul>
-                <li><a href="/nosotros">Sobre nosotros</a></li>
-                <li><a href="/ubicaciones">Ubicaciones</a></li>
-                <li><a href="#contact">Contáctanos</a></li>
-            </ul>
+    <!-- Testimonios -->
+    <section class="py-16">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Lo que dicen nuestros clientes</h2>
+                <p class="mt-4 text-lg text-gray-600 dark:text-gray-400">Experiencias reales de personas que financiaron su vehículo con nosotros</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="testimonial-card">
+                    <p class="testimonial-text text-gray-600 dark:text-gray-400 italic">"El proceso de financiamiento fue muy sencillo y rápido. Me aprobaron el crédito en menos de 24 horas y con una tasa mejor de lo que esperaba. ¡Ahora disfruto de mi NexGen X1!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar"></div>
+                        <div class="author-info">
+                            <h4 class="font-bold text-gray-900 dark:text-white">Roberto Sánchez</h4>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Dueño de NexGen X1 2023</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <p class="testimonial-text text-gray-600 dark:text-gray-400 italic">"Como empresario, el plan de leasing operativo me ha permitido renovar mi flotilla con beneficios fiscales importantes. Excelente asesoría por parte del equipo de NexGen Motors."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar"></div>
+                        <div class="author-info">
+                            <h4 class="font-bold text-gray-900 dark:text-white">Carlos Mendoza</h4>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Dueño de 5 NexGen E1 para su empresa</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <p class="testimonial-text text-gray-600 dark:text-gray-400 italic">"Aprobamos el crédito para mi NexGen S1 con mi historial crediticio que no era perfecto. Trabajaron conmigo para encontrar un plan de pagos que pudiera manejar cómodamente."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar"></div>
+                        <div class="author-info">
+                            <h4 class="font-bold text-gray-900 dark:text-white">Laura González</h4>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Dueña de NexGen S1 2022</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+    </section>
 
-        <div class="footer-column">
-            <h3>Legal</h3>
-            <ul>
-                <li><a href="/terminos">Términos y condiciones</a></li>
-                <li><a href="/cookies">Cookies y Aviso legal</a></li>
-            </ul>
+    <!-- CTA -->
+    <section class="py-16 bg-primary">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-bold text-white">¿Listo para adquirir tu NexGen?</h2>
+            <p class="mt-4 text-lg text-blue-100">Nuestros asesores financieros están disponibles para ayudarte a encontrar la mejor opción de crédito para tu nuevo vehículo.</p>
+            <a href="#" class="mt-8 inline-block bg-white text-primary px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">Solicitar crédito ahora</a>
         </div>
-    </div>
+    </section>
 
+    <!-- Footer -->
+    <footer class="bg-background-light dark:bg-background-dark border-t border-gray-200 dark:border-gray-800">
+        <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="footer-column">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Vehículos</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/vehiculos" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Nuevos modelos</a></li>
+                        <li><a href="/vehiculos" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Promociones</a></li>
+                    </ul>
+                </div>
 
-    <div class="copyright">
-        <p>&copy; 2023 Concesionario. Todos los derechos reservados.</p>
-    </div>
-</footer>
+                <div class="footer-column">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Servicios</h3>
+                    <ul class="space-y-2">
+                        <li><a th:href="@{/usuario/Inicio}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Agendar servicio</a></li>
+                        <li><a href="/garantias" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Garantías</a></li>
+                    </ul>
+                </div>
 
-<a href="https://wa.me/525512345678" class="whatsapp-float" target="_blank">
+                <div class="footer-column">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Concesionario</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/nosotros" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Sobre nosotros</a></li>
+                        <li><a href="/ubicaciones" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Ubicaciones</a></li>
+                        <li><a href="#contact" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Contáctanos</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Legal</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/terminos" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Términos y condiciones</a></li>
+                        <li><a href="/cookies" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Cookies y Aviso legal</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mt-8 border-t border-gray-200 dark:border-gray-700 pt-8 text-center">
+                <p class="text-sm text-gray-500 dark:text-gray-400">&copy; 2023 NextGenMotors. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<!-- Botón de WhatsApp -->
+<a href="https://wa.me/525512345678" class="fixed bottom-8 right-8 bg-green-500 text-white w-14 h-14 rounded-full flex items-center justify-center text-2xl shadow-lg hover:bg-green-600 transition-colors z-50" target="_blank">
     <i class="fab fa-whatsapp"></i>
 </a>
+
 <script th:src="@{/js/credito.js}"></script>
+<script>
+    // Barra de navegación al hacer scroll
+    window.addEventListener('scroll', function() {
+        const header = document.querySelector('header');
+        if (window.scrollY > 50) {
+            header.classList.add('shadow-md');
+        } else {
+            header.classList.remove('shadow-md');
+        }
+    });
+
+    // Código de la calculadora de crédito
+    document.addEventListener('DOMContentLoaded', function() {
+        const calculateButton = document.getElementById('calculate-button');
+        const resetButton = document.getElementById('reset-button');
+        let calculationDone = false;
+        
+        calculateButton.addEventListener('click', function() {
+            calculateLoan();
+            if (!calculationDone) {
+                // Cambiar el botón a "Calcular otro" después del primer cálculo
+                calculateButton.textContent = 'Calcular';
+                resetButton.style.display = 'block';
+                calculationDone = true;
+            }
+        });
+        
+        resetButton.addEventListener('click', function() {
+            resetCalculator();
+        });
+        
+        function calculateLoan() {
+            const vehiclePrice = parseFloat(document.getElementById('vehicle-price').value) || 0;
+            const downPayment = parseFloat(document.getElementById('down-payment').value) || 0;
+            const loanTerm = parseInt(document.getElementById('loan-term').value);
+            const interestRate = parseFloat(document.getElementById('interest-rate').value) || 0;
+            
+            // Validaciones básicas
+            if (vehiclePrice <= 0) {
+                alert('Por favor ingresa un precio válido para el vehículo');
+                return;
+            }
+            
+            if (downPayment > vehiclePrice) {
+                alert('El enganche no puede ser mayor al precio del vehículo');
+                return;
+            }
+            
+            const financedAmount = vehiclePrice - downPayment;
+            
+            if (financedAmount <= 0) {
+                // Si el enganche es mayor o igual al precio, mostrar valores en cero
+                document.getElementById('financed-amount').textContent = '$0';
+                document.getElementById('monthly-payment').textContent = '$0';
+                document.getElementById('total-interest').textContent = '$0';
+                document.getElementById('total-cost').textContent = '$' + vehiclePrice.toLocaleString();
+                return;
+            }
+            
+            // Cálculo de pagos mensuales (fórmula de amortización)
+            const monthlyRate = (interestRate / 100) / 12;
+            const monthlyPayment = financedAmount * (monthlyRate * Math.pow(1 + monthlyRate, loanTerm)) / (Math.pow(1 + monthlyRate, loanTerm) - 1);
+            
+            const totalPayment = monthlyPayment * loanTerm;
+            const totalInterest = totalPayment - financedAmount;
+            const totalCost = vehiclePrice + totalInterest;
+            
+            // Actualizar la interfaz
+            document.getElementById('financed-amount').textContent = '$' + financedAmount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('monthly-payment').textContent = '$' + monthlyPayment.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('total-interest').textContent = '$' + totalInterest.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('total-cost').textContent = '$' + totalCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        }
+        
+        function resetCalculator() {
+            // Limpiar los campos de entrada
+            document.getElementById('vehicle-price').value = '';
+            document.getElementById('down-payment').value = '';
+            document.getElementById('loan-term').value = '36';
+            document.getElementById('interest-rate').value = '9.5';
+            
+            // Limpiar los resultados
+            document.getElementById('financed-amount').textContent = '$0';
+            document.getElementById('monthly-payment').textContent = '$0';
+            document.getElementById('total-interest').textContent = '$0';
+            document.getElementById('total-cost').textContent = '$0';
+            
+            // Ocultar el botón "Calcular otro"
+            resetButton.style.display = 'none';
+            calculationDone = false;
+            
+            // Enfocar el primer campo
+            document.getElementById('vehicle-price').focus();
+        }
+        
+        // Calcular al cargar la página si hay valores por defecto
+        // calculateLoan();
+    });
+</script>
 </body>
 </html>
