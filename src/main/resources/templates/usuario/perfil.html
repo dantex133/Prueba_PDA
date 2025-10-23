@@ -392,6 +392,118 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         }
 
+        /* Estilos para el modal de confirmación */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark .modal-content {
+            background: #1e293b;
+            color: #e2e8f0;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-icon {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .modal-icon i {
+            font-size: 3rem;
+            color: #ef4444;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-message {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #64748b;
+        }
+
+        .dark .modal-message {
+            color: #94a3b8;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .modal-btn-cancel {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .dark .modal-btn-cancel {
+            background: #334155;
+            color: #e2e8f0;
+        }
+
+        .modal-btn-cancel:hover {
+            background: #e2e8f0;
+        }
+
+        .dark .modal-btn-cancel:hover {
+            background: #475569;
+        }
+
+        .modal-btn-confirm {
+            background: #ef4444;
+            color: white;
+        }
+
+        .modal-btn-confirm:hover {
+            background: #dc2626;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .main-container {
@@ -410,6 +522,10 @@
 
             .nav-links {
                 display: none;
+            }
+
+            .modal-actions {
+                flex-direction: column;
             }
         }
     </style>
@@ -479,7 +595,7 @@
                 </a>
             </li>
             <li>
-                <a href="/logout" class="logout">
+                <a href="#" onclick="confirmarCerrarSesion()" class="logout">
                     <i class='fas fa-sign-out-alt'></i>
                     <span class="text">Cerrar sesión</span>
                 </a>
@@ -552,6 +668,28 @@
     </main>
 </div>
 
+<!-- Modal de confirmación para cerrar sesión -->
+<div id="logoutModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h3 class="modal-title">¿Cerrar Sesión?</h3>
+        <p class="modal-message">
+            ¿Estás seguro de que quieres cerrar tu sesión? Tendrás que volver a iniciar sesión para acceder a tu cuenta.
+        </p>
+        <div class="modal-actions">
+            <button class="modal-btn modal-btn-cancel" onclick="cancelarCerrarSesion()">
+                Cancelar
+            </button>
+            <button class="modal-btn modal-btn-confirm" onclick="cerrarSesion()">
+                <i class="fas fa-sign-out-alt mr-2"></i>
+                Sí, Cerrar
+            </button>
+        </div>
+    </div>
+</div>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script>
@@ -589,6 +727,45 @@
                 },
                 responsive: true
             });
+        }
+    });
+
+    // Funciones para el modal de cierre de sesión
+    function confirmarCerrarSesion() {
+        const modal = document.getElementById('logoutModal');
+        modal.classList.add('active');
+    }
+
+    function cancelarCerrarSesion() {
+        const modal = document.getElementById('logoutModal');
+        modal.classList.remove('active');
+    }
+
+    function cerrarSesion() {
+        // Mostrar loading en el botón
+        const confirmButton = document.querySelector('.modal-btn-confirm');
+        const originalText = confirmButton.innerHTML;
+        confirmButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Cerrando...';
+        confirmButton.disabled = true;
+
+        // Redirigir al endpoint de logout después de un breve delay para que se vea el loading
+        setTimeout(() => {
+            window.location.href = '/logout'; // Ajusta esta URL según tu configuración de Spring Security
+        }, 1000);
+    }
+
+    // Cerrar modal haciendo clic fuera de él
+    document.getElementById('logoutModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            cancelarCerrarSesion();
+        }
+    });
+
+    // Cerrar modal con tecla ESC
+    document.addEventListener('keydown', function(e) {
+        const modal = document.getElementById('logoutModal');
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            cancelarCerrarSesion();
         }
     });
 </script>

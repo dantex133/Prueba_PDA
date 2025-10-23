@@ -52,23 +52,6 @@ public class AuthController {
             @RequestParam String password,
             Model model) {
 
-        if (usuarioService.existeIdentificacionEnCualquierTabla(identificacion)) {
-            model.addAttribute("error", "La identificación ya está registrada (como usuario o trabajador)");
-            model.addAttribute("nombre", nombre);
-            model.addAttribute("apellido", apellido);
-            model.addAttribute("identificacion", identificacion);
-            model.addAttribute("email", email);
-            return "usuario/loginup";
-        }
-
-        if (usuarioService.existeCorreoEnCualquierTabla(email)) {
-            model.addAttribute("error", "El correo ya está registrado (como usuario o trabajador)");
-            model.addAttribute("nombre", nombre);
-            model.addAttribute("apellido", apellido);
-            model.addAttribute("identificacion", identificacion);
-            model.addAttribute("email", email);
-            return "usuario/loginup";
-        }
 
         // Validar correo existente
         if (usuarioRepository.existsByCorreoUser(email)) {
@@ -135,6 +118,6 @@ public class AuthController {
 
         return "redirect:/login?adminRegistrado=true";
     }
-    
+
 }
 

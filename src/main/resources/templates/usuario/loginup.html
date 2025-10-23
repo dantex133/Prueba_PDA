@@ -473,19 +473,25 @@
                             </div>
                         </div>
 
-                        <!-- Mensajes de error -->
+                        <!-- Mensajes de error del servidor -->
+                        <div th:if="${error}" class="text-center mb-3 p-3 rounded-lg bg-red-100 text-red-700">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            <span th:text="${error}"></span>
+                        </div>
 
+                        <!-- Mensaje de error del cliente -->
                         <div id="error-message" class="text-center mb-3 p-3 rounded-lg bg-red-100 text-red-700" style="display: none;"></div>
 
                         <!-- Formulario -->
                         <form id="register-form" th:action="@{/registro}" method="post">
-                            <input type="hidden" id="hidden-email" name="email">
+                            <input type="hidden" id="hidden-email" name="email" th:value="${email}">
                             <input type="hidden" id="hidden-password" name="password">
 
                             <!-- Paso 1: Email -->
                             <div id="step1-content">
                                 <div class="input-with-icon">
-                                    <input type="email" id="email" class="form-input" placeholder="Introduce tu email" required>
+                                    <input type="email" id="email" class="form-input" placeholder="Introduce tu email" required
+                                           th:value="${email}">
                                     <div class="input-icon">
                                         <i class="fas fa-envelope"></i>
                                     </div>
@@ -523,19 +529,22 @@
                             <!-- Paso 3: Datos personales -->
                             <div id="step3-content" style="display: none;">
                                 <div class="input-with-icon">
-                                    <input type="text" id="nombre" name="nombre" class="form-input" placeholder="Nombre" required>
+                                    <input type="text" id="nombre" name="nombre" class="form-input" placeholder="Nombre" required
+                                           th:value="${nombre}">
                                     <div class="input-icon">
                                         <i class="fas fa-user"></i>
                                     </div>
                                 </div>
                                 <div class="input-with-icon">
-                                    <input type="text" id="apellido" name="apellido" class="form-input" placeholder="Apellido" required>
+                                    <input type="text" id="apellido" name="apellido" class="form-input" placeholder="Apellido" required
+                                           th:value="${apellido}">
                                     <div class="input-icon">
                                         <i class="fas fa-user"></i>
                                     </div>
                                 </div>
                                 <div class="input-with-icon">
-                                    <input type="text" id="identificacion" name="identificacion" class="form-input" placeholder="Identificación (CC)" required>
+                                    <input type="text" id="identificacion" name="identificacion" class="form-input" placeholder="Identificación (CC)" required
+                                           th:value="${identificacion}">
                                     <div class="input-icon">
                                         <i class="fas fa-id-card"></i>
                                     </div>
@@ -589,6 +598,16 @@
         const hiddenPassword = document.getElementById('hidden-password');
         const errorMessage = document.getElementById('error-message');
 
+        // Si hay un error del servidor, ir directamente al paso 3
+        const serverError = document.querySelector('[th\\:if="${error}"]');
+        if (serverError && serverError.style.display !== 'none') {
+            currentStep = 3;
+            // Llenar los campos ocultos con los valores existentes
+            if (emailField.value) {
+                hiddenEmail.value = emailField.value;
+            }
+        }
+
         // Actualizar progreso
         function updateProgress() {
             const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
@@ -604,7 +623,7 @@
                 }
             });
 
-            // Mostrar/ocultar contenidos n
+            // Mostrar/ocultar contenidos
             document.querySelectorAll('[id$="-content"]').forEach((content, index) => {
                 content.style.display = index + 1 === currentStep ? 'block' : 'none';
             });
