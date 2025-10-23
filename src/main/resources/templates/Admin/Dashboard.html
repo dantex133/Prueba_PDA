@@ -231,6 +231,120 @@
             color: #991b1b;
         }
 
+        
+        /* NUEVOS ESTILOS PARA DÍAS DE TRABAJO */
+        .dias-trabajo-container {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 2px dashed #e2e8f0;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .dark .dias-trabajo-container {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            border-color: #475569;
+        }
+
+        .dias-trabajo-container:hover {
+            border-color: #0f66bd;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(15, 102, 189, 0.1);
+        }
+
+        .dia-checkbox {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .dia-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .dark .dia-label {
+            background: #374151;
+            border-color: #4b5563;
+            color: #e5e7eb;
+        }
+
+        .dia-label:hover {
+            border-color: #0f66bd;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(15, 102, 189, 0.15);
+        }
+
+        .dia-checkbox:checked + .dia-label {
+            background: linear-gradient(135deg, #0f66bd 0%, #0a4d8c 100%);
+            color: white;
+            border-color: #0f66bd;
+            box-shadow: 0 4px 12px rgba(15, 102, 189, 0.3);
+        }
+
+        .dia-checkbox:checked + .dia-label .dia-icon {
+            color: white;
+        }
+
+        .dia-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #6b7280;
+            transition: all 0.3s ease;
+        }
+
+        .dark .dia-icon {
+            color: #9ca3af;
+        }
+
+        .dia-nombre {
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+        }
+
+        .dias-seleccionados {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(15, 102, 189, 0.05);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(15, 102, 189, 0.1);
+        }
+
+        .dark .dias-seleccionados {
+            background: rgba(15, 102, 189, 0.1);
+            border-color: rgba(15, 102, 189, 0.2);
+        }
+
+        .dia-seleccionado {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #0f66bd 0%, #0a4d8c 100%);
+            color: white;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .dia-seleccionado i {
+            font-size: 0.75rem;
+        }
+
+
         /* Responsive */
         @media (max-width: 768px) {
             .sidebar {
@@ -760,7 +874,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <label>Días de Trabajo</label>
                             <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
                                 <div class="flex items-center">
@@ -782,6 +896,85 @@
                                 <div class="flex items-center">
                                     <input type="checkbox" name="diasTrabajo" value="VIERNES" id="viernes" class="mr-2 rounded">
                                     <label for="viernes" class="text-sm">Viernes</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col lg:flex-row gap-4">
+                            <button type="submit" class="btn-primary flex-1">Registrar Trabajador</button>
+                            <a href="/admin/Dashboard" class="btn-secondary text-center">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section> -->
+
+         <div class="form-group">
+                            <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-4">Días de Trabajo</label>
+                            
+                            <div class="dias-trabajo-container">
+                                <div class="text-center mb-4">
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Selecciona los días en los que el trabajador estará disponible</p>
+                                </div>
+                                
+                                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-4">
+                                    <!-- Lunes -->
+                                    <div class="relative">
+                                        <input type="checkbox" name="diasTrabajo" value="LUNES" id="lunes" class="dia-checkbox">
+                                        <label for="lunes" class="dia-label">
+                                            <i class='bx bx-calendar-check dia-icon'></i>
+                                            <span class="dia-nombre">Lunes</span>
+                                        </label>
+                                    </div>
+                                    
+                                    <!-- Martes -->
+                                    <div class="relative">
+                                        <input type="checkbox" name="diasTrabajo" value="MARTES" id="martes" class="dia-checkbox">
+                                        <label for="martes" class="dia-label">
+                                            <i class='bx bx-calendar dia-icon'></i>
+                                            <span class="dia-nombre">Martes</span>
+                                        </label>
+                                    </div>
+                                    
+                                    <!-- Miércoles -->
+                                    <div class="relative">
+                                        <input type="checkbox" name="diasTrabajo" value="MIERCOLES" id="miercoles" class="dia-checkbox">
+                                        <label for="miercoles" class="dia-label">
+                                            <i class='bx bx-calendar-event dia-icon'></i>
+                                            <span class="dia-nombre">Miércoles</span>
+                                        </label>
+                                    </div>
+                                    
+                                    <!-- Jueves -->
+                                    <div class="relative">
+                                        <input type="checkbox" name="diasTrabajo" value="JUEVES" id="jueves" class="dia-checkbox">
+                                        <label for="jueves" class="dia-label">
+                                            <i class='bx bx-calendar-week dia-icon'></i>
+                                            <span class="dia-nombre">Jueves</span>
+                                        </label>
+                                    </div>
+                                    
+                                    <!-- Viernes -->
+                                    <div class="relative">
+                                        <input type="checkbox" name="diasTrabajo" value="VIERNES" id="viernes" class="dia-checkbox">
+                                        <label for="viernes" class="dia-label">
+                                            <i class='bx bx-calendar-star dia-icon'></i>
+                                            <span class="dia-nombre">Viernes</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Días seleccionados -->
+                                <div id="dias-seleccionados-container" class="dias-seleccionados hidden">
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300 mr-2">Días seleccionados:</span>
+                                    <div id="dias-seleccionados-list" class="flex flex-wrap gap-2"></div>
+                                </div>
+
+                                <!-- Contador de días -->
+                                <div class="text-center mt-3">
+                                    <span id="contador-dias" class="text-sm font-medium text-primary bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded-full">
+                                        0 días seleccionados
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -1242,6 +1435,67 @@
         console.log('Editando elemento con ID:', id);
         mostrarModal('modal-editar-vehiculo');
     }
+
+    
+        // GESTIÓN DE DÍAS DE TRABAJO
+        const checkboxes = document.querySelectorAll('.dia-checkbox');
+        const diasSeleccionadosContainer = document.getElementById('dias-seleccionados-container');
+        const diasSeleccionadosList = document.getElementById('dias-seleccionados-list');
+        const contadorDias = document.getElementById('contador-dias');
+
+        // Mapeo de días a íconos
+        const iconosDias = {
+            'LUNES': 'bx-calendar-check',
+            'MARTES': 'bx-calendar',
+            'MIERCOLES': 'bx-calendar-event',
+            'JUEVES': 'bx-calendar-week',
+            'VIERNES': 'bx-calendar-star'
+        };
+
+        // Mapeo de días a nombres cortos
+        const nombresCortos = {
+            'LUNES': 'Lun',
+            'MARTES': 'Mar',
+            'MIERCOLES': 'Mié',
+            'JUEVES': 'Jue',
+            'VIERNES': 'Vie'
+        };
+
+        function actualizarDiasSeleccionados() {
+            const diasSeleccionados = Array.from(checkboxes)
+                .filter(checkbox => checkbox.checked)
+                .map(checkbox => checkbox.value);
+
+            // Actualizar contador
+            contadorDias.textContent = `${diasSeleccionados.length} día${diasSeleccionados.length !== 1 ? 's' : ''} seleccionado${diasSeleccionados.length !== 1 ? 's' : ''}`;
+
+            // Actualizar lista de días seleccionados
+            diasSeleccionadosList.innerHTML = '';
+            
+            if (diasSeleccionados.length > 0) {
+                diasSeleccionadosContainer.classList.remove('hidden');
+                
+                diasSeleccionados.forEach(dia => {
+                    const badge = document.createElement('span');
+                    badge.className = 'dia-seleccionado';
+                    badge.innerHTML = `
+                        <i class='bx ${iconosDias[dia]}'></i>
+                        ${nombresCortos[dia]}
+                    `;
+                    diasSeleccionadosList.appendChild(badge);
+                });
+            } else {
+                diasSeleccionadosContainer.classList.add('hidden');
+            }
+        }
+
+        // Agregar event listeners a los checkboxes
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', actualizarDiasSeleccionados);
+        });
+
+        // Inicializar estado
+        actualizarDiasSeleccionados();
 </script>
 </body>
 </html>
