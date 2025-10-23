@@ -1,499 +1,638 @@
 <!DOCTYPE html>
-<!-- <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml"> -->
-<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Boxicons -->
+    <title>AdminHub - NexGen Motors</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-
-    <!-- CSS -->
-    <link th:href="@{/css/style.css}" rel="stylesheet"> <!--estilo general del dashboard-->
-    <link th:href="@{/css/styleRT.css}" rel="stylesheet"> <!-- esto tiene lo de los vehiculos -->
-    <link th:href="@{/css/noti.css}" rel="stylesheet"> <!-- este es el estilo de las notificaciones -->
-    <link th:href="@{/css/citasadstyle.css}" rel="stylesheet"> <!-- este es el estilo de las citas-->
-    <link th:href="@{/css/auto.css}" rel="stylesheet">
-    <title>AdminHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        .material-symbols-outlined {
+            font-variation-settings:
+                "FILL" 0,
+                "wght" 400,
+                "GRAD" 0,
+                "opsz" 24;
+        }
 
+        /* Estilos personalizados para el dashboard */
+        .sidebar {
+            width: 280px;
+            min-height: 100vh;
+            background: #1f2937;
+            transition: all 0.3s ease;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            transform: translateX(0);
+        }
 
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .sidebar.collapsed .sidebar-text {
+            display: none;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            transition: all 0.3s ease;
+            min-height: 100vh;
+            background: #f8fafc;
+        }
+
+        .main-content.expanded {
+            margin-left: 80px;
+        }
+
+        .mobile-menu-open .sidebar {
+            transform: translateX(0);
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+            border: 1px solid #e5e7eb;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            border: 1px solid #e5e7eb;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 2rem;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0f66bd 0%, #0a4d8c 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(15, 102, 189, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+            transform: translateY(-1px);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.875rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.75rem;
+            background-color: white;
+            transition: all 0.3s ease;
+            font-size: 0.875rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #0f66bd;
+            box-shadow: 0 0 0 3px rgba(15, 102, 189, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border-radius: 9999px;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            box-shadow: 0 2px 4px rgba(220, 38, 38, 0.4);
+        }
+
+        .sidebar-link {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: #0f66bd;
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-link.active::before {
+            transform: scaleY(1);
+        }
+
+        .estado-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .estado-pendiente {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .estado-aprobada {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .estado-rechazada {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-open .sidebar {
+                transform: translateX(0);
+            }
+
+            .stat-card {
+                padding: 1rem;
+            }
+
+            .modal-content {
+                margin: 5% auto;
+                width: 95%;
+                padding: 1.5rem;
+            }
+        }
+
+        /* Modo oscuro */
+        .dark .sidebar {
+            background: #111827;
+        }
+
+        .dark .main-content {
+            background: #101922;
+        }
+
+        .dark .stat-card,
+        .dark .table-container,
+        .dark .modal-content {
+            background: #1f2937;
+            border-color: #374151;
+            color: #e5e7eb;
+        }
+
+        .dark .form-group label {
+            color: #d1d5db;
+        }
+
+        .dark .form-group input,
+        .dark .form-group select,
+        .dark .form-group textarea {
+            background: #374151;
+            border-color: #4b5563;
+            color: #e5e7eb;
+        }
+
+        .dark .form-group input:focus,
+        .dark .form-group select:focus,
+        .dark .form-group textarea:focus {
+            border-color: #0f66bd;
+        }
+
+        .dark .nav-toggle {
+            color: #d1d5db;
+        }
     </style>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#0f66bd",
+                        "background-light": "#f8fafc",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        display: ["Manrope", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        lg: "0.75rem",
+                        xl: "1rem",
+                        full: "9999px",
+                    },
+                },
+            },
+        };
+    </script>
 </head>
-<body>
-
-<!-- ===================== SIDEBAR ===================== -->
-<section id="sidebar">
-    <a href="#" class="brand">
-        <!-- <i class='bx bxs-smile'></i> -->
-        <span class="text">Administrador</span>
-    </a>
-    <ul class="side-menu top">
-        <li class="active">
-            <a href="#dashboard">
-                <i class='bx bxs-dashboard'></i>
-                <span class="text">Dashboard</span>
-            </a>
-        </li>
-        <li>
-            <a href="#vehiculos">
-                <i class='bx bxs-shopping-bag-alt'></i>
-                <span class="text">Vehículos</span>
-            </a>
-        </li>
-        <li>
-            <a href="#anuncios">
-                <i class='bx bxs-shopping-bag-alt'></i>
-                <span class="text">Anuncios</span>
-            </a>
-        </li>
-        <li>
-            <a href="#analytics">
-                <i class='bx bxs-doughnut-chart'></i>
-                <span class="text">Analytics</span>
-            </a>
-        </li>
-        <li>
-            <a href="#mensaje">
-                <i class='bx bxs-message-dots'></i>
-                <span class="text">Mensaje</span>
-            </a>
-        </li>
-        <li sec:authorize="hasRole('ROLE_ADMINISTRADOR')">
-            <a href="#team">
-                <i class='bx bxs-group'></i>
-                <span class="text">Team</span>
-            </a>
-        </li>
-    </ul>
-    <ul class="side-menu">
-
-        <li>
-            <a href="/logout" class="logout">
-                <i class='bx bxs-log-out-circle'></i>
-                <span class="text">Logout</span>
-            </a>
-            
-        </li>
-    </ul>
-</section>
-<!-- ===================== END SIDEBAR ===================== -->
-
-<!-- ===================== CONTENT ===================== -->
-
-<section id="content">
-    <!-- Navbar -->
-    <nav>
-        <i class='bx bx-menu'></i>
-        <a href="#" class="nav-link">Categories</a>
-        <form action="#">
-            <div class="form-input">
-                <input type="search" placeholder="search...">
-                <button type="submit" class="search-btn"><i class='bx bx-search'></i></button>
-            </div>
-        </form>
-        <a href="#" class="notification" id="notification-bell">
-            <i class='bx bxs-bell'></i>
-            <span class="num" id="notification-count">0</span>
-        </a>
-
-        <div class="notification-dropdown" id="notification-dropdown">
-            <div class="notification-list" id="notification-list">
-                <!-- Las notificaciones aparecerán aquí -->
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+<div class="flex">
+    <!-- ===================== SIDEBAR ===================== -->
+    <div class="sidebar">
+        <div class="p-6 border-b border-gray-700">
+            <div class="flex items-center gap-3">
+                <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-primary to-blue-800 flex items-center justify-center">
+                    <i class='bx bxs-dashboard text-white text-xl'></i>
+                </div>
+                <div>
+                    <span class="text-white font-bold text-lg sidebar-text">AdminHub</span>
+                    <p class="text-gray-400 text-sm sidebar-text">NexGen Motors</p>
+                </div>
             </div>
         </div>
-        <!-- <a href="#" class="profile">
-            <img src="img/people.png" alt="">
-        </a> -->
-    </nav>
-    <!-- End Navbar -->
+
+        <ul class="py-4 space-y-1">
+            <li>
+                <a href="#dashboard" class="sidebar-link flex items-center gap-3 px-6 py-4 text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-300 active">
+                    <i class='bx bxs-dashboard text-xl'></i>
+                    <span class="sidebar-text font-medium">Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="#vehiculos" class="sidebar-link flex items-center gap-3 px-6 py-4 text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-300">
+                    <i class='bx bxs-car text-xl'></i>
+                    <span class="sidebar-text font-medium">Vehículos</span>
+                </a>
+            </li>
+            <li>
+                <a href="#anuncios" class="sidebar-link flex items-center gap-3 px-6 py-4 text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-300">
+                    <i class='bx bxs-megaphone text-xl'></i>
+                    <span class="sidebar-text font-medium">Anuncios</span>
+                </a>
+            </li>
+            <li>
+                <a href="#analytics" class="sidebar-link flex items-center gap-3 px-6 py-4 text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-300">
+                    <i class='bx bxs-chart text-xl'></i>
+                    <span class="sidebar-text font-medium">Analytics</span>
+                </a>
+            </li>
+            <li>
+                <a href="#mensaje" class="sidebar-link flex items-center gap-3 px-6 py-4 text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-300">
+                    <i class='bx bxs-calendar text-xl'></i>
+                    <span class="sidebar-text font-medium">Citas</span>
+                </a>
+            </li>
+            <li sec:authorize="hasRole('ROLE_ADMINISTRADOR')">
+                <a href="#team" class="sidebar-link flex items-center gap-3 px-6 py-4 text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-300">
+                    <i class='bx bxs-group text-xl'></i>
+                    <span class="sidebar-text font-medium">Team</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="absolute bottom-0 w-full p-6 border-t border-gray-700">
+            <a href="/logout" class="flex items-center gap-3 px-6 py-4 text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-300 rounded-lg">
+                <i class='bx bxs-log-out-circle text-xl'></i>
+                <span class="sidebar-text font-medium">Cerrar Sesión</span>
+            </a>
+        </div>
+    </div>
+    <!-- ===================== END SIDEBAR ===================== -->
 
     <!-- ===================== MAIN CONTENT ===================== -->
-    <main>
-
-        <!-- ===================== DASHBOARD SECTION ===================== -->
-        <section id="dashboard">
-            <div class="head-title">
-                <div class="left">
-                    <h1>Dashboard</h1>
-                    <ul class="breacrumb">
-                        <li>
-                            <a href="#">Dashboard</a>
-                        </li>
-                        <li><i class='bx bx-chevron-right'></i></li>
-                        <li>
-                            <a class="active" href="#">Home</a>
-                        </li>
-                    </ul>
-                </div>
-                <a href="#" class="btn-download">
-                    <i class='bx bxs-cloud-download'></i>
-                    <span class="text">Download PDF</span>
-                </a>
-            </div>
-            <ul class="box-info">
-                <li>
-                    <i class='bx bxs-calendar-check'></i>
-                    <span class="text">
-                <h3 th:text="${totalCitas}">0</h3>
-                <p>Citas Totales</p>
-            </span>
-                </li>
-                <li>
-                    <i class='bx bxs-group'></i>
-                    <span class="text">
-                <h3 th:text="${totalUsuarios}">0</h3>
-                <p>Usuarios Registrados</p>
-            </span>
-                </li>
-                <li>
-                    <i class='bx bxs-car'></i>
-                    <span class="text">
-                <h3 th:text="${totalVehiculos}">0</h3>
-                <p>Vehículos en Stock</p>
-            </span>
-                </li>
-            </ul>
-            <iframe title="concesionariotablero" width="600" height="373.5" src="https://app.powerbi.com/view?r=eyJrIjoiMDljY2M3NWUtMWM1ZS00NjFiLTljNjgtMDQ3NGRlNDVjZGJjIiwidCI6IjlkMTJiZjNmLWU0ZjYtNDdhYi05MTJmLTFhMmYwZmM0OGFhNCIsImMiOjR9" frameborder="0" allowFullScreen="true"></iframe>
-        </section>
-        <!-- ===================== END DASHBOARD SECTION ===================== -->
-
-        <!-- ===================== VEHÍCULOS SECTION ===================== -->
-        <main>
-            <section id="vehiculos" style="display: none;">
-                <div class="head-title">
-                    <div class="left">
-                        <h1>Vehículos</h1>
-                        <ul class="breacrumb">
-                            <li>
-                                <a href="#">Dashboard</a>
-                            </li>
-                            <li><i class='bx bx-chevron-right'></i></li>
-                            <li>
-                                <a class="active" href="#">Vehículos</a>
-                            </li>
-                        </ul>
+    <div class="main-content flex-1">
+        <!-- Navbar -->
+        <nav class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 p-4 lg:p-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <button class="lg:hidden nav-toggle text-2xl cursor-pointer p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                        <i class='bx bx-menu'></i>
+                    </button>
+                    <div class="relative hidden lg:block">
+                        <input type="search" placeholder="Buscar..." class="pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent w-64">
+                        <i class='bx bx-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400'></i>
                     </div>
                 </div>
-                <div class="table-data">
-                    <div class="order">
-                        <div class="head">
-                            <h3>Vehículos en Stock</h3>
-                            <button onclick="mostrarModal('modal-vehiculo')" class="btn-añadir">+ Añadir Vehículo</button>
+
+                <div class="flex items-center gap-4">
+                    <!-- Botón de búsqueda móvil -->
+                    <button class="lg:hidden p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                        <i class='bx bx-search text-xl'></i>
+                    </button>
+
+                    <!-- Notificaciones -->
+                    <div class="relative">
+                        <button class="relative p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors" id="notification-bell">
+                            <i class='bx bxs-bell text-xl'></i>
+                            <span class="notification-badge" id="notification-count">0</span>
+                        </button>
+                        <div class="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 hidden z-50" id="notification-dropdown">
+                            <div class="p-4 max-h-96 overflow-y-auto" id="notification-list">
+                                <div class="text-center text-gray-500 dark:text-gray-400 py-4">
+                                    No hay notificaciones
+                                </div>
+                            </div>
                         </div>
-                        <table id="tabla-vehiculos">
-                            <thead>
-                            <tr>
-                                <th>Marca</th>
-                                <th>Modelo</th>
-                                <th>Año</th>
-                                <th>Precio</th>
-                                <th>Categoría</th>
-                                <th>Imagen</th>
-                                <th>Acciones</th>
-                            </tr>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- ===================== DASHBOARD SECTION ===================== -->
+        <section id="dashboard" class="p-4 lg:p-6">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
+                <div>
+                    <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+                    <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mt-2">
+                        <a href="#" class="hover:text-primary transition-colors">Dashboard</a>
+                        <i class='bx bx-chevron-right text-xs'></i>
+                        <a href="#" class="text-primary font-medium">Home</a>
+                    </div>
+                </div>
+                <button class="btn-primary">
+                    <i class='bx bxs-cloud-download'></i>
+                    <span>Descargar PDF</span>
+                </button>
+            </div>
+
+            <!-- Estadísticas -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mb-8">
+                <div class="stat-card">
+                    <div class="flex items-center gap-4">
+                        <div class="p-3 bg-blue-100 dark:bg-blue-900 rounded-xl">
+                            <i class='bx bxs-calendar-check text-2xl text-blue-600'></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white" th:text="${totalCitas}">0</h3>
+                            <p class="text-gray-600 dark:text-gray-400">Citas Totales</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="flex items-center gap-4">
+                        <div class="p-3 bg-green-100 dark:bg-green-900 rounded-xl">
+                            <i class='bx bxs-group text-2xl text-green-600'></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white" th:text="${totalUsuarios}">0</h3>
+                            <p class="text-gray-600 dark:text-gray-400">Usuarios Registrados</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="flex items-center gap-4">
+                        <div class="p-3 bg-purple-100 dark:bg-purple-900 rounded-xl">
+                            <i class='bx bxs-car text-2xl text-purple-600'></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white" th:text="${totalVehiculos}">0</h3>
+                            <p class="text-gray-600 dark:text-gray-400">Vehículos en Stock</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Power BI Dashboard -->
+            <div class="table-container">
+                <div class="p-4 lg:p-6">
+                    <h3 class="text-lg lg:text-xl font-semibold text-gray-900 dark:text-white mb-4">Dashboard Analytics</h3>
+                    <div class="rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
+                        <iframe title="concesionariotablero" width="100%" height="500" src="https://app.powerbi.com/view?r=eyJrIjoiMDljY2M3NWUtMWM1ZS00NjFiLTljNjgtMDQ3NGRlNDVjZGJjIiwidCI6IjlkMTJiZjNmLWU0ZjYtNDdhYi05MTJmLTFhMmYwZmM0OGFhNCIsImMiOjR9" frameborder="0" allowFullScreen="true"></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== VEHÍCULOS SECTION ===================== -->
+        <section id="vehiculos" class="p-4 lg:p-6 hidden">
+            <div class="mb-6">
+                <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Vehículos</h1>
+                <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mt-2">
+                    <a href="#" class="hover:text-primary transition-colors">Dashboard</a>
+                    <i class='bx bx-chevron-right text-xs'></i>
+                    <a href="#" class="text-primary font-medium">Vehículos</a>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <div class="p-4 lg:p-6">
+                    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
+                        <h3 class="text-lg lg:text-xl font-semibold text-gray-900 dark:text-white">Vehículos en Stock</h3>
+                        <button onclick="mostrarModal('modal-vehiculo')" class="btn-primary">
+                            <i class='bx bx-plus'></i>
+                            <span>Añadir Vehículo</span>
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table id="tabla-vehiculos" class="w-full min-w-full">
+                            <thead class="bg-gray-50 dark:bg-gray-700">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Marca</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Modelo</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Año</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Precio</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Categoría</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Imagen</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Acciones</th>
+                                </tr>
                             </thead>
-                            <tbody>
-                            <tr th:each="vehiculo : ${vehiculos}">
-                                <td th:text="${vehiculo.marca}"></td>
-                                <td th:text="${vehiculo.modelo}"></td>
-                                <td th:text="${vehiculo.año}"></td>
-                                <td th:text="${vehiculo.precio}"></td>
-                                <td th:text="${vehiculo.categoria}"></td>
-                                <td><img th:src="${vehiculo.imagenUrl}" width="100"></td>
-                                <td>
-                                    <a href="#" th:attr="onclick=|mostrarModalEditar('${vehiculo.id}')|" class="btn-editar">Editar</a>
-                                    <a th:href="@{/admin/eliminar/{id}(id=${vehiculo.id})}" class="btn-eliminar">Eliminar</a>
-                                </td>
-                            </tr>
+                            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                <tr th:each="vehiculo : ${vehiculos}" class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white" th:text="${vehiculo.marca}"></td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white" th:text="${vehiculo.modelo}"></td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white" th:text="${vehiculo.año}"></td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white" th:text="${vehiculo.precio}"></td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white" th:text="${vehiculo.categoria}"></td>
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <img th:src="${vehiculo.imagenUrl}" class="w-16 h-12 object-cover rounded-lg shadow-sm">
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm font-medium">
+                                        <div class="flex gap-2">
+                                            <button th:attr="onclick=|mostrarModalEditar('${vehiculo.id}')|" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors">Editar</button>
+                                            <a th:href="@{/admin/eliminar/{id}(id=${vehiculo.id})}" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 transition-colors" onclick="return confirm('¿Estás seguro de eliminar este vehículo?')">Eliminar</a>
+                                        </div>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-            </section>
-            <!-- ===================== END VEHÍCULOS SECTION ===================== -->
-
-            <!-- Modal para Añadir Vehículo -->
-            <div id="modal-vehiculo" class="modal">
-                <div class="modal-content">
-                    <span class="close" onclick="cerrarModal('modal-vehiculo')">&times;</span>
-                    <h2>Añadir Nuevo Vehículo</h2>
-                    <form th:action="@{/admin/guardar-vehiculo}" method="post" enctype="multipart/form-data">
-                        <!-- Campos del vehículo -->
-
-                        <input type="text" name="marca" placeholder="Marca" required>
-                        <input type="text" name="modelo" placeholder="Modelo" required>
-                        <input type="number" name="año" placeholder="Año" required>
-                        <input type="number" step="0.01" name="precio" placeholder="Precio" required>
-                        <select name="categoria" required>
-                            <option value="Pick-Ups">Pick-Ups</option>
-                            <option value="Camionetas">Camionetas</option>
-                            <option value="Automóviles">Automóviles</option>
-                        </select>
-                        <input type="text" name="motor" placeholder="Motor" required>
-                        <select name="transmision" required>
-                            <option value="Automática">Automática</option>
-                            <option value="Manual">Manual</option>
-                        </select>
-                        <select name="combustible" required>
-                            <option value="Gasolina">Gasolina</option>
-                            <option value="Diésel">Diésel</option>
-                        </select>
-                        <input type="number" name="pasajeros" placeholder="Pasajeros" required min="1" max="10">
-                        <textarea name="descripcion" placeholder="Descripción técnica" required></textarea>
-                        <div class="form-group">
-                            <label for="colores">Colores disponibles (separados por comas):</label>
-                            <input type="text" id="colores" name="colores"
-                                   placeholder="Ej: Rojo, Azul, Negro"> <!-- Quita el th:value -->
-                        </div>
-                        <input type="file" name="imagen" required>
-                        <button type="submit" class="btn-guardar">Guardar Vehículo</button>
-                    </form>
-                </div>
             </div>
-            <!-- Modal para Editar Vehículo -->
-            <div id="modal-editar-vehiculo" class="modal">
-                <div class="modal-content">
-                    <span class="close" onclick="cerrarModal('modal-editar-vehiculo')">&times;</span>
-                    <h2>Editar Vehículo</h2>
-                    <form id="form-editar-vehiculo" method="post" enctype="multipart/form-data">
-                        <input type="hidden" name="id" id="editar-id">
-
-                        <div class="form-group">
-                            <label for="editar-marca">Marca:</label>
-                            <input type="text" id="editar-marca" name="marca" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="editar-modelo">Modelo:</label>
-                            <input type="text" id="editar-modelo" name="modelo" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="editar-año">Año:</label>
-                            <input type="number" id="editar-año" name="año" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="editar-precio">Precio:</label>
-                            <input type="number" step="0.01" id="editar-precio" name="precio" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="editar-categoria">Categoría:</label>
-                            <select id="editar-categoria" name="categoria" required>
-                                <option value="Pick-Ups">Pick-Ups</option>
-                                <option value="Camionetas">Camionetas</option>
-                                <option value="Automóviles">Automóviles</option>
-                                <option value="Performance">Performance</option>
-                                <option value="Híbridos">Híbridos</option>
-                                <option value="Comerciales">Comerciales</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="editar-motor">Motor:</label>
-                            <input type="text" id="editar-motor" name="motor" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="editar-transmision">Transmisión:</label>
-                            <select id="editar-transmision" name="transmision" required>
-                                <option value="Automática">Automática</option>
-                                <option value="Manual">Manual</option>
-                                <option value="CVT">CVT</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="editar-combustible">Combustible:</label>
-                            <select id="editar-combustible" name="combustible" required>
-                                <option value="Gasolina">Gasolina</option>
-                                <option value="Diésel">Diésel</option>
-                                <option value="Híbrido">Híbrido</option>
-                                <option value="Eléctrico">Eléctrico</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="editar-pasajeros">Pasajeros:</label>
-                            <input type="number" id="editar-pasajeros" name="pasajeros" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="editar-descripcion">Descripción:</label>
-                            <textarea id="editar-descripcion" name="descripcion" required></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="editar-colores">Colores disponibles (separados por comas):</label>
-                            <input type="text" id="editar-colores" name="colores"
-                                   th:value="${vehiculo?.colores != null ? #strings.listJoin(vehiculo.colores, ', ') : ''}"
-                                   placeholder="Ej: Rojo, Azul, Negro">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="editar-imagen">Imagen:</label>
-                            <input type="file" id="editar-imagen" name="imagen">
-                            <img id="editar-imagen-preview" src="" alt="Imagen actual" class="current-image" style="max-width: 200px; display: none;">
-                        </div>
-
-                        <button type="submit" class="btn-guardar">Guardar Cambios</button>
-                        <button type="button" class="btn-cancelar" onclick="cerrarModal('modal-editar-vehiculo')">Cancelar</button>
-                    </form>
-                </div>
-            </div>
-        </main>
-        <!-- ===================== ANUNCIOS SECTION ===================== -->
-        <section id="anuncios" style="display: none;">
-            <div class="head-title">
-                <div class="left">
-                    <h1>Anuncios</h1>
-                    <ul class="breacrumb">
-                        <li>
-                            <a href="#">Dashboard</a>
-                        </li>
-                        <li><i class='bx bx-chevron-right'></i></li>
-                        <li>
-                            <a class="active" href="#">Anuncios</a>
-                        </li>
-                    </ul>
-                </div>
-                <!-- <div class="left">
-                    <h1>Gestión de Anuncios</h1>
-                    <button onclick="document.getElementById('modal-anuncio').style.display='block'">
-                        + Nuevo Anuncio
-                    </button>
-                </div> -->
-            </div>
-
-            <!-- Tabla de Anuncios -->
-            <div class="table-data">
-                <div class="order">
-                    <div class="head">
-                        <h3>Anuncios Destacados</h3>
-                        <button onclick="mostrarModal('modal-anuncio')" class="btn-añadir">+ Crear Anuncio</button>
-                    </div>
-                    <table id="tabla-anuncios">
-                        <thead>
-                        <tr>
-                            <th>Marca</th>
-                            <th>Modelo</th>
-                            <th>Año</th>
-                            <th>Precio</th>
-                            <th>Categoría</th>
-                            <th>Imagen</th>
-                            <th>Acciones</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="anuncio : ${anuncios}">
-                            <td th:text="${anuncio.marca}"></td>
-                            <td th:text="${anuncio.modelo}"></td>
-                            <td th:text="${anuncio.año}"></td>
-                            <td th:text="${anuncio.precio}"></td>
-                            <td th:text="${anuncio.categoria}"></td>
-                            <td><img th:src="${anuncio.imagenUrl}" width="100"></td>
-                            <td>
-                                <a href="#" th:attr="onclick=|mostrarModalEditar('${anuncio.id}')|" class="btn-editar">Editar</a>
-                                <a th:href="@{/admin/eliminar/{id}(id=${anuncio.id})}" class="btn-eliminar">Eliminar</a>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Modal para crear anuncio (en el mismo dashboard) -->
-            <div id="modal-anuncio" class="modal">
-                <div class="modal-content">
-                    <span class="close" onclick="cerrarModal('modal-anuncio')">&times;</span>
-                    <h2>Crear Nuevo Anuncio</h2>
-                    <form th:action="@{/admin/guardar-anuncio}" method="post" enctype="multipart/form-data">
-                        <!-- Todos los campos del anuncio (igual que vehículo pero con destacado=true) -->
-                        <input type="text" name="marca" placeholder="Marca" required>
-                        <input type="text" name="modelo" placeholder="Modelo" required>
-                        <input type="number" name="año" placeholder="Año" required>
-                        <input type="number" step="0.01" name="precio" placeholder="Precio" required>
-                        <select name="categoria" required>
-                            <option value="Pick-Ups">Pick-Ups</option>
-                            <option value="Camionetas">Camionetas</option>
-                            <option value="Automóviles">Automóviles</option>
-                        </select>
-                        <input type="text" name="motor" placeholder="Motor" required>
-                        <select name="transmision" required>
-                            <option value="Automática">Automática</option>
-                            <option value="Manual">Manual</option>
-                        </select>
-                        <select name="combustible" required>
-                            <option value="Gasolina">Gasolina</option>
-                            <option value="Diésel">Diésel</option>
-                        </select>
-                        <input type="number" name="pasajeros" placeholder="Pasajeros" required min="1" max="10">
-                        <textarea name="descripcion" placeholder="Descripción destacada" required></textarea>
-                        <div class="form-group">
-                            <label for="colores-anuncio">Colores disponibles (separados por comas):</label>
-                            <input type="text" id="colores-anuncio" name="colores"
-                                   placeholder="Ej: Rojo, Azul, Negro">
-                        </div>
-                        <input type="file" name="imagen" required>
-                        <button type="submit">Crear Anuncio</button>
-                    </form>
-                </div>
-            </div>
-
-            <script>
-                // Funciones para manejar los modales
-                function mostrarModal(modalId) {
-                    document.getElementById(modalId).style.display = 'block';
-                }
-
-                function cerrarModal(modalId) {
-                    document.getElementById(modalId).style.display = 'none';
-                }
-
-                // Cerrar modales al hacer clic fuera
-                window.onclick = function(event) {
-                    if (event.target.className === 'modal') {
-                        event.target.style.display = 'none';
-                    }
-                }
-            </script>
         </section>
-        <!-- ===================== END ANUNCIOS SECTION ===================== -->
+
+        <!-- ===================== ANUNCIOS SECTION ===================== -->
+        <section id="anuncios" class="p-4 lg:p-6 hidden">
+            <div class="mb-6">
+                <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Anuncios</h1>
+                <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mt-2">
+                    <a href="#" class="hover:text-primary transition-colors">Dashboard</a>
+                    <i class='bx bx-chevron-right text-xs'></i>
+                    <a href="#" class="text-primary font-medium">Anuncios</a>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <div class="p-4 lg:p-6">
+                    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
+                        <h3 class="text-lg lg:text-xl font-semibold text-gray-900 dark:text-white">Anuncios Destacados</h3>
+                        <button onclick="mostrarModal('modal-anuncio')" class="btn-primary">
+                            <i class='bx bx-plus'></i>
+                            <span>Crear Anuncio</span>
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table id="tabla-anuncios" class="w-full min-w-full">
+                            <thead class="bg-gray-50 dark:bg-gray-700">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Marca</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Modelo</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Año</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Precio</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Categoría</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Imagen</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                <tr th:each="anuncio : ${anuncios}" class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white" th:text="${anuncio.marca}"></td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white" th:text="${anuncio.modelo}"></td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white" th:text="${anuncio.año}"></td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white" th:text="${anuncio.precio}"></td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white" th:text="${anuncio.categoria}"></td>
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <img th:src="${anuncio.imagenUrl}" class="w-16 h-12 object-cover rounded-lg shadow-sm">
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm font-medium">
+                                        <div class="flex gap-2">
+                                            <button th:attr="onclick=|mostrarModalEditar('${anuncio.id}')|" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors">Editar</button>
+                                            <a th:href="@{/admin/eliminar/{id}(id=${anuncio.id})}" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 transition-colors" onclick="return confirm('¿Estás seguro de eliminar este anuncio?')">Eliminar</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <!-- ===================== ANALYTICS SECTION ===================== -->
-        <section id="analytics" style="display: none;">
-            <div class="head-title">
-                <div class="left">
-                    <h1>Analytics</h1>
-                    <ul class="breacrumb">
-                        <li>
-                            <a href="#">Dashboard</a>
-                        </li>
-                        <li><i class='bx bx-chevron-right'></i></li>
-                        <li>
-                            <a class="active" href="#">Analytics</a>
-                        </li>
-                    </ul>
+        <section id="analytics" class="p-4 lg:p-6 hidden">
+            <div class="mb-6">
+                <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Analytics</h1>
+                <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mt-2">
+                    <a href="#" class="hover:text-primary transition-colors">Dashboard</a>
+                    <i class='bx bx-chevron-right text-xs'></i>
+                    <a href="#" class="text-primary font-medium">Analytics</a>
                 </div>
             </div>
-            <div class="table-data">
-                <div class="order">
-                    <div class="head">
-                        <h3>Gráficos y Estadísticas</h3>
+
+            <div class="table-container">
+                <div class="p-4 lg:p-6">
+                    <h3 class="text-lg lg:text-xl font-semibold text-gray-900 dark:text-white mb-4">Gráficos y Estadísticas</h3>
+                    <div class="rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
+                        <iframe title="concesionariotablero" width="100%" height="500" src="https://app.powerbi.com/view?r=eyJrIjoiMDljY2M3NWUtMWM1ZS00NjFiLTljNjgtMDQ3NGRlNDVjZGJjIiwidCI6IjlkMTJiZjNmLWU0ZjYtNDdhYi05MTJmLTFhMmYwZmM0OGFhNCIsImMiOjR9" frameborder="0" allowFullScreen="true"></iframe>
                     </div>
-                    <iframe title="concesionariotablero" width="600" height="373.5" src="https://app.powerbi.com/view?r=eyJrIjoiMDljY2M3NWUtMWM1ZS00NjFiLTljNjgtMDQ3NGRlNDVjZGJjIiwidCI6IjlkMTJiZjNmLWU0ZjYtNDdhYi05MTJmLTFhMmYwZmM0OGFhNCIsImMiOjR9" frameborder="0" allowFullScreen="true"></iframe>
                 </div>
             </div>
         </section>
-        <!-- ===================== END ANALYTICS SECTION ===================== -->
 
         <!-- ===================== MENSAJE SECTION ===================== -->
-        <section id="mensaje" style="display: none;">
-            <div class="head-title">
-                <div class="left">
-                    <h1>Gestión de Citas</h1>
-                    <select id="filtro-estado" class="filtro-estado">
+        <section id="mensaje" class="p-4 lg:p-6 hidden">
+            <div class="mb-6">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+                    <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Gestión de Citas</h1>
+                    <select id="filtro-estado" class="form-group w-full lg:w-48">
                         <option value="TODAS">Todas las citas</option>
                         <option value="Pendiente">Pendientes</option>
                         <option value="Aprobada">Aprobadas</option>
@@ -502,352 +641,607 @@
                 </div>
             </div>
 
-            <div class="table-data">
-                <div class="order">
-                    <table id="tabla-citas" class="tabla-citas">
-                        <thead>
-                        <tr>
-                            <th>Cliente</th>
-                            <th>Tipo</th>
-                            <th>Auto</th>
-                            <th>Fecha Solicitud</th>
-                            <th>Comentario</th>
-                            <th>Estado</th>
-                            <th>Fecha Asignada</th>
-                            <th>Notas</th>
-                            <th>Acciones</th>
-                        </tr>
+            <div class="table-container">
+                <div class="overflow-x-auto">
+                    <table id="tabla-citas" class="w-full min-w-full">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Cliente</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Tipo</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Auto</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Fecha Solicitud</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Comentario</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Estado</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Fecha Asignada</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Notas</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Acciones</th>
+                            </tr>
                         </thead>
-                        <tbody>
-                            
-                        <tr th:each="cita : ${citas}" th:data-id="${cita.id}" th:classappend="${cita.estado}">
-                            <td th:text="${cita.usuario != null ? cita.usuario.nombre + ' ' + cita.usuario.apellido : 'Sin usuario'}"></td>
-                            <!-- <td th:text="${cita.usuario.nombre + ' ' + cita.usuario.apellido}"></td> -->
-
-                            <!-- esto de aquí funciona perfectamente: -->
-                            <td th:text="${cita.tipo}"></td>
-                            <td>
-                            <span th:if="${cita.vehiculo != null}"
-                            th:text="${cita.vehiculo.marca + ' ' + cita.vehiculo.modelo}"></span>
-                            <span th:unless="${cita.vehiculo != null}" th:text="${cita.modelo}">N/A</span>
-                            </td>
-                            <!-- <td th:text="${cita.vehiculo != null ? cita.vehiculo.marca + ' ' + cita.vehiculo.modelo : 'Sin vehículo'}"></td> -->
-                            
-                            <!-- <td th:text="${cita.vehiculo.marca + ' ' + cita.vehiculo.modelo}"></td> -->
-
-                            <td th:text="${#temporals.format(cita.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></td>
-
-                            <td th:text="${cita.comentario}"></td>
-                            <td>
-                                <span th:text="${cita.estado}" class="estado-badge"></span>
-                            </td>
-                            <td>
-                            <span th:if="${cita.fechaAsignada != null}"
-                                  th:text="${#temporals.format(cita.fechaAsignada, 'dd/MM/yyyy hh:mm a')}"></span>
-                                <span th:unless="${cita.fechaAsignada != null}">-</span>
-                            </td>
-                            <td th:text="${cita.notasAdmin ?: 'Sin notas'}"></td>
-                            <td class="acciones">
-                                <!-- Botones para citas Pendientes -->
-                                <div th:if="${cita.estado == 'Pendiente'}" class="acciones-pendiente">
-                                    <button class="btn-accion btn-aprobar" th:data-id="${cita.id}">Aprobar</button>
-                                    <button class="btn-accion btn-rechazar" th:data-id="${cita.id}">Rechazar</button>
-                                    <button class="btn-accion btn-notas" th:data-id="${cita.id}">Notas</button>
-                                </div>
-
-                                <!-- Botones para citas Aprobadas -->
-                                <div th:if="${cita.estado == 'Aprobada'}" class="acciones-aprobada">
-                                    <button class="btn-accion btn-asignar" th:data-id="${cita.id}">Asignar Fecha</button>
-                                    <button class="btn-accion btn-volver" th:data-id="${cita.id}">A Pendiente</button>
-                                    <button class="btn-accion btn-notas" th:data-id="${cita.id}">Notas</button>
-                                </div>
-
-                                <!-- Botones para citas Rechazadas -->
-                                <div th:if="${cita.estado == 'Rechazada'}" class="acciones-rechazada">
-                                    <button class="btn-accion btn-volver" th:data-id="${cita.id}">A Pendiente</button>
-                                    <button class="btn-accion btn-notas" th:data-id="${cita.id}">Notas</button>
-                                </div>
-                            </td>
-                        </tr> 
+                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                            <tr th:each="cita : ${citas}" th:data-id="${cita.id}" class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white" th:text="${cita.usuario != null ? cita.usuario.nombre + ' ' + cita.usuario.apellido : 'Sin usuario'}"></td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white" th:text="${cita.tipo}"></td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                    <span th:if="${cita.vehiculo != null}" th:text="${cita.vehiculo.marca + ' ' + cita.vehiculo.modelo}"></span>
+                                    <span th:unless="${cita.vehiculo != null}" th:text="${cita.modelo}">N/A</span>
+                                </td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white" th:text="${#temporals.format(cita.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></td>
+                                <td class="px-4 py-4 text-sm text-gray-900 dark:text-white max-w-xs truncate" th:text="${cita.comentario}"></td>
+                                <td class="px-4 py-4 whitespace-nowrap">
+                                    <span th:text="${cita.estado}" 
+                                          class="estado-badge"
+                                          th:classappend="${cita.estado == 'Pendiente'} ? 'estado-pendiente' : 
+                                                         ${cita.estado == 'Aprobada'} ? 'estado-aprobada' : 
+                                                         'estado-rechazada'"></span>
+                                </td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                    <span th:if="${cita.fechaAsignada != null}" th:text="${#temporals.format(cita.fechaAsignada, 'dd/MM/yyyy hh:mm a')}"></span>
+                                    <span th:unless="${cita.fechaAsignada != null}">-</span>
+                                </td>
+                                <td class="px-4 py-4 text-sm text-gray-900 dark:text-white max-w-xs truncate" th:text="${cita.notasAdmin ?: 'Sin notas'}"></td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm font-medium">
+                                    <div th:if="${cita.estado == 'Pendiente'}" class="flex flex-col lg:flex-row gap-2">
+                                        <button class="btn-primary btn-sm" th:data-id="${cita.id}">Aprobar</button>
+                                        <button class="btn-secondary btn-sm" th:data-id="${cita.id}">Rechazar</button>
+                                        <button class="btn-secondary btn-sm" th:data-id="${cita.id}">Notas</button>
+                                    </div>
+                                    <div th:if="${cita.estado == 'Aprobada'}" class="flex flex-col lg:flex-row gap-2">
+                                        <button class="btn-primary btn-sm" th:data-id="${cita.id}">Asignar Fecha</button>
+                                        <button class="btn-secondary btn-sm" th:data-id="${cita.id}">A Pendiente</button>
+                                        <button class="btn-secondary btn-sm" th:data-id="${cita.id}">Notas</button>
+                                    </div>
+                                    <div th:if="${cita.estado == 'Rechazada'}" class="flex flex-col lg:flex-row gap-2">
+                                        <button class="btn-secondary btn-sm" th:data-id="${cita.id}">A Pendiente</button>
+                                        <button class="btn-secondary btn-sm" th:data-id="${cita.id}">Notas</button>
+                                    </div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
-
-                </div>
-            </div>
-
-            <!-- Modal para Asignar Fecha -->
-            <div id="modal-fecha" class="modal-cita">
-                <div class="modal-contenido">
-                    <span class="cerrar-modal">&times;</span>
-                    <h3>Asignar Fecha</h3>
-                    <input type="datetime-local" id="fecha-asignacion" min="">
-                    <button id="confirmar-fecha" class="btn-confirmar">Confirmar</button>
-                </div>
-            </div>
-
-            <!-- Modal para Notas -->
-            <div id="modal-notas" class="modal-cita">
-                <div class="modal-contenido">
-                    <span class="cerrar-modal">&times;</span>
-                    <h3>Notas Administrativas</h3>
-                    <textarea id="texto-notas" rows="5"></textarea>
-                    <button id="guardar-notas" class="btn-confirmar">Guardar</button>
                 </div>
             </div>
         </section>
-
-        <script>
-
-        </script>
-        <!-- ===================== END MENSAJE SECTION ===================== -->
 
         <!-- ===================== TEAM SECTION ===================== -->
-
-        <section id="team" th:style="${error != null} ? 'display: block;' : 'display: none;'">
-            <div class="head-title">
-                <div class="left">
-                    <h1>Registro de Trabajadores</h1>
-                    <ul class="breadcrumb">
-                        <li><a href="#">Dashboard</a></li>
-                        <li><i class='bx bx-chevron-right'></i></li>
-                        <li><a class="active" href="#">Nuevo Trabajador</a></li>
-                    </ul>
+        <section id="team" class="p-4 lg:p-6 hidden">
+            <div class="mb-6">
+                <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Registro de Trabajadores</h1>
+                <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mt-2">
+                    <a href="#" class="hover:text-primary transition-colors">Dashboard</a>
+                    <i class='bx bx-chevron-right text-xs'></i>
+                    <a href="#" class="text-primary font-medium">Nuevo Trabajador</a>
                 </div>
             </div>
 
-            <div class="table-data">
-                <div class="order">
-                    <div class="head">
-                        <h3>Datos del Trabajador</h3>
+            <div class="table-container">
+                <div class="p-4 lg:p-6">
+                    <h3 class="text-lg lg:text-xl font-semibold text-gray-900 dark:text-white mb-6">Datos del Trabajador</h3>
+
+                    <div th:if="${error != null}" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl mb-6" role="alert">
+                        <span th:text="${error}"></span>
                     </div>
 
-                    <div class="login-card">
-                        <!-- Mensaje de error -->
-                        <div th:if="${error != null}" class="alert alert-danger" role="alert">
-                            <span th:text="${error}"></span>
+                    <form th:action="@{/admin/RegistroT}" method="post" class="space-y-6">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="form-group">
+                                <label for="nombre">Nombre</label>
+                                <input type="text" id="nombre" name="nombre" th:value="${nombre != null} ? ${nombre} : ''" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="apellido">Apellido</label>
+                                <input type="text" id="apellido" name="apellido" th:value="${apellido != null} ? ${apellido} : ''" required>
+                            </div>
                         </div>
 
-                        <form th:action="@{/admin/RegistroT}" method="post">
-                            <!-- Datos Personales -->
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="nombre" class="form-label">Nombre</label>
-                                    <input type="text" class="form-control" id="nombre" name="nombre"
-                                           th:value="${nombre != null} ? ${nombre} : ''" required>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="apellido" class="form-label">Apellido</label>
-                                    <input type="text" class="form-control" id="apellido" name="apellido"
-                                           th:value="${apellido != null} ? ${apellido} : ''" required>
-                                </div>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="form-group">
+                                <label for="identificacion">Identificación</label>
+                                <input type="text" id="identificacion" name="identificacion" th:value="${identificacion != null} ? ${identificacion} : ''" required>
                             </div>
+                            <div class="form-group">
+                                <label for="correo">Correo Electrónico</label>
+                                <input type="email" id="correo" name="correo" th:value="${correo != null} ? ${correo} : ''" required>
+                            </div>
+                        </div>
 
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="identificacion" class="form-label">Identificación</label>
-                                    <input type="text" class="form-control" id="identificacion" name="identificacion"
-                                           th:value="${identificacion != null} ? ${identificacion} : ''" required>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="correo" class="form-label">Correo Electrónico</label>
-                                    <input type="email" class="form-control" id="correo" name="correo"
-                                           th:value="${correo != null} ? ${correo} : ''" required>
-                                </div>
-                            </div>
+                        <div class="form-group">
+                            <label for="password">Contraseña</label>
+                            <input type="password" id="password" name="password" required>
+                        </div>
 
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Contraseña</label>
-                                <input type="password" class="form-control" id="password" name="password" required>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="form-group">
+                                <label for="horaInicio">Hora de Inicio</label>
+                                <input type="time" id="horaInicio" name="horaInicio" th:value="${horaInicio != null} ? ${horaInicio} : '08:00'" required>
                             </div>
-
-                            <!-- Horario de Trabajo -->
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="horaInicio" class="form-label">Hora de Inicio</label>
-                                    <input type="time" class="form-control" id="horaInicio" name="horaInicio"
-                                           th:value="${horaInicio != null} ? ${horaInicio} : '08:00'" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="horaFin" class="form-label">Hora de Fin</label>
-                                    <input type="time" class="form-control" id="horaFin" name="horaFin"
-                                           th:value="${horaFin != null} ? ${horaFin} : '17:00'" required>
-                                </div>
+                            <div class="form-group">
+                                <label for="horaFin">Hora de Fin</label>
+                                <input type="time" id="horaFin" name="horaFin" th:value="${horaFin != null} ? ${horaFin} : '17:00'" required>
                             </div>
+                        </div>
 
-                            <!-- Días de Trabajo -->
-                            <div class="mb-3">
-                                <label class="form-label">Días de Trabajo</label>
-                                <div class="dias-checkbox-container">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="diasTrabajo" value="LUNES" id="lunes">
-                                        <label class="form-check-label" for="lunes">Lunes</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="diasTrabajo" value="MARTES" id="martes">
-                                        <label class="form-check-label" for="martes">Martes</label>
-                                    </div>
-                                    <!-- Repetir para los demás días -->
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="diasTrabajo" value="MIERCOLES" id="miercoles">
-                                        <label class="form-check-label" for="miercoles">Miércoles</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="diasTrabajo" value="JUEVES" id="jueves">
-                                        <label class="form-check-label" for="jueves">Jueves</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="diasTrabajo" value="VIERNES" id="viernes">
-                                        <label class="form-check-label" for="viernes">Viernes</label>
-                                    </div>
+                        <div class="form-group">
+                            <label>Días de Trabajo</label>
+                            <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
+                                <div class="flex items-center">
+                                    <input type="checkbox" name="diasTrabajo" value="LUNES" id="lunes" class="mr-2 rounded">
+                                    <label for="lunes" class="text-sm">Lunes</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" name="diasTrabajo" value="MARTES" id="martes" class="mr-2 rounded">
+                                    <label for="martes" class="text-sm">Martes</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" name="diasTrabajo" value="MIERCOLES" id="miercoles" class="mr-2 rounded">
+                                    <label for="miercoles" class="text-sm">Miércoles</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" name="diasTrabajo" value="JUEVES" id="jueves" class="mr-2 rounded">
+                                    <label for="jueves" class="text-sm">Jueves</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" name="diasTrabajo" value="VIERNES" id="viernes" class="mr-2 rounded">
+                                    <label for="viernes" class="text-sm">Viernes</label>
                                 </div>
                             </div>
+                        </div>
 
-                            <button type="submit" class="btn btn-primary w-100">Registrar Trabajador</button>
-                            <div class="text-center mt-3">
-                                <a href="/admin/Dashboard" class="btn btn-secondary">Cancelar</a>
-                            </div>
-                        </form>
-                    </div>
+                        <div class="flex flex-col lg:flex-row gap-4">
+                            <button type="submit" class="btn-primary flex-1">Registrar Trabajador</button>
+                            <a href="/admin/Dashboard" class="btn-secondary text-center">Cancelar</a>
+                        </div>
+                    </form>
                 </div>
             </div>
         </section>
-        <!-- ===================== END TEAM SECTION ===================== -->
+    </div>
+</div>
 
-    </main>
-    <!-- ===================== END MAIN CONTENT ===================== -->
-</section>
-<!-- ===================== END CONTENT ===================== -->
+<!-- Modal para Añadir Vehículo -->
+<div id="modal-vehiculo" class="modal">
+    <div class="modal-content">
+        <span class="close text-2xl cursor-pointer float-right hover:text-gray-600 transition-colors" onclick="cerrarModal('modal-vehiculo')">&times;</span>
+        <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Añadir Nuevo Vehículo</h2>
+        <form th:action="@{/admin/guardar-vehiculo}" method="post" enctype="multipart/form-data" class="space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label>Marca</label>
+                    <input type="text" name="marca" placeholder="Marca" required>
+                </div>
+                <div class="form-group">
+                    <label>Modelo</label>
+                    <input type="text" name="modelo" placeholder="Modelo" required>
+                </div>
+            </div>
 
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label>Año</label>
+                    <input type="number" name="año" placeholder="Año" required>
+                </div>
+                <div class="form-group">
+                    <label>Precio</label>
+                    <input type="number" step="0.01" name="precio" placeholder="Precio" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Categoría</label>
+                <select name="categoria" required>
+                    <option value="Pick-Ups">Pick-Ups</option>
+                    <option value="Camionetas">Camionetas</option>
+                    <option value="Automóviles">Automóviles</option>
+                </select>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label>Motor</label>
+                    <input type="text" name="motor" placeholder="Motor" required>
+                </div>
+                <div class="form-group">
+                    <label>Transmisión</label>
+                    <select name="transmision" required>
+                        <option value="Automática">Automática</option>
+                        <option value="Manual">Manual</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label>Combustible</label>
+                    <select name="combustible" required>
+                        <option value="Gasolina">Gasolina</option>
+                        <option value="Diésel">Diésel</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Pasajeros</label>
+                    <input type="number" name="pasajeros" placeholder="Pasajeros" required min="1" max="10">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Descripción técnica</label>
+                <textarea name="descripcion" placeholder="Descripción técnica" required rows="4"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="colores">Colores disponibles (separados por comas)</label>
+                <input type="text" id="colores" name="colores" placeholder="Ej: Rojo, Azul, Negro">
+            </div>
+
+            <div class="form-group">
+                <label>Imagen</label>
+                <input type="file" name="imagen" required class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-blue-700">
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-4 pt-4">
+                <button type="submit" class="btn-primary flex-1">Guardar Vehículo</button>
+                <button type="button" class="btn-secondary" onclick="cerrarModal('modal-vehiculo')">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal para Editar Vehículo -->
+<div id="modal-editar-vehiculo" class="modal">
+    <div class="modal-content">
+        <span class="close text-2xl cursor-pointer float-right hover:text-gray-600 transition-colors" onclick="cerrarModal('modal-editar-vehiculo')">&times;</span>
+        <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Editar Vehículo</h2>
+        <form id="form-editar-vehiculo" method="post" enctype="multipart/form-data" class="space-y-6">
+            <input type="hidden" name="id" id="editar-id">
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label for="editar-marca">Marca</label>
+                    <input type="text" id="editar-marca" name="marca" required>
+                </div>
+                <div class="form-group">
+                    <label for="editar-modelo">Modelo</label>
+                    <input type="text" id="editar-modelo" name="modelo" required>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label for="editar-año">Año</label>
+                    <input type="number" id="editar-año" name="año" required>
+                </div>
+                <div class="form-group">
+                    <label for="editar-precio">Precio</label>
+                    <input type="number" step="0.01" id="editar-precio" name="precio" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="editar-categoria">Categoría</label>
+                <select id="editar-categoria" name="categoria" required>
+                    <option value="Pick-Ups">Pick-Ups</option>
+                    <option value="Camionetas">Camionetas</option>
+                    <option value="Automóviles">Automóviles</option>
+                    <option value="Performance">Performance</option>
+                    <option value="Híbridos">Híbridos</option>
+                    <option value="Comerciales">Comerciales</option>
+                </select>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label for="editar-motor">Motor</label>
+                    <input type="text" id="editar-motor" name="motor" required>
+                </div>
+                <div class="form-group">
+                    <label for="editar-transmision">Transmisión</label>
+                    <select id="editar-transmision" name="transmision" required>
+                        <option value="Automática">Automática</option>
+                        <option value="Manual">Manual</option>
+                        <option value="CVT">CVT</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label for="editar-combustible">Combustible</label>
+                    <select id="editar-combustible" name="combustible" required>
+                        <option value="Gasolina">Gasolina</option>
+                        <option value="Diésel">Diésel</option>
+                        <option value="Híbrido">Híbrido</option>
+                        <option value="Eléctrico">Eléctrico</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editar-pasajeros">Pasajeros</label>
+                    <input type="number" id="editar-pasajeros" name="pasajeros" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="editar-descripcion">Descripción</label>
+                <textarea id="editar-descripcion" name="descripcion" required rows="4"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="editar-colores">Colores disponibles (separados por comas)</label>
+                <input type="text" id="editar-colores" name="colores" placeholder="Ej: Rojo, Azul, Negro">
+            </div>
+
+            <div class="form-group">
+                <label for="editar-imagen">Imagen</label>
+                <input type="file" id="editar-imagen" name="imagen" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-blue-700">
+                <img id="editar-imagen-preview" src="" alt="Imagen actual" class="mt-2 rounded-lg shadow-sm" style="max-width: 200px; display: none;">
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-4 pt-4">
+                <button type="submit" class="btn-primary flex-1">Guardar Cambios</button>
+                <button type="button" class="btn-secondary" onclick="cerrarModal('modal-editar-vehiculo')">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal para Anuncio -->
+<div id="modal-anuncio" class="modal">
+    <div class="modal-content">
+        <span class="close text-2xl cursor-pointer float-right hover:text-gray-600 transition-colors" onclick="cerrarModal('modal-anuncio')">&times;</span>
+        <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Crear Nuevo Anuncio</h2>
+        <form th:action="@{/admin/guardar-anuncio}" method="post" enctype="multipart/form-data" class="space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label>Marca</label>
+                    <input type="text" name="marca" placeholder="Marca" required>
+                </div>
+                <div class="form-group">
+                    <label>Modelo</label>
+                    <input type="text" name="modelo" placeholder="Modelo" required>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label>Año</label>
+                    <input type="number" name="año" placeholder="Año" required>
+                </div>
+                <div class="form-group">
+                    <label>Precio</label>
+                    <input type="number" step="0.01" name="precio" placeholder="Precio" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Categoría</label>
+                <select name="categoria" required>
+                    <option value="Pick-Ups">Pick-Ups</option>
+                    <option value="Camionetas">Camionetas</option>
+                    <option value="Automóviles">Automóviles</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Descripción destacada</label>
+                <textarea name="descripcion" placeholder="Descripción destacada" required rows="4"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="colores-anuncio">Colores disponibles (separados por comas)</label>
+                <input type="text" id="colores-anuncio" name="colores" placeholder="Ej: Rojo, Azul, Negro">
+            </div>
+
+            <div class="form-group">
+                <label>Imagen</label>
+                <input type="file" name="imagen" required class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-blue-700">
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-4 pt-4">
+                <button type="submit" class="btn-primary flex-1">Crear Anuncio</button>
+                <button type="button" class="btn-secondary" onclick="cerrarModal('modal-anuncio')">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
-
-<!-- <script src="/js/script.js"></script> -->
-<script th:src="@{/js/script.js}" defer></script>
-<!-- <script th:src="@{/js/script.js}" defer></script> -->
-            <script>
-                // Funciones para manejar los modales
-                function mostrarModal(modalId) {
-                    document.getElementById(modalId).style.display = 'block';
-                }
-
-                function cerrarModal(modalId) {
-                    document.getElementById(modalId).style.display = 'none';
-                }
-
-                // Cerrar modales al hacer clic fuera
-                window.onclick = function(event) {
-                    if (event.target.className === 'modal') {
-                        event.target.style.display = 'none';
-                    }
-
-
-
-            </script>
-
 <script>
+    // Funciones para manejar los modales
+    function mostrarModal(modalId) {
+        document.getElementById(modalId).style.display = 'block';
+    }
+
+    function cerrarModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+
+    // Cerrar modales al hacer clic fuera
+    window.onclick = function(event) {
+        if (event.target.className === 'modal') {
+            event.target.style.display = 'none';
+        }
+    }
+
+    // Navegación entre secciones
     document.addEventListener('DOMContentLoaded', function() {
-        const form = document.forms['RegistroT'];
-        const correoInput = document.getElementById('CorreoUser');
-        const passwordInput = document.getElementById('password');
-        const identificacionInput = document.getElementById('Identifiacion');
+        const sidebarLinks = document.querySelectorAll('.sidebar-link');
+        const sections = document.querySelectorAll('section[id]');
+        const navToggle = document.querySelector('.nav-toggle');
 
-        // Crear elemento para mensajes de error
-        const errorDiv = document.createElement('div');
-        errorDiv.style.color = 'red';
-        errorDiv.style.margin = '10px 0';
-        errorDiv.style.padding = '10px';
-        errorDiv.style.borderRadius = '5px';
-        errorDiv.style.backgroundColor = '#ffeeee';
-        errorDiv.style.display = 'none';
-        form.insertBefore(errorDiv, form.querySelector('.create-account'));
-
-        // Función para validar email
-        function isValidEmail(email) {
-            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return regex.test(email);
-        }
-
-        // Función para validar solo números
-        function isOnlyNumbers(input) {
-            return /^\d+$/.test(input);
-        }
-
-        // Validar identificación en tiempo real (solo números)
-        identificacionInput.addEventListener('input', function() {
-            if (!isOnlyNumbers(this.value)) {
-                this.setCustomValidity('La identificación debe contener solo números');
-            } else {
-                this.setCustomValidity('');
-            }
-        });
-
-        // Validar formulario al enviar
-        form.addEventListener('submit', function(e) {
-            let errorMessages = [];
-
-            // Validar email
-            const email = correoInput.value.trim();
-            if (!email) {
-                errorMessages.push('Por favor introduzca su correo electrónico');
-            } else if (!isValidEmail(email)) {
-                errorMessages.push('Por favor introduzca un correo electrónico válido');
-            }
-
-            // Validar contraseña (8 caracteres)
-            const password = passwordInput.value.trim();
-            if (!password) {
-                errorMessages.push('Por favor introduzca una contraseña');
-            } else if (password.length < 8) {
-                errorMessages.push('La contraseña debe tener al menos 8 caracteres');
-            }
-
-            // Validar identificación (solo números)
-            const identificacion = identificacionInput.value.trim();
-            if (!identificacion) {
-                errorMessages.push('Por favor introduzca su identificación');
-            } else if (!isOnlyNumbers(identificacion)) {
-                errorMessages.push('La identificación debe contener solo números');
-            }
-
-            // Validar otros campos obligatorios
-            const nombre = document.getElementById('NombreUser').value.trim();
-            const apellido = document.getElementById('ApellidoUser').value.trim();
-
-            if (!nombre) {
-                errorMessages.push('Por favor introduzca su nombre');
-            }
-
-            if (!apellido) {
-                errorMessages.push('Por favor introduzca su apellido');
-            }
-
-            // Mostrar errores o enviar formulario
-            if (errorMessages.length > 0) {
+        // Navegación entre secciones
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
                 e.preventDefault();
-                errorDiv.innerHTML = errorMessages.join('<br>');
-                errorDiv.style.display = 'block';
-
-                // Desplazarse al primer error
-                window.scrollTo({
-                    top: errorDiv.offsetTop - 20,
-                    behavior: 'smooth'
+                
+                const targetId = this.getAttribute('href').substring(1);
+                
+                // Ocultar todas las secciones
+                sections.forEach(section => {
+                    section.classList.add('hidden');
                 });
-            }
-        });
+                
+                // Mostrar la sección objetivo
+                document.getElementById(targetId).classList.remove('hidden');
+                
+                // Actualizar enlace activo
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
 
-        // Ocultar mensajes de error al empezar a editar
-        const inputs = form.querySelectorAll('input');
-        inputs.forEach(input => {
-            input.addEventListener('input', function() {
-                if (errorDiv.style.display === 'block') {
-                    errorDiv.style.display = 'none';
+                // Cerrar sidebar en móviles
+                if (window.innerWidth < 1024) {
+                    document.body.classList.remove('mobile-menu-open');
                 }
             });
         });
-    });
-</script>
 
+        // Toggle sidebar móvil
+        navToggle.addEventListener('click', function() {
+            document.body.classList.toggle('mobile-menu-open');
+        });
+
+        // Cerrar sidebar al hacer clic fuera en móviles
+        document.addEventListener('click', function(e) {
+            if (window.innerWidth < 1024 && 
+                !e.target.closest('.sidebar') && 
+                !e.target.closest('.nav-toggle') &&
+                document.body.classList.contains('mobile-menu-open')) {
+                document.body.classList.remove('mobile-menu-open');
+            }
+        });
+
+        // Inicializar DataTables
+        $('#tabla-vehiculos, #tabla-anuncios, #tabla-citas').DataTable({
+            responsive: true,
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+            },
+            pageLength: 10,
+            dom: '<"flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-4"lfr>t<"flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mt-4"ip>'
+        });
+
+        // Notificaciones
+        const notificationBell = document.getElementById('notification-bell');
+        const notificationDropdown = document.getElementById('notification-dropdown');
+
+        if (notificationBell && notificationDropdown) {
+            notificationBell.addEventListener('click', function(e) {
+                e.stopPropagation();
+                notificationDropdown.classList.toggle('hidden');
+            });
+
+            // Cerrar dropdown al hacer clic fuera
+            document.addEventListener('click', function() {
+                notificationDropdown.classList.add('hidden');
+            });
+        }
+    });
+
+    // Validación de formularios
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.forms['RegistroT'];
+        if (form) {
+            const correoInput = document.getElementById('correo');
+            const passwordInput = document.getElementById('password');
+            const identificacionInput = document.getElementById('identificacion');
+
+            // Crear elemento para mensajes de error
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl mb-6';
+            errorDiv.style.display = 'none';
+            form.insertBefore(errorDiv, form.firstChild);
+
+            // Función para validar email
+            function isValidEmail(email) {
+                const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return regex.test(email);
+            }
+
+            // Función para validar solo números
+            function isOnlyNumbers(input) {
+                return /^\d+$/.test(input);
+            }
+
+            // Validar identificación en tiempo real (solo números)
+            identificacionInput.addEventListener('input', function() {
+                if (!isOnlyNumbers(this.value)) {
+                    this.setCustomValidity('La identificación debe contener solo números');
+                } else {
+                    this.setCustomValidity('');
+                }
+            });
+
+            // Validar formulario al enviar
+            form.addEventListener('submit', function(e) {
+                let errorMessages = [];
+
+                // Validar email
+                const email = correoInput.value.trim();
+                if (!email) {
+                    errorMessages.push('Por favor introduzca su correo electrónico');
+                } else if (!isValidEmail(email)) {
+                    errorMessages.push('Por favor introduzca un correo electrónico válido');
+                }
+
+                // Validar contraseña (8 caracteres)
+                const password = passwordInput.value.trim();
+                if (!password) {
+                    errorMessages.push('Por favor introduzca una contraseña');
+                } else if (password.length < 8) {
+                    errorMessages.push('La contraseña debe tener al menos 8 caracteres');
+                }
+
+                // Validar identificación (solo números)
+                const identificacion = identificacionInput.value.trim();
+                if (!identificacion) {
+                    errorMessages.push('Por favor introduzca su identificación');
+                } else if (!isOnlyNumbers(identificacion)) {
+                    errorMessages.push('La identificación debe contener solo números');
+                }
+
+                // Validar otros campos obligatorios
+                const nombre = document.getElementById('nombre').value.trim();
+                const apellido = document.getElementById('apellido').value.trim();
+
+                if (!nombre) {
+                    errorMessages.push('Por favor introduzca su nombre');
+                }
+
+                if (!apellido) {
+                    errorMessages.push('Por favor introduzca su apellido');
+                }
+
+                // Mostrar errores o enviar formulario
+                if (errorMessages.length > 0) {
+                    e.preventDefault();
+                    errorDiv.innerHTML = errorMessages.join('<br>');
+                    errorDiv.style.display = 'block';
+
+                    // Desplazarse al primer error
+                    window.scrollTo({
+                        top: errorDiv.offsetTop - 20,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+
+            // Ocultar mensajes de error al empezar a editar
+            const inputs = form.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    if (errorDiv.style.display === 'block') {
+                        errorDiv.style.display = 'none';
+                    }
+                });
+            });
+        }
+    });
+
+    // Función para mostrar modal de edición (placeholder)
+    function mostrarModalEditar(id) {
+        // Aquí iría la lógica para cargar los datos del vehículo/anuncio
+        console.log('Editando elemento con ID:', id);
+        mostrarModal('modal-editar-vehiculo');
+    }
+</script>
 </body>
 </html>
