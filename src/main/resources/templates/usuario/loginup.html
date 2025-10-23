@@ -339,6 +339,42 @@
         .dark .btn-secondary:hover {
             background: #475569;
         }
+
+        /* Estilos adicionales para el navbar mejorado */
+        .nav-link.active {
+            color: #0f66bd;
+            font-weight: 700;
+        }
+
+        .mobile-menu {
+            transition: all 0.3s ease;
+        }
+
+        /* Mejorar la accesibilidad del botón de perfil */
+        .profile-btn {
+            position: relative;
+        }
+
+        .profile-btn:hover .profile-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .profile-tooltip {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #1f2937;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            margin-top: 8px;
+        }
     </style>
     <script>
         tailwind.config = {
@@ -366,21 +402,27 @@
 </head>
 <body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
 <div class="flex min-h-screen flex-col">
-    <!-- Barra de navegación -->
-    <header class="sticky top-0 z-50 border-b border-gray-200/50 dark:border-gray-700/50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
+    <!-- Barra de navegación mejorada -->
+    <header class="sticky top-0 z-50 border-b border-gray-200/50 dark:border-gray-700/50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="flex h-16 items-center justify-between">
                 <div class="flex items-center gap-8">
                     <a class="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white" th:href="@{/usuario/Inicio}">
-                        <div class="h-8 w-8 bg-primary rounded-lg flex items-center justify-center">
-                            <span class="text-white font-bold text-sm">NG</span>
+                        <!-- Logo actualizado con imagen -->
+                        <div class="h-20 w-20 rounded-lg flex items-center justify-center overflow-hidden">
+                            <img src="/images/LOGO.png" alt="NextGenMotors" class="h-full w-full object-contain">
                         </div>
-                        <span class="font-display">NextGenMotors</span>
+                        <span class="font-display"><span class="text-primary">NextGen</span>Motors</span>
                     </a>
+                    <nav class="hidden md:flex items-center gap-6">
+                        <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="/vehiculos">Nuestros Modelos</a>
+                        <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" th:href="@{/usuario/agendamiento}">Agendamiento online</a>
+                    </nav>
                 </div>
                 <div class="flex items-center gap-4">
-                    <button class="rounded-full p-2 text-gray-600 dark:text-gray-300 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors">
-                        <a class="fas fa-user" href="/login"></a>
+                    <button class="profile-btn rounded-full p-2 text-gray-600 dark:text-gray-300 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors">
+                        <a class="fas fa-user" href="/usuario/perfil"></a>
+                        <span class="profile-tooltip">Perfil</span>
                     </button>
                 </div>
             </div>
