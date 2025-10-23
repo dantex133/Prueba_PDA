@@ -504,28 +504,202 @@
             background: #dc2626;
         }
 
+        /* NUEVOS ESTILOS RESPONSIVOS */
+
+        /* Menú hamburguesa */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #475569;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .dark .menu-toggle {
+            color: #cbd5e1;
+        }
+
+        /* Sidebar móvil */
+        .sidebar-mobile-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 40;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-mobile-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .sidebar-mobile {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100vh;
+            background: white;
+            z-index: 50;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .dark .sidebar-mobile {
+            background: #1e293b;
+        }
+
+        .sidebar-mobile.active {
+            transform: translateX(0);
+        }
+
+        .sidebar-mobile .brand {
+            margin-top: 3rem;
+        }
+
+        .sidebar-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #475569;
+            cursor: pointer;
+        }
+
+        .dark .sidebar-close {
+            color: #cbd5e1;
+        }
+
+        /* Tabla responsiva */
+        .table-container {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
         /* Responsive */
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             .main-container {
                 flex-direction: column;
             }
 
             #sidebar {
-                width: 100%;
-                border-right: none;
-                border-bottom: 1px solid #e2e8f0;
-            }
-
-            .dark #sidebar {
-                border-bottom: 1px solid #334155;
+                display: none;
             }
 
             .nav-links {
                 display: none;
             }
 
+            .menu-toggle {
+                display: block;
+            }
+
+            .mobile-nav-links {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                margin-top: 1rem;
+            }
+
+            .mobile-nav-links a {
+                color: #475569;
+                font-weight: 500;
+                transition: color 0.3s ease;
+                text-decoration: none;
+                padding: 0.5rem 0;
+            }
+
+            .dark .mobile-nav-links a {
+                color: #cbd5e1;
+            }
+
+            .mobile-nav-links a:hover {
+                color: #0f66bd;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+
+            main {
+                padding: 1rem;
+            }
+
+            main section {
+                padding: 1.5rem;
+            }
+
+            section#bienvenida h1 {
+                font-size: 2rem;
+            }
+
+            .btn-nueva-cita {
+                width: 100%;
+                text-align: center;
+            }
+
             .modal-actions {
                 flex-direction: column;
+            }
+
+            th, td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.875rem;
+            }
+
+            .estado-pendiente, .estado-aprobada, .estado-rechazada {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-logo {
+                font-size: 1.25rem;
+            }
+
+            main section {
+                padding: 1rem;
+                border-radius: 0.5rem;
+            }
+
+            section#bienvenida h1 {
+                font-size: 1.75rem;
+            }
+
+            section#bienvenida p {
+                font-size: 1rem;
+            }
+
+            .info-card {
+                padding: 1rem;
+            }
+
+            .modal-content {
+                padding: 1.5rem;
+            }
+
+            .modal-title {
+                font-size: 1.25rem;
+            }
+
+            .modal-message {
+                font-size: 0.875rem;
             }
         }
     </style>
@@ -560,6 +734,9 @@
         <span class="logo-nexgen">NexGen</span>
         <span class="logo-motors">Motors</span>
     </div>
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
     <div class="nav-links">
         <a th:href="@{/usuario/Inicio}">Inicio</a>
         <a href="/vehiculos">Vehículos</a>
@@ -620,42 +797,44 @@
                 </div>
             </div>
             <div th:unless="${citas.empty}">
-                <table id="tabla-miscitas">
-                    <thead>
-                    <tr>
-                        <th>Tipo</th>
-                        <th>Auto</th>
-                        <th>Color</th>
-                        <th>Fecha Solicitud</th>
-                        <th>Estado</th>
-                        <th>Fecha Asignada</th>
-                        <th>Notas del Administrador</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="cita : ${citas}">
-                        <td th:text="${cita.tipo}"></td>
-                        <td>
-                <span th:if="${cita.vehiculo != null}"
-                      th:text="${cita.vehiculo.marca + ' ' + cita.vehiculo.modelo}"></span>
-                            <span th:unless="${cita.vehiculo != null}" th:text="${cita.modelo}">N/A</span>
-                        </td>
-                        <td>
-                            <span th:text="${cita.colorVehiculo ?: 'N/A'}"></span>
-                        </td>
-                        <td th:text="${#temporals.format(cita.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></td>
-                        <td>
-                <span th:text="${cita.estado}"
-                      th:class="${cita.estado == 'Pendiente'} ? 'estado-pendiente' :
-                                (${cita.estado == 'Aprobada'} ? 'estado-aprobada' : 'estado-rechazada')"></span>
-                        </td>
-                        <td th:text="${cita.fechaAsignada != null} ?
-                         ${#temporals.format(cita.fechaAsignada, 'dd/MM/yyyy HH:mm')} :
-                         'Por asignar'"></td>
-                        <td th:text="${cita.notasAdmin ?: 'No hay notas'}" class="notas-cell"></td>
-                    </tr>
-                    </tbody>
-                </table>
+                <div class="table-container">
+                    <table id="tabla-miscitas">
+                        <thead>
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Auto</th>
+                            <th>Color</th>
+                            <th>Fecha Solicitud</th>
+                            <th>Estado</th>
+                            <th>Fecha Asignada</th>
+                            <th>Notas del Administrador</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="cita : ${citas}">
+                            <td th:text="${cita.tipo}"></td>
+                            <td>
+                                <span th:if="${cita.vehiculo != null}"
+                                      th:text="${cita.vehiculo.marca + ' ' + cita.vehiculo.modelo}"></span>
+                                <span th:unless="${cita.vehiculo != null}" th:text="${cita.modelo}">N/A</span>
+                            </td>
+                            <td>
+                                <span th:text="${cita.colorVehiculo ?: 'N/A'}"></span>
+                            </td>
+                            <td th:text="${#temporals.format(cita.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></td>
+                            <td>
+                                <span th:text="${cita.estado}"
+                                      th:class="${cita.estado == 'Pendiente'} ? 'estado-pendiente' :
+                                                (${cita.estado == 'Aprobada'} ? 'estado-aprobada' : 'estado-rechazada')"></span>
+                            </td>
+                            <td th:text="${cita.fechaAsignada != null} ?
+                                         ${#temporals.format(cita.fechaAsignada, 'dd/MM/yyyy HH:mm')} :
+                                         'Por asignar'"></td>
+                            <td th:text="${cita.notasAdmin ?: 'No hay notas'}" class="notas-cell"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <a th:href="@{/usuario/cita}" class="btn-nueva-cita">Solicitar Nueva Cita</a>
         </section>
@@ -671,6 +850,49 @@
         </section>
     </main>
 </div>
+
+<!-- Sidebar móvil -->
+<div class="sidebar-mobile-overlay" id="sidebarOverlay"></div>
+<aside class="sidebar-mobile" id="sidebarMobile">
+    <button class="sidebar-close" id="sidebarClose">
+        <i class="fas fa-times"></i>
+    </button>
+    <a href="#" class="brand">
+        <span th:text="${nombreUsuario}">Nombre Usuario</span>
+    </a>
+    <ul class="side-menu top">
+        <li>
+            <a href="#bienvenida" class="mobile-menu-link">
+                <i class='fas fa-home'></i>
+                <span class="text">Inicio</span>
+            </a>
+        </li>
+        <li>
+            <a href="#citas" class="mobile-menu-link">
+                <i class='fas fa-calendar-check'></i>
+                <span class="text">Mis Citas</span>
+            </a>
+        </li>
+        <li>
+            <a href="#terminos" class="mobile-menu-link">
+                <i class='fas fa-file-contract'></i>
+                <span class="text">Términos</span>
+            </a>
+        </li>
+        <li>
+            <a href="#" onclick="confirmarCerrarSesion()" class="logout mobile-menu-link">
+                <i class='fas fa-sign-out-alt'></i>
+                <span class="text">Cerrar sesión</span>
+            </a>
+        </li>
+    </ul>
+    <div class="mobile-nav-links">
+        <a th:href="@{/usuario/Inicio}">Inicio</a>
+        <a href="/vehiculos">Vehículos</a>
+        <a th:href="@{/usuario/agendamiento}">Agendamiento online</a>
+        <a href="/usuario/perfil">Perfil</a>
+    </div>
+</aside>
 
 <!-- Modal de confirmación para cerrar sesión -->
 <div id="logoutModal" class="modal-overlay">
@@ -706,7 +928,7 @@
         document.getElementById('bienvenida').style.display = 'block';
 
         // Manejar clics en enlaces del menú lateral
-        document.querySelectorAll('.side-menu a').forEach(link => {
+        document.querySelectorAll('.side-menu a, .mobile-menu-link').forEach(link => {
             link.addEventListener('click', function(e) {
                 if (this.getAttribute('href').startsWith('#')) {
                     e.preventDefault();
@@ -719,6 +941,9 @@
                     // Mostrar la sección correspondiente
                     const targetId = this.getAttribute('href').substring(1);
                     document.getElementById(targetId).style.display = 'block';
+
+                    // Cerrar sidebar móvil si está abierto
+                    cerrarSidebarMovil();
                 }
             });
         });
@@ -729,7 +954,8 @@
                 language: {
                     url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
                 },
-                responsive: true
+                responsive: true,
+                autoWidth: false
             });
         }
     });
@@ -770,6 +996,31 @@
         const modal = document.getElementById('logoutModal');
         if (e.key === 'Escape' && modal.classList.contains('active')) {
             cancelarCerrarSesion();
+        }
+    });
+
+    // Funciones para el sidebar móvil
+    function abrirSidebarMovil() {
+        document.getElementById('sidebarMobile').classList.add('active');
+        document.getElementById('sidebarOverlay').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function cerrarSidebarMovil() {
+        document.getElementById('sidebarMobile').classList.remove('active');
+        document.getElementById('sidebarOverlay').classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
+    // Event listeners para el sidebar móvil
+    document.getElementById('menuToggle').addEventListener('click', abrirSidebarMovil);
+    document.getElementById('sidebarClose').addEventListener('click', cerrarSidebarMovil);
+    document.getElementById('sidebarOverlay').addEventListener('click', cerrarSidebarMovil);
+
+    // Cerrar sidebar móvil con tecla ESC
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && document.getElementById('sidebarMobile').classList.contains('active')) {
+            cerrarSidebarMovil();
         }
     });
 </script>
