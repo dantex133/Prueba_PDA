@@ -1,110 +1,379 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${vehiculo.marca + ' ' + vehiculo.modelo}">Explorar Vehículo</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link th:href="@{/css/styles4.css}" rel="stylesheet">
-    <link th:href="@{/css/explorar-vehiculo.css}" rel="stylesheet">
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings:
+                "FILL" 0,
+                "wght" 400,
+                "GRAD" 0,
+                "opsz" 24;
+        }
 
+        /* Estilos personalizados para la página de vehículo */
+        .vehicle-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .specs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .spec-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background-color: #f3f4f6;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .spec-item:hover {
+            background-color: #e5e7eb;
+            transform: translateY(-2px);
+        }
+
+        .spec-icon {
+            font-size: 1.5rem;
+            color: #0f66bd;
+            width: 2.5rem;
+            text-align: center;
+        }
+
+        .spec-label {
+            font-weight: 600;
+            color: #374151;
+            display: block;
+        }
+
+        .color-section {
+            margin-bottom: 2rem;
+        }
+
+        .color-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .color-option {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #d1d5db;
+            border-radius: 0.5rem;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .color-option:hover {
+            border-color: #0f66bd;
+            transform: translateY(-2px);
+        }
+
+        .color-option.selected {
+            border-color: #0f66bd;
+            background-color: rgba(15, 102, 189, 0.1);
+            color: #0f66bd;
+        }
+
+        .vehicle-description {
+            line-height: 1.6;
+            color: #4b5563;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background-color: #f9fafb;
+            border-radius: 0.5rem;
+            border-left: 4px solid #0f66bd;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-cotizar {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background-color: #0f66bd;
+            color: white;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .btn-cotizar:hover {
+            background-color: #0a4d8c;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background-color: #6b7280;
+            color: white;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .btn-back:hover {
+            background-color: #4b5563;
+        }
+
+        /* Modo oscuro */
+        .dark .spec-item {
+            background-color: #1f2937;
+        }
+
+        .dark .spec-item:hover {
+            background-color: #374151;
+        }
+
+        .dark .spec-label {
+            color: #d1d5db;
+        }
+
+        .dark .color-option {
+            background-color: #1f2937;
+            border-color: #374151;
+            color: #e5e7eb;
+        }
+
+        .dark .vehicle-description {
+            background-color: #1f2937;
+            color: #d1d5db;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#0f66bd",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        display: ["Manrope", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px",
+                    },
+                },
+            },
+        };
+    </script>
 </head>
-<body>
-<header class="main-header">
-    <nav id="mainNav">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <span class="logo-nexgen">NexGen</span>
-                <span class="logo-motors">Motors</span>
-            </div>
-
-            <div class="nav-links">
-                <a th:href="@{/usuario/Inicio}" class="nav-link">Inicio</a>
-                <a href="/vehiculos" class="nav-link">Vehículos</a>
-                <a th:href="@{/usuario/agendamiento}" class="nav-link active">Agendamiento</a>
-                <a href="/usuario/perfil" class="nav-link">Perfil</a>
-            </div>
-
-        </div>
-    </nav>
-</header>
-
-<main class="main-content explorar-container">
-    <div class="vehicle-header">
-        <h1 class="vehicle-title" th:text="${vehiculo.marca + ' ' + vehiculo.modelo}"></h1>
-        <div class="vehicle-subtitle" th:text="${vehiculo.año} + ' • ' + ${vehiculo.categoria}"></div>
-        <div class="vehicle-price" th:text="'$' + ${#numbers.formatDecimal(vehiculo.precio, 1, 2, 'COMMA')}"></div>
-    </div>
-
-    <div class="vehicle-content">
-        <div class="vehicle-image-container">
-            <img th:src="${vehiculo.imagenUrl}" alt="Vehículo" class="vehicle-image">
-        </div>
-
-        <div>
-            <div class="specs-container">
-                <div class="specs-grid">
-                    <div class="spec-item">
-                        <i class="fas fa-tachometer-alt spec-icon"></i>
-                        <div>
-                            <span class="spec-label">Motor:</span>
-                            <span th:text="${vehiculo.motor ?: 'N/A'}"></span>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+<div class="flex min-h-screen flex-col">
+    <!-- Barra de navegación -->
+    <header class="sticky top-0 z-50 border-b border-gray-200/50 dark:border-gray-700/50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="flex h-16 items-center justify-between">
+                <div class="flex items-center gap-8">
+                    <a class="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white" th:href="@{/usuario/Inicio}">
+                        <div class="h-20 w-20 rounded-lg flex items-center justify-center overflow-hidden">
+                            <img src="https://res.cloudinary.com/dktrgjt6b/image/upload/v1760657181/NEXTGEN_MOTORS_-_LOGO_ncwuwb.png" alt="NextGenMotors" class="h-full w-full object-contain">
                         </div>
-                    </div>
-                    <div class="spec-item">
-                        <i class="fas fa-gas-pump spec-icon"></i>
-                        <div>
-                            <span class="spec-label">Combustible:</span>
-                            <span th:text="${vehiculo.combustible ?: 'N/A'}"></span>
-                        </div>
-                    </div>
-                    <div class="spec-item">
-                        <i class="fas fa-cog spec-icon"></i>
-                        <div>
-                            <span class="spec-label">Transmisión:</span>
-                            <span th:text="${vehiculo.transmision ?: 'N/A'}"></span>
-                        </div>
-                    </div>
-                    <div class="spec-item">
-                        <i class="fas fa-users spec-icon"></i>
-                        <div>
-                            <span class="spec-label">Pasajeros:</span>
-                            <span th:text="${vehiculo.pasajeros != null ? vehiculo.pasajeros : 'N/A'}"></span>
-                        </div>
-                    </div>
+                        <span class="font-display"><span class="text-primary">NextGen</span>Motors</span>
+                    </a>
+                    <nav class="hidden md:flex items-center gap-6">
+                        <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" th:href="@{/usuario/Inicio}">Inicio</a>
+                        <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="/vehiculos">Vehículos</a>
+                        <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" th:href="@{/usuario/agendamiento}">Agendamiento</a>
+                        <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="/usuario/perfil">Perfil</a>
+                    </nav>
                 </div>
-
-                <!-- Sección de colores -->
-                <div class="color-section" th:if="${vehiculo.colores != null and !vehiculo.colores.isEmpty()}">
-                    <h3>Colores disponibles</h3>
-                    <div class="color-options">
-                        <div th:each="color : ${vehiculo.colores}"
-                             class="color-option"
-                             th:text="${color}"
-                             th:data-color="${color}"
-                             onclick="seleccionarColor(this)">
-                        </div>
-                    </div>
+                <div class="flex items-center gap-4">
+                    <button class="rounded-full p-2 text-gray-600 dark:text-gray-300 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors">
+                        <a class="fas fa-user" href="/usuario/perfil"></a>
+                    </button>
                 </div>
             </div>
+        </div>
+    </header>
 
-            <div class="vehicle-description" th:text="${vehiculo.descripcion ?: 'Este vehículo no tiene descripción disponible.'}"></div>
+    <!-- Contenido principal -->
+    <main class="flex-grow py-8">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <!-- Encabezado del vehículo -->
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold text-gray-900 dark:text-white" th:text="${vehiculo.marca + ' ' + vehiculo.modelo}"></h1>
+                <div class="mt-2 text-xl text-gray-600 dark:text-gray-400" th:text="${vehiculo.año} + ' • ' + ${vehiculo.categoria}"></div>
+                <div class="mt-4 text-3xl font-bold text-primary" th:text="'$' + ${#numbers.formatDecimal(vehiculo.precio, 1, 2, 'COMMA')}"></div>
+            </div>
 
-            <div class="action-buttons">
-                <a href="#" class="btn-cotizar" id="cotizarBtn" onclick="irACita()">
-                    <i class="fas fa-file-alt"></i> SOLICITAR COTIZACIÓN
-                </a>
-                <a href="/vehiculos" class="btn-back">
-                    <i class="fas fa-arrow-left"></i> VOLVER
-                </a>
+            <!-- Contenido del vehículo -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <!-- Imagen del vehículo -->
+                <div class="vehicle-image-container">
+                    <img th:src="${vehiculo.imagenUrl}" alt="Vehículo" class="vehicle-image">
+                </div>
+
+                <!-- Especificaciones y detalles -->
+                <div class="space-y-8">
+                    <!-- Especificaciones -->
+                    <div class="specs-container">
+                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Especificaciones</h2>
+
+                        <div class="specs-grid">
+                            <div class="spec-item">
+                                <i class="fas fa-tachometer-alt spec-icon"></i>
+                                <div>
+                                    <span class="spec-label">Motor:</span>
+                                    <span th:text="${vehiculo.motor ?: 'N/A'}"></span>
+                                </div>
+                            </div>
+                            <div class="spec-item">
+                                <i class="fas fa-gas-pump spec-icon"></i>
+                                <div>
+                                    <span class="spec-label">Combustible:</span>
+                                    <span th:text="${vehiculo.combustible ?: 'N/A'}"></span>
+                                </div>
+                            </div>
+                            <div class="spec-item">
+                                <i class="fas fa-cog spec-icon"></i>
+                                <div>
+                                    <span class="spec-label">Transmisión:</span>
+                                    <span th:text="${vehiculo.transmision ?: 'N/A'}"></span>
+                                </div>
+                            </div>
+                            <div class="spec-item">
+                                <i class="fas fa-users spec-icon"></i>
+                                <div>
+                                    <span class="spec-label">Pasajeros:</span>
+                                    <span th:text="${vehiculo.pasajeros != null ? vehiculo.pasajeros : 'N/A'}"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sección de colores -->
+                        <div class="color-section" th:if="${vehiculo.colores != null and !vehiculo.colores.isEmpty()}">
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Colores disponibles</h3>
+                            <div class="color-options">
+                                <div th:each="color : ${vehiculo.colores}"
+                                     class="color-option"
+                                     th:text="${color}"
+                                     th:data-color="${color}"
+                                     onclick="seleccionarColor(this)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Descripción -->
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Descripción</h2>
+                        <div class="vehicle-description" th:text="${vehiculo.descripcion ?: 'Este vehículo no tiene descripción disponible.'}"></div>
+                    </div>
+
+                    <!-- Botones de acción -->
+                    <div class="action-buttons">
+                        <a href="#" class="btn-cotizar" id="cotizarBtn" onclick="irACita()">
+                            <i class="fas fa-file-alt"></i> SOLICITAR COTIZACIÓN
+                        </a>
+                        <a href="/vehiculos" class="btn-back">
+                            <i class="fas fa-arrow-left"></i> VOLVER
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</main>
+    </main>
 
+    <!-- Footer -->
+    <footer class="bg-background-light dark:bg-background-dark border-t border-gray-200 dark:border-gray-800">
+        <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="footer-column">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Vehículos</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/vehiculos" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Nuevos modelos</a></li>
+                        <li><a href="/vehiculos" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Promociones</a></li>
+                    </ul>
+                </div>
 
+                <div class="footer-column">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Servicios</h3>
+                    <ul class="space-y-2">
+                        <li><a th:href="@{/usuario/Inicio}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Agendar servicio</a></li>
+                        <li><a href="/garantias" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Garantías</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Concesionario</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/nosotros" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Sobre nosotros</a></li>
+                        <li><a href="/ubicaciones" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Ubicaciones</a></li>
+                        <li><a href="#contact" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Contáctanos</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Legal</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/terminos" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Términos y condiciones</a></li>
+                        <li><a href="/cookies" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Cookies y Aviso legal</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mt-8 border-t border-gray-200 dark:border-gray-700 pt-8 text-center">
+                <p class="text-sm text-gray-500 dark:text-gray-400">&copy; 2023 NextGenMotors. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<!-- Botón de WhatsApp -->
+<a href="https://wa.me/525512345678" class="fixed bottom-8 right-8 bg-green-500 text-white w-14 h-14 rounded-full flex items-center justify-center text-2xl shadow-lg hover:bg-green-600 transition-colors z-50" target="_blank">
+    <i class="fab fa-whatsapp"></i>
+</a>
 
 <script th:src="@{/js/chatbot.js}"></script>
+<script>
+    // Barra de navegación al hacer scroll
+    window.addEventListener('scroll', function() {
+        const header = document.querySelector('header');
+        if (window.scrollY > 50) {
+            header.classList.add('shadow-md');
+        } else {
+            header.classList.remove('shadow-md');
+        }
+    });
+</script>
 
 <script th:inline="javascript">
     /*<![CDATA[*/
@@ -124,34 +393,35 @@
             localStorage.setItem('colorVehiculo_' + vehiculoId, colorSeleccionado);
             console.log("Color seleccionado:", colorSeleccionado);
         };
+
         function seleccionarCategoria(categoria, elemento) {
-    // Limpiar selecciones previas
-    document.querySelectorAll('.categoria-item').forEach(item => {
-        item.classList.remove('selected');
-    });
+            // Limpiar selecciones previas
+            document.querySelectorAll('.categoria-item').forEach(item => {
+                item.classList.remove('selected');
+            });
 
-    // Seleccionar nueva categoría
-    elemento.classList.add('selected');
-    document.getElementById('tipo').value = categoria;
+            // Seleccionar nueva categoría
+            elemento.classList.add('selected');
+            document.getElementById('tipo').value = categoria;
 
-    // No limpiar la selección de vehículo si ya hay uno seleccionado
-    const vehiculoSelect = document.getElementById('vehiculo');
-    const tieneVehiculoSeleccionado = vehiculoSelect.value !== '';
+            // No limpiar la selección de vehículo si ya hay uno seleccionado
+            const vehiculoSelect = document.getElementById('vehiculo');
+            const tieneVehiculoSeleccionado = vehiculoSelect.value !== '';
 
-    if (categoria === 'Otros') {
-        document.getElementById('comentarioContainer').style.display = 'block';
-    } else {
-        document.getElementById('comentarioContainer').style.display = 'none';
-    }
+            if (categoria === 'Otros') {
+                document.getElementById('comentarioContainer').style.display = 'block';
+            } else {
+                document.getElementById('comentarioContainer').style.display = 'none';
+            }
 
-    // Solo resetear si no hay vehículo seleccionado
-    if (!tieneVehiculoSeleccionado) {
-        vehiculoSelect.selectedIndex = 0;
-        document.getElementById('nombreVehiculo').value = '';
-        document.getElementById('colorVehiculo').innerHTML = '<option value="">-- Selecciona un color --</option>';
-        document.getElementById('colorContainer').style.display = 'none';
-    }
-}
+            // Solo resetear si no hay vehículo seleccionado
+            if (!tieneVehiculoSeleccionado) {
+                vehiculoSelect.selectedIndex = 0;
+                document.getElementById('nombreVehiculo').value = '';
+                document.getElementById('colorVehiculo').innerHTML = '<option value="">-- Selecciona un color --</option>';
+                document.getElementById('colorContainer').style.display = 'none';
+            }
+        }
 
         // Función para ir a cita
         window.irACita = function() {
