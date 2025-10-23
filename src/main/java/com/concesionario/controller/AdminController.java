@@ -207,6 +207,11 @@ public class AdminController {
         try {
             Vehiculo vehiculoExistente = vehiculoService.obtenerPorId(id);
 
+            // ✅ CORRECCIÓN: Procesar la nueva imagen si se proporciona
+            if (imagen != null && !imagen.isEmpty()) {
+                vehiculoService.actualizarImagenVehiculo(vehiculoExistente, imagen);
+            }
+
             if (vehiculoExistente.getColores() == null) {
                 vehiculoExistente.setColores(new ArrayList<>());
             }

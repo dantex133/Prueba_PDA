@@ -128,4 +128,8 @@ public class VehiculoService {
             throw new IOException("Error al subir la imagen: " + e.getMessage(), e);
         }
     }
+    public void actualizarImagenVehiculo(Vehiculo vehiculo, MultipartFile imagen) throws IOException {
+        String rutaImagen = guardarImagenEnCloudinary(imagen);
+        vehiculo.setImagenUrl(rutaImagen);
+    }
 }
