@@ -9,9 +9,6 @@
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- <link th:href="@{/css/styleinicio.css}" rel="stylesheet"> -->
-    <!-- <link th:href="@{/css/stilechatbot.css}" rel="stylesheet"> -->
-    <!-- <link th:href="@{/css/vehiculos.css}" rel="stylesheet"> -->
     <style>
         .material-symbols-outlined {
             font-variation-settings:
@@ -28,6 +25,19 @@
             height: 70vh;
             overflow: hidden;
             border-radius: 0.75rem;
+        }
+
+        @media (max-width: 768px) {
+            .carousel {
+                height: 50vh;
+                border-radius: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .carousel {
+                height: 40vh;
+            }
         }
 
         .carousel-inner {
@@ -58,10 +68,34 @@
             padding: 2rem;
         }
 
+        @media (max-width: 768px) {
+            .carousel-content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .carousel-content {
+                padding: 1rem;
+            }
+        }
+
         .carousel-content h2 {
             font-size: 2rem;
             font-weight: bold;
             margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .carousel-content h2 {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .carousel-content h2 {
+                font-size: 1.25rem;
+            }
         }
 
         .carousel-content p {
@@ -69,9 +103,23 @@
             opacity: 0.9;
         }
 
+        @media (max-width: 480px) {
+            .carousel-content p {
+                font-size: 0.875rem;
+                margin-bottom: 0.75rem;
+            }
+        }
+
         .carousel-buttons {
             display: flex;
             gap: 1rem;
+        }
+
+        @media (max-width: 480px) {
+            .carousel-buttons {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
         }
 
         .carousel-buttons a {
@@ -80,6 +128,14 @@
             font-weight: 600;
             text-decoration: none;
             transition: all 0.3s;
+        }
+
+        @media (max-width: 480px) {
+            .carousel-buttons a {
+                padding: 0.75rem 1rem;
+                text-align: center;
+                font-size: 0.875rem;
+            }
         }
 
         .carousel-buttons a:first-child {
@@ -110,6 +166,18 @@
             transition: all 0.3s ease;
         }
 
+        @media (max-width: 768px) {
+            .service-card {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .service-card {
+                padding: 1rem;
+            }
+        }
+
         .service-card:hover {
             border-color: #0f66bd;
             transform: translateY(-4px);
@@ -127,9 +195,23 @@
             margin: 0 auto 1.5rem;
         }
 
+        @media (max-width: 768px) {
+            .service-icon {
+                width: 4rem;
+                height: 4rem;
+                margin-bottom: 1rem;
+            }
+        }
+
         .service-icon i {
             font-size: 2rem;
             color: #0f66bd;
+        }
+
+        @media (max-width: 768px) {
+            .service-icon i {
+                font-size: 1.5rem;
+            }
         }
 
         .service-title {
@@ -139,10 +221,24 @@
             margin-bottom: 1rem;
         }
 
+        @media (max-width: 480px) {
+            .service-title {
+                font-size: 1.125rem;
+                margin-bottom: 0.75rem;
+            }
+        }
+
         .service-description {
             color: #6b7280;
             margin-bottom: 1.5rem;
             line-height: 1.6;
+        }
+
+        @media (max-width: 480px) {
+            .service-description {
+                font-size: 0.875rem;
+                margin-bottom: 1rem;
+            }
         }
 
         .model-button {
@@ -154,6 +250,14 @@
             font-weight: 600;
             text-decoration: none;
             transition: background-color 0.3s;
+        }
+
+        @media (max-width: 480px) {
+            .model-button {
+                padding: 0.75rem 1rem;
+                font-size: 0.875rem;
+                width: 100%;
+            }
         }
 
         .model-button:hover {
@@ -169,6 +273,12 @@
             transition: all 0.3s ease;
         }
 
+        @media (max-width: 768px) {
+            .testimonial-card {
+                padding: 1.5rem;
+            }
+        }
+
         .testimonial-card:hover {
             border-color: #0f66bd;
             transform: translateY(-2px);
@@ -181,10 +291,23 @@
             line-height: 1.6;
         }
 
+        @media (max-width: 480px) {
+            .testimonial-text {
+                font-size: 0.875rem;
+                margin-bottom: 1rem;
+            }
+        }
+
         .testimonial-author {
             display: flex;
             align-items: center;
             gap: 1rem;
+        }
+
+        @media (max-width: 480px) {
+            .testimonial-author {
+                gap: 0.75rem;
+            }
         }
 
         .author-avatar {
@@ -194,15 +317,34 @@
             border-radius: 9999px;
         }
 
+        @media (max-width: 480px) {
+            .author-avatar {
+                width: 2.5rem;
+                height: 2.5rem;
+            }
+        }
+
         .author-info h4 {
             font-weight: 600;
             color: #111827;
             margin-bottom: 0.25rem;
         }
 
+        @media (max-width: 480px) {
+            .author-info h4 {
+                font-size: 0.875rem;
+            }
+        }
+
         .author-info p {
             font-size: 0.875rem;
             color: #6b7280;
+        }
+
+        @media (max-width: 480px) {
+            .author-info p {
+                font-size: 0.75rem;
+            }
         }
 
         /* Estilos para contacto */
@@ -211,6 +353,13 @@
             align-items: flex-start;
             gap: 1rem;
             margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 480px) {
+            .contact-item {
+                gap: 0.75rem;
+                margin-bottom: 1rem;
+            }
         }
 
         .contact-item i {
@@ -222,6 +371,12 @@
         .contact-item p {
             color: #4b5563;
             line-height: 1.6;
+        }
+
+        @media (max-width: 480px) {
+            .contact-item p {
+                font-size: 0.875rem;
+            }
         }
 
         .contact-item a {
@@ -260,6 +415,177 @@
         .dark .contact-item p {
             color: #d1d5db;
         }
+
+        /* NUEVOS ESTILOS RESPONSIVOS */
+
+        /* Menú hamburguesa */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #475569;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        .dark .menu-toggle {
+            color: #cbd5e1;
+        }
+
+        /* Menú móvil */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 300px;
+            height: 100vh;
+            background: white;
+            z-index: 60;
+            transition: right 0.3s ease;
+            padding: 2rem;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+
+        .dark .mobile-menu {
+            background: #1e293b;
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 50;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .mobile-menu-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #475569;
+            cursor: pointer;
+        }
+
+        .dark .mobile-menu-close {
+            color: #cbd5e1;
+        }
+
+        .mobile-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .mobile-nav a {
+            color: #475569;
+            font-weight: 500;
+            text-decoration: none;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e5e7eb;
+            transition: color 0.3s;
+        }
+
+        .dark .mobile-nav a {
+            color: #cbd5e1;
+            border-bottom: 1px solid #374151;
+        }
+
+        .mobile-nav a:hover {
+            color: #0f66bd;
+        }
+
+        /* Ajustes responsivos generales */
+        @media (max-width: 768px) {
+            .py-16 {
+                padding-top: 3rem;
+                padding-bottom: 3rem;
+            }
+
+            .text-3xl {
+                font-size: 1.75rem;
+            }
+
+            .text-lg {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .py-16 {
+                padding-top: 2rem;
+                padding-bottom: 2rem;
+            }
+
+            .text-3xl {
+                font-size: 1.5rem;
+            }
+
+            .text-lg {
+                font-size: 0.875rem;
+            }
+
+            .grid-cols-1 {
+                grid-template-columns: 1fr;
+            }
+
+            .grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .grid-cols-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .grid-cols-4 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Ajustes específicos para el logo en móviles */
+        @media (max-width: 640px) {
+            .logo-container {
+                gap: 0.5rem;
+            }
+
+            .logo-img {
+                width: 3rem;
+                height: 3rem;
+            }
+
+            .logo-text {
+                font-size: 1rem;
+            }
+        }
     </style>
     <script>
         tailwind.config = {
@@ -292,11 +618,11 @@
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="flex h-16 items-center justify-between">
                 <div class="flex items-center gap-8">
-                    <a class="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white" th:href="@{/usuario/Inicio}">
-                        <div class="h-20 w-20 rounded-lg flex items-center justify-center overflow-hidden">
+                    <a class="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white logo-container" th:href="@{/usuario/Inicio}">
+                        <div class="h-16 w-16 sm:h-20 sm:w-20 rounded-lg flex items-center justify-center overflow-hidden logo-img">
                             <img src="https://res.cloudinary.com/dktrgjt6b/image/upload/v1760657181/NEXTGEN_MOTORS_-_LOGO_ncwuwb.png" alt="NextGenMotors" class="h-full w-full object-contain">
                         </div>
-                        <span class="font-display"><span class="text-primary">NextGen</span>Motors</span>
+                        <span class="font-display logo-text"><span class="text-primary">NextGen</span>Motors</span>
                     </a>
                     <nav class="hidden md:flex items-center gap-6">
                         <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" th:href="@{/usuario/Inicio}">Inicio</a>
@@ -309,10 +635,32 @@
                     <button class="rounded-full p-2 text-gray-600 dark:text-gray-300 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors">
                         <a class="fas fa-user" href="/usuario/perfil"></a>
                     </button>
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
                 </div>
             </div>
         </div>
     </header>
+
+    <!-- Menú móvil -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-header">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Menú</h3>
+            <button class="mobile-menu-close" id="mobileMenuClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <nav class="mobile-nav">
+            <a th:href="@{/usuario/Inicio}">Inicio</a>
+            <a href="/vehiculos">Vehículos</a>
+            <a th:href="@{/usuario/agendamiento}">Agendamiento online</a>
+            <a href="/usuario/perfil">Perfil</a>
+            <a href="#services">Servicios</a>
+            <a href="#contact">Contacto</a>
+        </nav>
+    </div>
 
     <!-- Carrusel -->
     <section class="relative">
@@ -546,6 +894,35 @@
 
             // Cambiar slide cada 5 segundos
             setInterval(nextSlide, 5000);
+        }
+    });
+
+    // Menú móvil
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+    const mobileMenuClose = document.getElementById('mobileMenuClose');
+
+    function openMobileMenu() {
+        mobileMenu.classList.add('active');
+        mobileMenuOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileMenu() {
+        mobileMenu.classList.remove('active');
+        mobileMenuOverlay.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
+    menuToggle.addEventListener('click', openMobileMenu);
+    mobileMenuClose.addEventListener('click', closeMobileMenu);
+    mobileMenuOverlay.addEventListener('click', closeMobileMenu);
+
+    // Cerrar menú móvil con tecla ESC
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
+            closeMobileMenu();
         }
     });
 </script>
