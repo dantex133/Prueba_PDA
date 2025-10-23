@@ -1,227 +1,553 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nexgen Motors - Concesionario Oficial</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link th:href="@{/css/styleinicio.css}" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link th:href="@{/css/stilechatbot.css}" rel="stylesheet">
-    <link th:href="@{/css/vehiculos.css}" rel="stylesheet">
-
+    <!-- <link th:href="@{/css/styleinicio.css}" rel="stylesheet"> -->
+    <!-- <link th:href="@{/css/stilechatbot.css}" rel="stylesheet"> -->
+    <!-- <link th:href="@{/css/vehiculos.css}" rel="stylesheet"> -->
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings:
+                "FILL" 0,
+                "wght" 400,
+                "GRAD" 0,
+                "opsz" 24;
+        }
+        
+        /* Estilos personalizados para el carrusel */
+        .carousel {
+            position: relative;
+            width: 100%;
+            height: 70vh;
+            overflow: hidden;
+            border-radius: 0.75rem;
+        }
+        
+        .carousel-inner {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            height: 100%;
+        }
+        
+        .carousel-item {
+            min-width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .carousel-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .carousel-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            color: white;
+            padding: 2rem;
+        }
+        
+        .carousel-content h2 {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .carousel-content p {
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+        
+        .carousel-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .carousel-buttons a {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .carousel-buttons a:first-child {
+            background-color: white;
+            color: #0f66bd;
+        }
+        
+        .carousel-buttons a:first-child:hover {
+            background-color: #f3f4f6;
+        }
+        
+        .carousel-buttons a:last-child {
+            background-color: #0f66bd;
+            color: white;
+        }
+        
+        .carousel-buttons a:last-child:hover {
+            background-color: #0a4d8c;
+        }
+        
+        /* Estilos para servicios */
+        .service-card {
+            padding: 2rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            background-color: #f6f7f8;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .service-card:hover {
+            border-color: #0f66bd;
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .service-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 5rem;
+            height: 5rem;
+            background-color: rgba(15, 102, 189, 0.1);
+            border-radius: 0.75rem;
+            margin: 0 auto 1.5rem;
+        }
+        
+        .service-icon i {
+            font-size: 2rem;
+            color: #0f66bd;
+        }
+        
+        .service-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 1rem;
+        }
+        
+        .service-description {
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .model-button {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background-color: #0f66bd;
+            color: white;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        
+        .model-button:hover {
+            background-color: #0a4d8c;
+        }
+        
+        /* Estilos para testimonios */
+        .testimonial-card {
+            padding: 2rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            background-color: #f6f7f8;
+            transition: all 0.3s ease;
+        }
+        
+        .testimonial-card:hover {
+            border-color: #0f66bd;
+            transform: translateY(-2px);
+        }
+        
+        .testimonial-text {
+            font-style: italic;
+            color: #4b5563;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .author-avatar {
+            width: 3rem;
+            height: 3rem;
+            background-color: #d1d5db;
+            border-radius: 9999px;
+        }
+        
+        .author-info h4 {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.25rem;
+        }
+        
+        .author-info p {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        /* Estilos para contacto */
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .contact-item i {
+            color: #0f66bd;
+            margin-top: 0.25rem;
+            width: 1.25rem;
+        }
+        
+        .contact-item p {
+            color: #4b5563;
+            line-height: 1.6;
+        }
+        
+        .contact-item a {
+            color: #0f66bd;
+            text-decoration: none;
+        }
+        
+        .contact-item a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Modo oscuro */
+        .dark .service-card,
+        .dark .testimonial-card {
+            background-color: #1f2937;
+            border-color: #374151;
+        }
+        
+        .dark .service-title {
+            color: #f9fafb;
+        }
+        
+        .dark .service-description,
+        .dark .testimonial-text {
+            color: #d1d5db;
+        }
+        
+        .dark .author-info h4 {
+            color: #f9fafb;
+        }
+        
+        .dark .author-avatar {
+            background-color: #4b5563;
+        }
+        
+        .dark .contact-item p {
+            color: #d1d5db;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#0f66bd",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        display: ["Manrope", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px",
+                    },
+                },
+            },
+        };
+    </script>
 </head>
-<body>
-<!-- Barra de navegación -->
-<nav id="mainNav">
-    <div class="nav-logo">
-        <span class="logo-nexgen">NexGen</span>
-        <span class="logo-motors">Motors</span>
-
-    </div>
-    <div class="nav-links">
-        <a th:href="@{/usuario/Inicio}">Inicio</a>
-        <a href="/vehiculos">Vehículos</a>
-        <a th:href="@{/usuario/agendamiento}">Agendamiento online</a>
-        <a href="/login">Iniciar sesión</a>
-        <!-- <a href="/usuario/cita">Cita</a> -->
-        <a href="/usuario/perfil">Perfil</a>
-    </div>
-</nav>
-
-<!-- Carrusel -->
-<div class="carousel">
-    <div class="carousel-inner">
-        <div th:each="vehiculo : ${destacados}" class="carousel-item">
-            <img th:src="${vehiculo.imagenUrl}" alt="Vehículo destacado" class="carousel-img">
-            <div class="carousel-content">
-                <h2 th:text="${vehiculo.marca + ' ' + vehiculo.modelo}"></h2>
-                <p th:text="${vehiculo.descripcion}"></p>
-                <div class="carousel-buttons">
-                    <a th:href="@{/vehiculos/explorar/{id}(id=${vehiculo.id})}">Conoce más</a>
-                    <a th:href="@{/usuario/cita?vehiculoId={id}(id=${vehiculo.id})}">Cotizar</a>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+<div class="flex min-h-screen flex-col">
+    <!-- Barra de navegación -->
+    <header class="sticky top-0 z-50 border-b border-gray-200/50 dark:border-gray-700/50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="flex h-16 items-center justify-between">
+                <div class="flex items-center gap-8">
+                    <a class="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white" th:href="@{/usuario/Inicio}">
+                        <div class="h-20 w-20 rounded-lg flex items-center justify-center overflow-hidden">
+                            <img src="https://res.cloudinary.com/dktrgjt6b/image/upload/v1760657181/NEXTGEN_MOTORS_-_LOGO_ncwuwb.png" alt="NextGenMotors" class="h-full w-full object-contain">
+                        </div>
+                        <span class="font-display"><span class="text-primary">NextGen</span>Motors</span>
+                    </a>
+                    <nav class="hidden md:flex items-center gap-6">
+                        <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" th:href="@{/usuario/Inicio}">Inicio</a>
+                        <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="/vehiculos">Vehículos</a>
+                        <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" th:href="@{/usuario/agendamiento}">Agendamiento online</a>
+                        <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="/usuario/perfil">Perfil</a>
+                    </nav>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="rounded-full p-2 text-gray-600 dark:text-gray-300 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors">
+                        <a class="fas fa-user" href="/usuario/perfil"></a>
+                    </button>
                 </div>
             </div>
         </div>
-    </div>
+    </header>
+
+    <!-- Carrusel -->
+    <section class="relative">
+        <div class="carousel">
+            <div class="carousel-inner">
+                <div th:each="vehiculo : ${destacados}" class="carousel-item">
+                    <img th:src="${vehiculo.imagenUrl}" alt="Vehículo destacado" class="carousel-img">
+                    <div class="carousel-content">
+                        <h2 th:text="${vehiculo.marca + ' ' + vehiculo.modelo}"></h2>
+                        <p th:text="${vehiculo.descripcion}"></p>
+                        <div class="carousel-buttons">
+                            <a th:href="@{/vehiculos/explorar/{id}(id=${vehiculo.id})}">Conoce más</a>
+                            <a th:href="@{/usuario/cita?vehiculoId={id}(id=${vehiculo.id})}">Cotizar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Servicios -->
+    <section class="py-16" id="services">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Nuestros Servicios</h2>
+                <p class="mt-4 text-lg text-gray-600 dark:text-gray-400">Ofrecemos soluciones integrales para todas las necesidades de tu vehículo</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <h3 class="service-title">Información Taller</h3>
+                    <p class="service-description">Conoce nuestros servicios de taller y programa una visita para evaluar tu vehículo.</p>
+                    <a th:href="@{/usuario/cita(tipo='Información Taller')}" class="model-button">Agendar cita</a>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-wrench"></i>
+                    </div>
+                    <h3 class="service-title">Mantenimiento</h3>
+                    <p class="service-description">Servicio técnico especializado con repuestos originales y garantía en todas las reparaciones.</p>
+                    <a th:href="@{/usuario/cita(tipo='Mantenimiento')}" class="model-button">Agendar cita</a>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="service-title">Garantías</h3>
+                    <p class="service-description">Protege tu inversión con nuestros planes de garantía extendida y servicio de asistencia vial.</p>
+                    <a th:href="@{/usuario/cita(tipo='Garantías')}" class="model-button">Agendar cita</a>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </div>
+                    <h3 class="service-title">Otros Servicios</h3>
+                    <p class="service-description">¿Necesitas algo más? Contáctanos para cualquier otra consulta o servicio que necesites.</p>
+                    <a th:href="@{/usuario/cita(tipo='Otros')}" class="model-button">Agendar cita</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonios -->
+    <section class="py-16 bg-gray-50 dark:bg-gray-900">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Lo que dicen nuestros clientes</h2>
+                <p class="mt-4 text-lg text-gray-600 dark:text-gray-400">Experiencias reales de personas que confiaron en nosotros</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"Excelente atención en el concesionario. Me asesoraron perfectamente para elegir mi Sportage y el proceso de financiamiento fue muy sencillo. ¡Totalmente recomendados!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar"></div>
+                        <div class="author-info">
+                            <h4>Carlos Méndez</h4>
+                            <p>Dueño de NexGen Motors Sportage 2023</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"Llevo mi Rio a servicio cada 6 meses y siempre recibo un trato profesional. Los técnicos son expertos y me explican claramente todo lo que necesita mi auto."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar"></div>
+                        <div class="author-info">
+                            <h4>Ana Rodríguez</h4>
+                            <p>Dueña de NexGen Motors Rio 2021</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"Compré mi EV6 eléctrico aquí y ha sido la mejor decisión. El equipo me ayudó con toda la instalación del cargador en casa y me han dado seguimiento constante."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar"></div>
+                        <div class="author-info">
+                            <h4>Javier López</h4>
+                            <p>Dueño de NexGen Motors EV6 2023</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contacto -->
+    <section class="py-16" id="contact">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Contáctanos</h2>
+                <p class="mt-4 text-lg text-gray-600 dark:text-gray-400">Estamos aquí para responder todas tus preguntas</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div class="contact-info">
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Información de contacto</h3>
+                    <div class="contact-details space-y-4">
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <p>Ve a nuestro enlace de ubicaciones para mas informacion</p>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <p><a href="/ubicaciones">Ubicaciones</a></p>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <p>Nexgenmotors@gmail.com</p>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-clock"></i>
+                            <p>Lunes a Viernes: 9:00 - 19:00<br>Sábado: 9:00 - 15:00</p>
+                        </div>
+                    </div>
+
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mt-8 mb-6">Visítanos</h3>
+                    <div class="rounded-lg overflow-hidden shadow-lg">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d125715.64043749604!2d-75.54462260000001!3d10.3992244!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8ef6251c1e6a8a3b%3A0x4a1e3b1b1b1b1b1b!2sBocagrande%2C%20Cartagena%2C%20Bol%C3%ADvar!5e0!3m2!1ses!2sco!4v1712345678901!5m2!1ses!2sco" width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-background-light dark:bg-background-dark border-t border-gray-200 dark:border-gray-800">
+        <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="footer-column">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Vehículos</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/vehiculos" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Nuevos modelos</a></li>
+                        <li><a href="/vehiculos" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Promociones</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Servicios</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#services" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Agendar servicio</a></li>
+                        <li><a href="/garantias" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Garantías</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Concesionario</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/nosotros" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Sobre nosotros</a></li>
+                        <li><a href="/ubicaciones" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Ubicaciones</a></li>
+                        <li><a href="#contact" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Contáctanos</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Legal</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/terminos" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Términos y condiciones</a></li>
+                        <li><a href="/cookies" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Cookies y Aviso legal</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mt-8 border-t border-gray-200 dark:border-gray-700 pt-8 text-center">
+                <p class="text-sm text-gray-500 dark:text-gray-400">&copy; 2023 NextGenMotors. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
 </div>
 
+<!-- Botón de WhatsApp -->
+<!-- <a href="https://wa.me/525512345678" class="fixed bottom-8 right-8 bg-green-500 text-white w-14 h-14 rounded-full flex items-center justify-center text-2xl shadow-lg hover:bg-green-600 transition-colors z-50" target="_blank">
+    <i class="fab fa-whatsapp"></i>
+</a> -->
 
-
-<!-- Servicios -->
-<section class="services" id="services">
-    <h2 class="section-title">Nuestros Servicios</h2>
-    <p class="section-subtitle">Ofrecemos soluciones integrales para todas las necesidades de tu vehículo</p>
-
-    <div class="services-grid">
-        <!-- Nota: Eliminé "Interés en Vehículo" ya que ese se maneja desde los listados de vehículos -->
-
-        <div class="service-card">
-            <div class="service-icon">
-                <i class="fas fa-tools"></i>
-            </div>
-            <h3 class="service-title">Información Taller</h3>
-            <p class="service-description">Conoce nuestros servicios de taller y programa una visita para evaluar tu vehículo.</p>
-            <a th:href="@{/usuario/cita(tipo='Información Taller')}" class="model-button">Agendar cita</a>
-        </div>
-
-        <div class="service-card">
-            <div class="service-icon">
-                <i class="fas fa-wrench"></i>
-            </div>
-            <h3 class="service-title">Mantenimiento</h3>
-            <p class="service-description">Servicio técnico especializado con repuestos originales y garantía en todas las reparaciones.</p>
-            <a th:href="@{/usuario/cita(tipo='Mantenimiento')}" class="model-button">Agendar cita</a>
-        </div>
-
-        <div class="service-card">
-            <div class="service-icon">
-                <i class="fas fa-shield-alt"></i>
-            </div>
-            <h3 class="service-title">Garantías</h3>
-            <p class="service-description">Protege tu inversión con nuestros planes de garantía extendida y servicio de asistencia vial.</p>
-            <a th:href="@{/usuario/cita(tipo='Garantías')}" class="model-button">Agendar cita</a>
-        </div>
-
-        <div class="service-card">
-            <div class="service-icon">
-                <i class="fas fa-ellipsis-h"></i>
-            </div>
-            <h3 class="service-title">Otros Servicios</h3>
-            <p class="service-description">¿Necesitas algo más? Contáctanos para cualquier otra consulta o servicio que necesites.</p>
-            <a th:href="@{/usuario/cita(tipo='Otros')}" class="model-button">Agendar cita</a>
-        </div>
-    </div>
-</section>
-<!-- Inserta el fragmento -->
+<!-- Chatbot -->
 <div th:replace="~{fragments/chatbot :: chatbot}"></div>
-<!-- Testimonios -->
-<section class="testimonials">
-    <h2 class="section-title">Lo que dicen nuestros clientes</h2>
-    <p class="section-subtitle">Experiencias reales de personas que confiaron en nosotros</p>
-
-    <div class="testimonials-grid">
-        <div class="testimonial-card">
-            <p class="testimonial-text">"Excelente atención en el concesionario. Me asesoraron perfectamente para elegir mi Sportage y el proceso de financiamiento fue muy sencillo. ¡Totalmente recomendados!"</p>
-            <div class="testimonial-author">
-                <div class="author-avatar"></div>
-                <div class="author-info">
-                    <h4>Carlos Méndez</h4>
-                    <p>Dueño de NexGen Motors Sportage 2023</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="testimonial-card">
-            <p class="testimonial-text">"Llevo mi Rio a servicio cada 6 meses y siempre recibo un trato profesional. Los técnicos son expertos y me explican claramente todo lo que necesita mi auto."</p>
-            <div class="testimonial-author">
-                <div class="author-avatar"></div>
-                <div class="author-info">
-                    <h4>Ana Rodríguez</h4>
-                    <p>Dueña de NexGen Motors Rio 2021</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="testimonial-card">
-            <p class="testimonial-text">"Compré mi EV6 eléctrico aquí y ha sido la mejor decisión. El equipo me ayudó con toda la instalación del cargador en casa y me han dado seguimiento constante."</p>
-            <div class="testimonial-author">
-                <div class="author-avatar"></div>
-                <div class="author-info">
-                    <h4>Javier López</h4>
-                    <p>Dueño de NexGen Motors EV6 2023</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Contacto -->
-<section class="contact" id="contact">
-    <h2 class="section-title">Contáctanos</h2>
-    <p class="section-subtitle">Estamos aquí para responder todas tus preguntas</p>
-
-    <div class="contact-container">
-        <div class="contact-info">
-            <h3>Información de contacto</h3>
-            <div class="contact-details">
-                <div class="contact-item">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <p>Ve a nuestro enlace de ubicaciones para mas informacion</p>
-                </div>
-                <div class="contact-item">
-                    <i class="fas fa-phone"></i>
-                    <p><a href="/ubicaciones">Ubicaciones</a></p>
-                </div>
-                <div class="contact-item">
-                    <i class="fas fa-envelope"></i>
-                    <p>Nexgenmotors@gmail.com </p>
-                </div>
-                <div class="contact-item">
-                    <i class="fas fa-clock"></i>
-                    <p>Lunes a Viernes: 9:00 - 19:00<br>Sábado: 9:00 - 15:00</p>
-                </div>
-            </div>
-
-            <h3>Visítanos</h3>
-            <div style="width: 100%; height: 250px; background: #ddd; border-radius: 5px; overflow: hidden;">
-                <!-- Aquí iría un mapa de Google Maps -->
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d125715.64043749604!2d-75.54462260000001!3d10.3992244!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8ef6251c1e6a8a3b%3A0x4a1e3b1b1b1b1b1b!2sBocagrande%2C%20Cartagena%2C%20Bol%C3%ADvar!5e0!3m2!1ses!2sco!4v1712345678901!5m2!1ses!2sco" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-            </div>
-        </div>
-
-
-    </div>
-</section>
-
-
-<footer>
-    <div class="footer-content">
-        <div class="footer-column">
-            <h3>Vehículos</h3>
-            <ul>
-                <li><a href="/vehiculos">Nuevos modelos</a></li>
-                <li><a href="/vehiculos">Promociones</a></li>
-            </ul>
-        </div>
-
-        <div class="footer-column">
-            <h3>Servicios</h3>
-            <ul>
-                <li><a href="#services">Agendar servicio</a></li>
-                <li><a href="/garantias">Garantías</a></li>
-
-
-            </ul>
-        </div>
-
-        <div class="footer-column">
-            <h3>Concesionario</h3>
-            <ul>
-                <li><a href="/nosotros">Sobre nosotros</a></li>
-                <li><a href="/ubicaciones">Ubicaciones</a></li>
-                <li><a href="#contact">Contáctanos</a></li>
-            </ul>
-        </div>
-
-        <div class="footer-column">
-            <h3>Legal</h3>
-            <ul>
-                <li><a href="/terminos">Términos y condiciones</a></li>
-                <li><a href="/cookies">Cookies y Aviso legal</a></li>
-            </ul>
-        </div>
-    </div>
-
-
-    <div class="copyright">
-        <p>&copy; 2023 Concesionario. Todos los derechos reservados.</p>
-    </div>
-</footer>
 
 <script th:src="@{/js/chatbot.js}"></script>
-
 <script th:src="@{/js/index.js}"></script>
+
+<script>
+    // Barra de navegación al hacer scroll
+    window.addEventListener('scroll', function() {
+        const header = document.querySelector('header');
+        if (window.scrollY > 50) {
+            header.classList.add('shadow-md');
+        } else {
+            header.classList.remove('shadow-md');
+        }
+    });
+
+    // Carrusel automático
+    document.addEventListener('DOMContentLoaded', function() {
+        const carouselInner = document.querySelector('.carousel-inner');
+        const carouselItems = document.querySelectorAll('.carousel-item');
+        let currentIndex = 0;
+        
+        if (carouselItems.length > 1) {
+            function nextSlide() {
+                currentIndex = (currentIndex + 1) % carouselItems.length;
+                carouselInner.style.transform = `translateX(-${currentIndex * 100}%)`;
+            }
+            
+            // Cambiar slide cada 5 segundos
+            setInterval(nextSlide, 5000);
+        }
+    });
+</script>
 </body>
 </html>
