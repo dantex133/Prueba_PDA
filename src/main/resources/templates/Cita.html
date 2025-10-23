@@ -1,264 +1,468 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agendar Cita - Concesionario Oficial</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link th:href="@{/css/Cita.css}" rel="stylesheet">
     <link th:href="@{/css/stilechatbot.css}" rel="stylesheet">
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings:
+                "FILL" 0,
+                "wght" 400,
+                "GRAD" 0,
+                "opsz" 24;
+        }
+        
+        /* Estilos personalizados para mantener la funcionalidad */
+        .categoria-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .categoria-item {
+            flex: 1;
+            min-width: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            background-color: #f6f7f8;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .categoria-item:hover {
+            border-color: #0f66bd;
+            transform: translateY(-2px);
+        }
+        
+        .categoria-item.selected {
+            border-color: #0f66bd;
+            background-color: rgba(15, 102, 189, 0.1);
+        }
+        
+        .categoria-item i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: #0f66bd;
+        }
+        
+        .categoria-item p {
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            background-color: #fff;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #0f66bd;
+            box-shadow: 0 0 0 3px rgba(15, 102, 189, 0.1);
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: #0f66bd;
+            color: white;
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background-color: #0a4d8c;
+        }
+        
+        .btn-secondary {
+            background-color: #6b7280;
+            color: white;
+            border: none;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+        
+        .horario-info {
+            background-color: #f3f4f6;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .horario-info p {
+            margin: 0.25rem 0;
+        }
+        
+        .error-message {
+            color: #dc2626;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        /* Modo oscuro */
+        .dark .categoria-item {
+            background-color: #1f2937;
+            border-color: #374151;
+            color: #e5e7eb;
+        }
+        
+        .dark .categoria-item:hover {
+            border-color: #0f66bd;
+        }
+        
+        .dark .categoria-item.selected {
+            border-color: #0f66bd;
+            background-color: rgba(15, 102, 189, 0.2);
+        }
+        
+        .dark .form-group input,
+        .dark .form-group select,
+        .dark .form-group textarea {
+            background-color: #1f2937;
+            border-color: #374151;
+            color: #e5e7eb;
+        }
+        
+        .dark .horario-info {
+            background-color: #1f2937;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#0f66bd",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        display: ["Manrope", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px",
+                    },
+                },
+            },
+        };
+    </script>
 </head>
-<body>
-<!-- Barra de navegación -->
-<nav id="mainNav">
-    <div class="nav-logo logo-container">
-        <span class="logo-nexgen">NexGen</span>
-        <span class="logo-motors">Motors</span>
-    </div>
-    <div class="nav-links">
-        <a href="/vehiculos">Vehículos</a>
-        <a th:href="@{/usuario/agendamiento}">Agendamiento online</a>
-        <!-- <a href="/login">Iniciar sesión</a> -->
-        <a href="/usuario/cita">Cita</a>
-        <a href="/usuario/perfil"> Perfil</a>
-    </div>
-</nav>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+<div class="flex min-h-screen flex-col">
+    <!-- Barra de navegación -->
+    <header class="sticky top-0 z-50 border-b border-gray-200/50 dark:border-gray-700/50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="flex h-16 items-center justify-between">
+                <div class="flex items-center gap-8">
+                    <a class="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white" href="/">
+                        <div class="h-20 w-20 rounded-lg flex items-center justify-center overflow-hidden">
+                            <img src="/images/LOGO.png" alt="NextGenMotors" class="h-full w-full object-contain">
+                        </div>
+                        <span class="font-display"><span class="text-primary">NextGen</span>Motors</span>
+                    </a>
+                    <nav class="hidden md:flex items-center gap-6">
+                        <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="/vehiculos">Vehículos</a>
+                        <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" th:href="@{/usuario/agendamiento}">Agendamiento online</a>
+                        <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="/usuario/cita">Cita</a>
+                        <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="/usuario/perfil">Perfil</a>
+                    </nav>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="rounded-full p-2 text-gray-600 dark:text-gray-300 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors">
+                        <a class="fas fa-user" href="/usuario/perfil"></a>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
 
-<!-- Hero Section -->
-<div class="hero">
-    <div class="hero-content">
-        <h1>Agenda tu cita con nosotros</h1>
-        <p>Nuestros expertos están listos para atenderte y brindarte la mejor experiencia Nexgen Motors</p>
-    </div>
+    <!-- Hero Section -->
+    <section class="relative h-[40vh] min-h-[300px] w-full bg-cover bg-center">
+        <div class="absolute inset-0 bg-cover bg-center" style='background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("/images/jpg.jpeg");'></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-background-dark/80 via-background-dark/30 to-transparent"></div>
+        <div class="relative z-10 flex h-full flex-col items-center justify-center px-4 text-white sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">Agenda tu cita con nosotros</h1>
+            <p class="mt-4 max-w-2xl text-lg text-gray-200">Nuestros expertos están listos para atenderte y brindarte la mejor experiencia Nexgen Motors</p>
+        </div>
+    </section>
+
+
+
+    <!-- Form Container -->
+    <main class="flex-grow py-16">
+        <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold tracking-tight text-center text-gray-900 dark:text-white sm:text-4xl">¡Agenda ahora tu cita!</h2>
+            <p class="mt-4 text-lg leading-8 text-center text-gray-600 dark:text-gray-400">Para una mejor atención reserva una cita con nosotros</p>
+
+            <div class="mt-12 space-y-12">
+            <!-- <div class="p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Formulario de citas</h3>
+                <p class="text-gray-600 dark:text-gray-400">Completa los siguientes datos para agendar tu cita</p> -->
+                </div>
+            
+            <div class="p-8 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark shadow-lg">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Formulario de Cita</h2>
+                    <p class="mt-2 text-lg text-gray-600 dark:text-gray-400">Completa los siguientes datos para agendar tu cita</p>
+                </div>
+
+                <form class="appointment-form" action="#" th:action="@{/usuario/cita/guardar}" th:object="${cita}" method="post">
+                    <div class="categoria-container">
+                        <div class="categoria-item" onclick="seleccionarCategoria('Interés en Vehículo', this)" th:classappend="${cita.tipo == 'Interés en Vehículo'} ? 'selected' : ''">
+                            <i class="fas fa-car"></i>
+                            <p>Interés en Vehículo</p>
+                        </div>
+                        <div class="categoria-item" onclick="seleccionarCategoria('Información Taller', this)" th:classappend="${cita.tipo == 'Información Taller'} ? 'selected' : ''">
+                            <i class="fas fa-tools"></i>
+                            <p>Información Taller</p>
+                        </div>
+                        <div class="categoria-item" onclick="seleccionarCategoria('Mantenimiento', this)" th:classappend="${cita.tipo == 'Mantenimiento'} ? 'selected' : ''">
+                            <i class="fas fa-wrench"></i>
+                            <p>Mantenimiento</p>
+                        </div>
+                        <div class="categoria-item" onclick="seleccionarCategoria('Garantías', this)" th:classappend="${cita.tipo == 'Garantías'} ? 'selected' : ''">
+                            <i class="fas fa-shield-alt"></i>
+                            <p>Garantías</p>
+                        </div>
+                        <div class="categoria-item" onclick="seleccionarCategoria('Otros', this)" th:classappend="${cita.tipo == 'Otros'} ? 'selected' : ''">
+                            <i class="fas fa-ellipsis-h"></i>
+                            <p>Otros</p>
+                        </div>
+                    </div>
+                    <input type="hidden" id="tipo" th:field="*{tipo}" required>
+
+                    <div id="vehiculoContainer">
+                        <div class="form-group">
+                            <label for="vehiculo">Selecciona un vehículo:</label>
+                            <select id="vehiculo" class="select2" th:field="*{vehiculoId}" onchange="actualizarNombreVehiculo()">
+                                <option value="">-- Selecciona un vehículo --</option>
+                                <option th:each="vehiculo : ${vehiculos}"
+                                        th:value="${vehiculo.id}"
+                                        th:data-nombre="${vehiculo.marca + ' ' + vehiculo.modelo}"
+                                        th:data-colores="${vehiculo.colores != null ? #strings.listJoin(vehiculo.colores, ',') : ''}"
+                                        th:selected="${cita.vehiculoId == vehiculo.id}"
+                                        th:text="${vehiculo.marca + ' ' + vehiculo.modelo + ' (' + vehiculo.año + ')'}">
+                                </option>
+                            </select>
+                            <input type="hidden" id="nombreVehiculo" th:field="*{nombreVehiculo}">
+                        </div>
+
+                        <div class="form-group" id="colorContainer" style="display: block;">
+                            <label for="colorVehiculo">Color del vehículo:</label>
+                            <select id="colorVehiculo" th:field="*{colorVehiculo}">
+                                <option value="">-- Selecciona un color --</option>
+                                <option th:each="color : ${coloresVehiculo ?: #strings.listSplit('Rojo,Azul,Blanco,Negro,Gris', ',')}"
+                                        th:value="${color}"
+                                        th:selected="${cita.colorVehiculo == color}"
+                                        th:text="${color}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="form-group">
+                            <label for="nombres">Nombres:</label>
+                            <input type="text" id="nombres"
+                                   th:value="${cita?.usuario?.nombres}"
+                                   th:field="*{nombres}" readonly
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="apellidos">Apellidos:</label>
+                            <input type="text" id="apellidos" th:field="*{apellidos}" readonly>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="form-group">
+                            <label for="cedula">Cédula:</label>
+                            <input type="text" id="cedula" th:field="*{cedula}" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="correoElectronico">Correo electrónico:</label>
+                            <input type="email" id="correoElectronico" th:field="*{correoElectronico}" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="telefono">Teléfono:</label>
+                        <input type="text" id="telefono" th:field="*{telefono}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="trabajador">Seleccione un trabajador:</label>
+                        <select id="trabajador" class="select2" th:field="*{trabajadorId}">
+                            <option value="">-- Seleccione un trabajador --</option>
+                            <option th:each="trabajador : ${trabajadores}"
+                                    th:value="${trabajador.id}"
+                                    th:data-dias="${trabajador.diasTrabajo}"
+                                    th:data-horainicio="${trabajador.horaInicioTrabajo}"
+                                    th:data-horafin="${trabajador.horaFinTrabajo}"
+                                    th:text="${trabajador.nombre + ' ' + trabajador.apellido}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Campos para mostrar el horario -->
+                    <div id="horarioContainer" style="display: none;">
+                        <label>Horario disponible:</label>
+                        <div class="horario-info">
+                            <p><strong>Días:</strong> <span id="diasTrabajo"></span></p>
+                            <p><strong>Horario:</strong> <span id="horarioTrabajo"></span></p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="form-group">
+                            <label for="fechaCita">Fecha de la cita:</label>
+                            <input type="date" id="fechaCita" th:field="*{fechaCita}" required>
+                            <div id="fecha-error" style="display: none; color: red; margin-top: 5px;"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="horaCita">Hora de la cita:</label>
+                            <input type="time" id="horaCita" th:field="*{horaCita}" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sede">Sede:</label>
+                        <select id="sede" th:field="*{sede}" required>
+                            <option value="">-- Selecciona una sede --</option>
+                            <option value="NexGen Motors Bocagrande">NexGen Motors Bocagrande</option>
+                            <option value="NexGen Motors La Boquilla">NexGen Motors La Boquilla</option>
+                            <option value="NexGen Motors El Laguito">NexGen Motors El Laguito</option>
+                            <option value="NexGen Motors Manga">NexGen Motors Manga</option>
+                        </select>
+                    </div>
+
+                    <!-- Campo de comentario (solo visible si no es "Interés en Vehículo") -->
+                    <div id="comentarioContainer" th:style="${cita.tipo == 'Otros'} ? 'display: block;' : 'display: none;'">
+                        <div class="form-group">
+                            <label for="comentario">Comentario:</label>
+                            <textarea id="comentario" th:field="*{comentario}" rows="4"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Enviar solicitud</button>
+                        <a href="/" class="btn btn-secondary">Regresar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-background-light dark:bg-background-dark border-t border-gray-200 dark:border-gray-800">
+        <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="footer-column">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Vehículos</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/vehiculos" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Nuevos modelos</a></li>
+                        <li><a href="/vehiculos" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Promociones</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Servicios</h3>
+                    <ul class="space-y-2">
+                        <li><a th:href="@{/usuario/Inicio}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Agendar servicio</a></li>
+                        <li><a href="/garantias" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Garantías</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Concesionario</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/nosotros" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Sobre nosotros</a></li>
+                        <li><a href="/ubicaciones" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Ubicaciones</a></li>
+                        <li><a href="#contact" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Contáctanos</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Legal</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/terminos" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Términos y condiciones</a></li>
+                        <li><a href="/cookies" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Cookies y Aviso legal</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mt-8 border-t border-gray-200 dark:border-gray-700 pt-8 text-center">
+                <p class="text-sm text-gray-500 dark:text-gray-400">&copy; 2023 NextGenMotors. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
 </div>
-
-<!-- Form Container -->
-<div class="form-container">
-    <div class="form-header">
-        <h2 class="section-title">Formulario de Cita</h2>
-        <p class="section-subtitle">Completa los siguientes datos para agendar tu cita</p>
-    </div>
-
-    <form class="appointment-form" action="#" th:action="@{/usuario/cita/guardar}" th:object="${cita}" method="post">
-        <div class="categoria-container">
-            <div class="categoria-item" onclick="seleccionarCategoria('Interés en Vehículo', this)" th:classappend="${cita.tipo == 'Interés en Vehículo'} ? 'selected' : ''">
-                <i class="fas fa-car"></i>
-                <p>Interés en Vehículo</p>
-            </div>
-            <div class="categoria-item" onclick="seleccionarCategoria('Información Taller', this)" th:classappend="${cita.tipo == 'Información Taller'} ? 'selected' : ''">
-                <i class="fas fa-tools"></i>
-                <p>Información Taller</p>
-            </div>
-            <div class="categoria-item" onclick="seleccionarCategoria('Mantenimiento', this)" th:classappend="${cita.tipo == 'Mantenimiento'} ? 'selected' : ''">
-                <i class="fas fa-wrench"></i>
-                <p>Mantenimiento</p>
-            </div>
-            <div class="categoria-item" onclick="seleccionarCategoria('Garantías', this)" th:classappend="${cita.tipo == 'Garantías'} ? 'selected' : ''">
-                <i class="fas fa-shield-alt"></i>
-                <p>Garantías</p>
-            </div>
-            <div class="categoria-item" onclick="seleccionarCategoria('Otros', this)" th:classappend="${cita.tipo == 'Otros'} ? 'selected' : ''">
-                <i class="fas fa-ellipsis-h"></i>
-                <p>Otros</p>
-            </div>
-        </div>
-        <input type="hidden" id="tipo" th:field="*{tipo}" required>
-
-        <!-- <div id="vehiculoContainer" th:style="${cita.tipo == 'Interés en Vehículo'} ? 'display: block;' : 'display: none;'"> -->
-        <div id="vehiculoContainer">
-
-            <div class="form-group">
-                <label for="vehiculo">Selecciona un vehículo:</label>
-                <select id="vehiculo" class="select2" th:field="*{vehiculoId}" onchange="actualizarNombreVehiculo()">
-                    <option value="">-- Selecciona un vehículo --</option>
-                    <option th:each="vehiculo : ${vehiculos}"
-                            th:value="${vehiculo.id}"
-                            th:data-nombre="${vehiculo.marca + ' ' + vehiculo.modelo}"
-                            th:data-colores="${vehiculo.colores != null ? #strings.listJoin(vehiculo.colores, ',') : ''}"
-                            th:selected="${cita.vehiculoId == vehiculo.id}"
-                            th:text="${vehiculo.marca + ' ' + vehiculo.modelo + ' (' + vehiculo.año + ')'}">
-                    </option>
-                </select>
-                <input type="hidden" id="nombreVehiculo" th:field="*{nombreVehiculo}">
-            </div>
-            <!-- <div class="form-group">
-                <label for="vehiculo">Selecciona un vehículo:</label>
-                <select id="vehiculo" class="select2"  th:field="*{vehiculoId}" onchange="actualizarNombreVehiculo()">
-                    <option value="">-- Selecciona un vehículo --</option>
-                    <option th:each="vehiculo : ${vehiculos}"
-                            th:value="${vehiculo.id}"
-                            th:data-nombre="${vehiculo.marca + ' ' + vehiculo.modelo}"
-                            th:data-colores="${vehiculo.colores != null ? #strings.listJoin(vehiculo.colores, ',') : ''}"
-                            th:selected="${cita.vehiculoId == vehiculo.id}"
-                            th:text="${vehiculo.marca + ' ' + vehiculo.modelo + ' (' + vehiculo.año + ')'}">
-                    </option>
-                </select>
-                <input type="hidden" id="nombreVehiculo" th:field="*{nombreVehiculo}">
-            </div> -->
-
-            <!-- AÑADE ESTE NUEVO BLOQUE PARA LOS COLORES -->
-            <!-- <div class="form-group" id="colorContainer" th:style="${cita.tipo == 'Interés en Vehículo' and cita.vehiculoId != null} ? 'display: block;' : 'display: none;'"></div> -->
-            <div class="form-group" id="colorContainer" style="display: block;">
-                <label for="colorVehiculo">Color del vehículo:</label>
-                <select id="colorVehiculo" th:field="*{colorVehiculo}">
-                    <option value="">-- Selecciona un color --</option>
-                    <option th:each="color : ${coloresVehiculo ?: #strings.listSplit('Rojo,Azul,Blanco,Negro,Gris', ',')}"
-                            th:value="${color}"
-                            th:selected="${cita.colorVehiculo == color}"
-                            th:text="${color}">
-                    </option>
-                </select>
-            </div>
-        </div>
-
-        <!-- <div id="modeloContainer" th:style="${cita.tipo == 'Interés en Vehículo'} ? 'display: none;' : 'display: block;'">
-            <div class="form-group">
-                <label for="modelo">Modelo:</label>
-                <input type="text" id="modelo" th:field="*{modelo}">
-            </div>
-        </div> -->
-
-        <div class="form-group">
-            <label for="nombres">Nombres:</label>
-            <input type="text" id="nombres"
-                   th:value="${cita?.usuario?.nombres}"
-                   th:field="*{nombres}"readonly
-            >
-        </div>
-
-        <div class="form-group">
-            <label for="apellidos">Apellidos:</label>
-            <input type="text" id="apellidos" th:field="*{apellidos}" readonly>
-        </div>
-
-        <div class="form-group">
-            <label for="cedula">Cédula:</label>
-            <input type="text" id="cedula" th:field="*{cedula}" readonly>
-        </div>
-
-        <div class="form-group">
-            <label for="correoElectronico">Correo electrónico:</label>
-            <input type="email" id="correoElectronico" th:field="*{correoElectronico}" readonly>
-        </div>
-
-        <div class="form-group">
-            <label for="telefono">Teléfono:</label>
-            <input type="text" id="telefono" th:field="*{telefono}" required>
-        </div>
-        <div class="form-group">
-            <label for="trabajador">Seleccione un trabajador:</label>
-            <select id="trabajador" class="select2" th:field="*{trabajadorId}">
-                <option value="">-- Seleccione un trabajador --</option>
-                <option th:each="trabajador : ${trabajadores}"
-                        th:value="${trabajador.id}"
-                        th:data-dias="${trabajador.diasTrabajo}"
-                        th:data-horainicio="${trabajador.horaInicioTrabajo}"
-                        th:data-horafin="${trabajador.horaFinTrabajo}"
-                        th:text="${trabajador.nombre + ' ' + trabajador.apellido}">
-                </option>
-            </select>
-        </div>
-
-        <!-- Campos para mostrar el horario -->
-        <div id="horarioContainer" style="display: none;">
-            <label>Horario disponible:</label>
-            <div class="horario-info">
-                <p><strong>Días:</strong> <span id="diasTrabajo"></span></p>
-                <p><strong>Horario:</strong> <span id="horarioTrabajo"></span></p>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="fechaCita">Fecha de la cita:</label>
-            <input type="date" id="fechaCita" th:field="*{fechaCita}" required>
-            <div id="fecha-error" style="display: none; color: red; margin-top: 5px;"></div>
-        </div>
-
-        <div class="form-group">
-            <label for="horaCita">Hora de la cita:</label>
-            <input type="time" id="horaCita" th:field="*{horaCita}" required>
-        </div>
-
-        <div class="form-group">
-            <label for="sede">Sede:</label>
-            <select id="sede" th:field="*{sede}" required>
-                <option value="">-- Selecciona una sede --</option>
-                <option value="NexGen Motors Bocagrande">NexGen Motors Bocagrande</option>
-                <option value="NexGen Motors La Boquilla">NexGen Motors La Boquilla</option>
-                <option value="NexGen Motors El Laguito">NexGen Motors El Laguito</option>
-                <option value="NexGen Motors Manga">NexGen Motors Manga</option>
-            </select>
-        </div>
-
-        <!-- Campo de comentario (solo visible si no es "Interés en Vehículo") -->
-        <!-- <div id="comentarioContainer" th:style="${cita.tipo == 'Interés en Vehículo'} ? 'display: none;' : 'display: block;'"></div> -->
-        <div id="comentarioContainer" th:style="${cita.tipo == 'Otros'} ? 'display: block;' : 'display: none;'">
-            <div class="form-group">
-                <label for="comentario">Comentario:</label>
-                <textarea id="comentario" th:field="*{comentario}"></textarea>
-            </div>
-        </div>
-
-        <!-- <input type="hidden" name="cedula" th:value="${cita.cedula}"> -->
-
-        <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Enviar solicitud</button>
-            <a href="/" class="btn btn-secondary">Regresar</a>
-        </div>
-    </form>
-</div>
-
-<!-- Footer -->
-<footer>
-    <div class="footer-content">
-        <div class="footer-column">
-            <h3>Vehículos</h3>
-            <ul>
-                <li><a href="/vehiculos">Nuevos modelos</a></li>
-                <li><a href="/vehiculos">Promociones</a></li>
-            </ul>
-        </div>
-
-        <div class="footer-column">
-            <h3>Servicios</h3>
-            <ul>
-                <li><a th:href="@{/usuario/Inicio#services}">Agendar servicio</a></li>
-                <li><a href="/garantias">Garantías</a></li>
-
-
-            </ul>
-        </div>
-
-        <div class="footer-column">
-            <h3>Concesionario</h3>
-            <ul>
-                <li><a href="/nosotros">Sobre nosotros</a></li>
-                <li><a href="/ubicaciones">Ubicaciones</a></li>
-                <li><a href="#contact">Contáctanos</a></li>
-            </ul>
-        </div>
-
-        <div class="footer-column">
-            <h3>Legal</h3>
-            <ul>
-                <li><a href="/terminos">Términos y condiciones</a></li>
-                <li><a href="/cookies">Cookies y Aviso legal</a></li>
-            </ul>
-        </div>
-    </div>
-
-
-    <div class="copyright">
-        <p>&copy; 2023 Concesionario. Todos los derechos reservados.</p>
-    </div>
-</footer>
 
 <!-- Snackbar -->
 <div id="snackbar">Some text some message..</div>
 
 <!-- Botón de WhatsApp -->
 <div th:replace="~{fragments/chatbot :: chatbot}"></div>
+
+<!-- Botón de WhatsApp -->
+<a href="https://wa.me/525512345678" class="fixed bottom-8 right-8 bg-green-500 text-white w-14 h-14 rounded-full flex items-center justify-center text-2xl shadow-lg hover:bg-green-600 transition-colors z-50" target="_blank">
+  <i class="fab fa-whatsapp"></i>
+</a>
+
+
 <script th:src="@{/js/chatbot.js}"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -581,6 +785,18 @@ function mostrarErrorFecha(mensaje) {
         }
 
         this.submit();
+    });
+</script>
+
+<script>
+    // Barra de navegación al hacer scroll
+    window.addEventListener('scroll', function() {
+        const header = document.querySelector('header');
+        if (window.scrollY > 50) {
+            header.classList.add('shadow-md');
+        } else {
+            header.classList.remove('shadow-md');
+        }
     });
 </script>
 
