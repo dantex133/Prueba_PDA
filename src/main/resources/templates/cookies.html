@@ -18,7 +18,7 @@
                 "opsz" 24;
         }
 
-        /* NUEVOS ESTILOS RESPONSIVOS PARA EL NAVBAR */
+        /* NUEVOS ESTILOS RESPONSIVOS */
 
         /* Menú hamburguesa */
         .menu-toggle {
@@ -129,12 +129,12 @@
         /* Ajustes responsivos para Hero Section */
         @media (max-width: 768px) {
             .hero-section {
-                height: 40vh;
-                min-height: 300px;
+                height: 30vh;
+                min-height: 250px;
             }
 
             .hero-title {
-                font-size: 2.5rem !important;
+                font-size: 2rem !important;
             }
 
             .hero-subtitle {
@@ -144,12 +144,12 @@
 
         @media (max-width: 480px) {
             .hero-section {
-                height: 35vh;
-                min-height: 250px;
+                height: 25vh;
+                min-height: 200px;
             }
 
             .hero-title {
-                font-size: 2rem !important;
+                font-size: 1.75rem !important;
             }
 
             .hero-subtitle {
@@ -157,65 +157,75 @@
             }
         }
 
-        /* Ajustes para los pasos del proceso */
+        /* Ajustes para secciones de contenido */
         @media (max-width: 768px) {
-            .process-steps {
-                gap: 1.5rem;
+            .content-section {
+                padding: 1.5rem !important;
             }
 
-            .process-step {
-                padding: 1.5rem;
+            .legal-card {
+                padding: 1.5rem !important;
             }
 
-            .step-number {
-                width: 3rem;
-                height: 3rem;
-                font-size: 1.25rem;
+            .section-title {
+                font-size: 1.75rem !important;
+            }
+
+            .section-subtitle {
+                font-size: 1rem !important;
             }
         }
 
         @media (max-width: 480px) {
-            .process-steps {
+            .content-section {
+                padding: 1rem !important;
+            }
+
+            .legal-card {
+                padding: 1rem !important;
+            }
+
+            .section-title {
+                font-size: 1.5rem !important;
+            }
+
+            .section-subtitle {
+                font-size: 0.875rem !important;
+            }
+        }
+
+        /* Ajustes para listas y elementos */
+        @media (max-width: 768px) {
+            .legal-list {
                 gap: 1rem;
             }
 
-            .process-step {
-                padding: 1rem;
+            .legal-list li {
+                font-size: 0.875rem;
             }
 
-            .step-number {
-                width: 2.5rem;
-                height: 2.5rem;
-                font-size: 1rem;
-            }
-        }
-
-        /* Ajustes para la sección de agendamiento */
-        @media (max-width: 768px) {
-            .agendamiento-section {
-                gap: 2rem;
-            }
-
-            .agendamiento-content {
-                padding: 1.5rem;
-            }
-
-            .agendamiento-image {
-                order: -1;
+            .cookie-item {
+                padding: 1rem !important;
             }
         }
 
         @media (max-width: 480px) {
-            .agendamiento-content {
-                padding: 1rem;
-            }
-
-            .benefits-list {
+            .legal-list {
                 gap: 0.75rem;
             }
 
-            .benefits-list li {
-                font-size: 0.875rem;
+            .legal-list li {
+                font-size: 0.75rem;
+                padding-left: 1.25rem;
+            }
+
+            .cookie-item {
+                padding: 0.75rem !important;
+            }
+
+            .cookie-icon {
+                width: 2rem !important;
+                height: 2rem !important;
             }
         }
 
@@ -298,8 +308,8 @@
                 margin-top: 2rem;
             }
 
-            .mt-16 {
-                margin-top: 3rem;
+            .mb-16 {
+                margin-bottom: 3rem;
             }
         }
 
@@ -313,9 +323,26 @@
                 margin-top: 1.5rem;
             }
 
-            .mt-16 {
-                margin-top: 2rem;
+            .mb-16 {
+                margin-bottom: 2rem;
             }
+        }
+
+        /* Estilos para cookies */
+        .cookie-settings {
+            background: rgba(15, 102, 189, 0.05);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .dark .cookie-settings {
+            background: rgba(15, 102, 189, 0.1);
+        }
+
+        .cookie-status {
+            color: #10b981;
+            font-weight: 600;
         }
     </style>
     <script>
@@ -408,22 +435,22 @@
                 <h2 class="text-3xl font-bold tracking-tight text-center text-gray-900 dark:text-white sm:text-4xl">Aviso Legal</h2>
                 <p class="mt-4 text-lg leading-8 text-center text-gray-600 dark:text-gray-400">Información legal sobre el uso de nuestro sitio web y servicios</p>
 
-                <div class="mt-12 space-y-12">
-                    <div class="p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark">
+                <div class="mt-12 space-y-8">
+                    <div class="p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark legal-card">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">1. Identificación del titular</h3>
                         <p class="text-gray-600 dark:text-gray-400">NextGenMotors S.A. de C.V. con domicilio en Av. Insurgentes Sur 1234, Col. Del Valle, Ciudad de México, C.P. 03100.</p>
                         <p class="mt-2 text-gray-600 dark:text-gray-400">RFC: NGM230101XYZ</p>
                     </div>
 
-                    <div class="p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark">
+                    <div class="p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark legal-card">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">2. Propiedad intelectual</h3>
                         <p class="text-gray-600 dark:text-gray-400">Todos los contenidos de este sitio web (textos, imágenes, logotipos, diseño) son propiedad exclusiva de NextGenMotors o de sus licenciantes y están protegidos por las leyes de propiedad intelectual.</p>
                     </div>
 
-                    <div class="p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark">
+                    <div class="p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark legal-card">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">3. Limitación de responsabilidad</h3>
                         <p class="text-gray-600 dark:text-gray-400">NextGenMotors no se hace responsable por:</p>
-                        <ul class="mt-4 space-y-2 text-gray-600 dark:text-gray-400">
+                        <ul class="mt-4 space-y-3 text-gray-600 dark:text-gray-400 legal-list">
                             <li class="flex items-start">
                                 <i class="fas fa-circle text-xs mt-1 mr-3 text-primary"></i>
                                 <span>Daños derivados de la imposibilidad de acceso al sitio web</span>
@@ -443,7 +470,7 @@
                         </ul>
                     </div>
 
-                    <div class="p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark">
+                    <div class="p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark legal-card">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">4. Legislación aplicable</h3>
                         <p class="text-gray-600 dark:text-gray-400">Este aviso legal se rige por la legislación mexicana, específicamente por la Ley Federal de Protección al Consumidor y la Ley Federal del Derecho de Autor.</p>
                     </div>
@@ -455,42 +482,42 @@
                 <h2 class="text-3xl font-bold tracking-tight text-center text-gray-900 dark:text-white sm:text-4xl">Política de Cookies</h2>
                 <p class="mt-4 text-lg leading-8 text-center text-gray-600 dark:text-gray-400">Cómo utilizamos las cookies en nuestro sitio web</p>
 
-                <div class="mt-12 space-y-12">
-                    <div class="p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark">
+                <div class="mt-12 space-y-8">
+                    <div class="p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark legal-card">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">1. ¿Qué son las cookies?</h3>
                         <p class="text-gray-600 dark:text-gray-400">Las cookies son pequeños archivos de texto que se almacenan en su dispositivo cuando visita nuestro sitio web.</p>
                     </div>
 
-                    <div class="p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark">
+                    <div class="p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark legal-card">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">2. Tipos de cookies que utilizamos</h3>
                         <ul class="space-y-4 text-gray-600 dark:text-gray-400">
-                            <li class="flex items-start">
-                                <div class="flex-shrink-0 h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center mt-0.5 mr-3">
-                                    <i class="fas fa-cookie text-xs text-primary"></i>
+                            <li class="flex items-start cookie-item">
+                                <div class="flex-shrink-0 h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center mt-0.5 mr-3 cookie-icon">
+                                    <i class="fas fa-cookie text-sm text-primary"></i>
                                 </div>
                                 <div>
                                     <span class="font-medium text-gray-900 dark:text-white">Cookies técnicas:</span> Necesarias para el funcionamiento básico del sitio
                                 </div>
                             </li>
-                            <li class="flex items-start">
-                                <div class="flex-shrink-0 h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center mt-0.5 mr-3">
-                                    <i class="fas fa-cookie text-xs text-primary"></i>
+                            <li class="flex items-start cookie-item">
+                                <div class="flex-shrink-0 h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center mt-0.5 mr-3 cookie-icon">
+                                    <i class="fas fa-cookie text-sm text-primary"></i>
                                 </div>
                                 <div>
                                     <span class="font-medium text-gray-900 dark:text-white">Cookies de preferencias:</span> Recuerdan sus configuraciones
                                 </div>
                             </li>
-                            <li class="flex items-start">
-                                <div class="flex-shrink-0 h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center mt-0.5 mr-3">
-                                    <i class="fas fa-cookie text-xs text-primary"></i>
+                            <li class="flex items-start cookie-item">
+                                <div class="flex-shrink-0 h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center mt-0.5 mr-3 cookie-icon">
+                                    <i class="fas fa-cookie text-sm text-primary"></i>
                                 </div>
                                 <div>
                                     <span class="font-medium text-gray-900 dark:text-white">Cookies analíticas:</span> Nos ayudan a mejorar el sitio
                                 </div>
                             </li>
-                            <li class="flex items-start">
-                                <div class="flex-shrink-0 h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center mt-0.5 mr-3">
-                                    <i class="fas fa-cookie text-xs text-primary"></i>
+                            <li class="flex items-start cookie-item">
+                                <div class="flex-shrink-0 h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center mt-0.5 mr-3 cookie-icon">
+                                    <i class="fas fa-cookie text-sm text-primary"></i>
                                 </div>
                                 <div>
                                     <span class="font-medium text-gray-900 dark:text-white">Cookies de marketing:</span> Para mostrar anuncios relevantes
@@ -499,13 +526,13 @@
                         </ul>
                     </div>
 
-                    <div class="p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark">
+                    <div class="p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark legal-card">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">3. Gestión de cookies</h3>
                         <p class="text-gray-600 dark:text-gray-400">Puede configurar su navegador para rechazar todas o algunas cookies. Sin embargo, esto puede afectar la funcionalidad de nuestro sitio.</p>
                         <p class="mt-4 text-gray-600 dark:text-gray-400">Para más información sobre cómo gestionar cookies, consulte la ayuda de su navegador.</p>
-                        <div class="mt-6 p-4 bg-primary/5 rounded-lg">
-                            <p class="text-sm text-primary font-medium">Configuración de cookies actual: <span class="text-green-600">Aceptadas</span></p>
-                            <button class="mt-3 text-sm text-primary hover:text-primary/80 font-medium">Cambiar configuración de cookies</button>
+                        <div class="mt-6 p-4 cookie-settings">
+                            <p class="text-sm text-primary font-medium">Configuración de cookies actual: <span class="cookie-status">Aceptadas</span></p>
+                            <button class="mt-3 text-sm text-primary hover:text-primary/80 font-medium" id="cookieSettingsBtn">Cambiar configuración de cookies</button>
                         </div>
                     </div>
                 </div>
@@ -612,10 +639,19 @@
 
     // Configuración de cookies
     document.addEventListener('DOMContentLoaded', function() {
-        const cookieSettingsBtn = document.querySelector('button');
+        const cookieSettingsBtn = document.getElementById('cookieSettingsBtn');
         if (cookieSettingsBtn) {
             cookieSettingsBtn.addEventListener('click', function() {
-                alert('Aquí se abriría el panel de configuración de cookies. Esta funcionalidad se implementaría según los requisitos específicos.');
+                // Simulación de panel de configuración de cookies
+                const acceptAll = confirm('¿Desea aceptar todas las cookies? Presione "Aceptar" para aceptar todas o "Cancelar" para configurar individualmente.');
+
+                if (acceptAll) {
+                    document.querySelector('.cookie-status').textContent = 'Todas aceptadas';
+                    document.querySelector('.cookie-status').style.color = '#10b981';
+                } else {
+                    document.querySelector('.cookie-status').textContent = 'Configuradas manualmente';
+                    document.querySelector('.cookie-status').style.color = '#f59e0b';
+                }
             });
         }
     });

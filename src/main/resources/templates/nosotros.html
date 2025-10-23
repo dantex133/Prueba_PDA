@@ -332,6 +332,61 @@
                 margin-top: 2rem;
             }
         }
+
+        /* MEJORAS RESPONSIVAS ADICIONALES */
+
+        /* Imagen de fondo para Hero Section */
+        .hero-section {
+            background-image: url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1400&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Mejoras para secciones en móviles */
+        @media (max-width: 768px) {
+            .section-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .team-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+
+            .recognition-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .team-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .recognition-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        /* Mejoras para textos en móviles */
+        @media (max-width: 768px) {
+            .responsive-text {
+                font-size: 0.9rem;
+                line-height: 1.5;
+            }
+        }
+
+        /* Mejoras para imágenes */
+        .responsive-image {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Mejoras para cards */
+        @media (max-width: 768px) {
+            .responsive-card {
+                padding: 1rem !important;
+            }
+        }
     </style>
     <script>
         tailwind.config = {
@@ -421,8 +476,8 @@
             <h2 class="text-3xl font-bold tracking-tight text-center text-gray-900 dark:text-white sm:text-4xl">Nuestra Historia</h2>
             <p class="mt-4 text-lg leading-8 text-center text-gray-600 dark:text-gray-400">Desde nuestros humildes comienzos hasta convertirnos en líderes del sector automotriz</p>
 
-            <div class="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div class="space-y-6 text-gray-600 dark:text-gray-400">
+            <div class="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center section-grid">
+                <div class="space-y-6 text-gray-600 dark:text-gray-400 responsive-text">
                     <p>Fundado en 2002, nuestro concesionario comenzó como un pequeño establecimiento con un sueño: revolucionar la experiencia de compra de autos en México. Lo que inició con un equipo de 10 apasionados por los automóviles, hoy es una organización con más de 150 colaboradores comprometidos con la excelencia.</p>
 
                     <p>En 2010 nos convertimos en Concesionario Oficial NexGen Motors, marcando un hito en nuestra trayectoria. Este reconocimiento nos permitió ofrecer productos de mayor calidad y acceder a la tecnología innovadora que caracteriza a la marca.</p>
@@ -430,7 +485,7 @@
                     <p>Hoy, con 3 sucursales en la Ciudad de México y más de 15,000 vehículos entregados, mantenemos nuestro compromiso con la satisfacción total del cliente, ofreciendo no solo autos excepcionales, sino una experiencia de compra y servicio que supera expectativas.</p>
                 </div>
                 <div class="rounded-xl overflow-hidden shadow-lg">
-                    <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1400&q=80" alt="Historia de NexGen Motors" class="w-full h-full object-cover">
+                    <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1400&q=80" alt="Historia de NexGen Motors" class="w-full h-full object-cover responsive-image">
                 </div>
             </div>
         </div>
@@ -444,7 +499,7 @@
 
             <div class="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
                 <!-- Integridad -->
-                <div class="flex flex-col items-center text-center p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark hover:shadow-lg transition-all">
+                <div class="flex flex-col items-center text-center p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark hover:shadow-lg transition-all responsive-card">
                     <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 dark:bg-primary/20 text-primary">
                         <i class="fas fa-handshake text-xl"></i>
                     </div>
@@ -453,7 +508,7 @@
                 </div>
 
                 <!-- Pasión -->
-                <div class="flex flex-col items-center text-center p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark hover:shadow-lg transition-all">
+                <div class="flex flex-col items-center text-center p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark hover:shadow-lg transition-all responsive-card">
                     <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 dark:bg-primary/20 text-primary">
                         <i class="fas fa-heart text-xl"></i>
                     </div>
@@ -462,7 +517,7 @@
                 </div>
 
                 <!-- Innovación -->
-                <div class="flex flex-col items-center text-center p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark hover:shadow-lg transition-all">
+                <div class="flex flex-col items-center text-center p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark hover:shadow-lg transition-all responsive-card">
                     <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 dark:bg-primary/20 text-primary">
                         <i class="fas fa-lightbulb text-xl"></i>
                     </div>
@@ -471,7 +526,7 @@
                 </div>
 
                 <!-- Trabajo en Equipo -->
-                <div class="flex flex-col items-center text-center p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark hover:shadow-lg transition-all">
+                <div class="flex flex-col items-center text-center p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark hover:shadow-lg transition-all responsive-card">
                     <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 dark:bg-primary/20 text-primary">
                         <i class="fas fa-users text-xl"></i>
                     </div>
@@ -480,7 +535,7 @@
                 </div>
 
                 <!-- Excelencia -->
-                <div class="flex flex-col items-center text-center p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark hover:shadow-lg transition-all">
+                <div class="flex flex-col items-center text-center p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark hover:shadow-lg transition-all responsive-card">
                     <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 dark:bg-primary/20 text-primary">
                         <i class="fas fa-star text-xl"></i>
                     </div>
@@ -489,7 +544,7 @@
                 </div>
 
                 <!-- Sostenibilidad -->
-                <div class="flex flex-col items-center text-center p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark hover:shadow-lg transition-all">
+                <div class="flex flex-col items-center text-center p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark hover:shadow-lg transition-all responsive-card">
                     <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 dark:bg-primary/20 text-primary">
                         <i class="fas fa-leaf text-xl"></i>
                     </div>
@@ -506,9 +561,9 @@
             <h2 class="text-3xl font-bold tracking-tight text-center text-gray-900 dark:text-white sm:text-4xl">Nuestro Equipo</h2>
             <p class="mt-4 text-lg leading-8 text-center text-gray-600 dark:text-gray-400">Conoce a las personas que hacen posible nuestra excelencia en servicio</p>
 
-            <div class="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4 team-grid">
                 <!-- Laura Méndez -->
-                <div class="flex flex-col items-center text-center p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark hover:shadow-lg transition-all">
+                <div class="flex flex-col items-center text-center p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark hover:shadow-lg transition-all responsive-card">
                     <div class="h-24 w-24 rounded-full bg-cover bg-center mb-4" style="background-image: url('https://randomuser.me/api/portraits/women/65.jpg');"></div>
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Laura Méndez</h3>
                     <p class="text-primary font-medium">Directora General</p>
@@ -516,7 +571,7 @@
                 </div>
 
                 <!-- Carlos Rodríguez -->
-                <div class="flex flex-col items-center text-center p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark hover:shadow-lg transition-all">
+                <div class="flex flex-col items-center text-center p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark hover:shadow-lg transition-all responsive-card">
                     <div class="h-24 w-24 rounded-full bg-cover bg-center mb-4" style="background-image: url('https://randomuser.me/api/portraits/men/32.jpg');"></div>
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Carlos Rodríguez</h3>
                     <p class="text-primary font-medium">Gerente de Ventas</p>
@@ -524,7 +579,7 @@
                 </div>
 
                 <!-- Ana Sánchez -->
-                <div class="flex flex-col items-center text-center p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark hover:shadow-lg transition-all">
+                <div class="flex flex-col items-center text-center p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark hover:shadow-lg transition-all responsive-card">
                     <div class="h-24 w-24 rounded-full bg-cover bg-center mb-4" style="background-image: url('https://randomuser.me/api/portraits/women/44.jpg');"></div>
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Ana Sánchez</h3>
                     <p class="text-primary font-medium">Gerente de Servicio</p>
@@ -532,7 +587,7 @@
                 </div>
 
                 <!-- Javier López -->
-                <div class="flex flex-col items-center text-center p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark hover:shadow-lg transition-all">
+                <div class="flex flex-col items-center text-center p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark hover:shadow-lg transition-all responsive-card">
                     <div class="h-24 w-24 rounded-full bg-cover bg-center mb-4" style="background-image: url('https://randomuser.me/api/portraits/men/75.jpg');"></div>
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Javier López</h3>
                     <p class="text-primary font-medium">Asesor Financiero</p>
@@ -548,9 +603,9 @@
             <h2 class="text-3xl font-bold tracking-tight text-center text-gray-900 dark:text-white sm:text-4xl">Reconocimientos</h2>
             <p class="mt-4 text-lg leading-8 text-center text-gray-600 dark:text-gray-400">Premios y certificaciones que respaldan nuestra excelencia</p>
 
-            <div class="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-5">
+            <div class="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-5 recognition-grid">
                 <!-- Premio Excelencia -->
-                <div class="flex flex-col items-center text-center p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark">
+                <div class="flex flex-col items-center text-center p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark responsive-card">
                     <div class="h-16 w-16 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-4">
                         <i class="fas fa-trophy text-2xl"></i>
                     </div>
@@ -559,7 +614,7 @@
                 </div>
 
                 <!-- Certificación ISO -->
-                <div class="flex flex-col items-center text-center p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark">
+                <div class="flex flex-col items-center text-center p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark responsive-card">
                     <div class="h-16 w-16 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-4">
                         <i class="fas fa-certificate text-2xl"></i>
                     </div>
@@ -568,7 +623,7 @@
                 </div>
 
                 <!-- Mejor Servicio -->
-                <div class="flex flex-col items-center text-center p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark">
+                <div class="flex flex-col items-center text-center p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark responsive-card">
                     <div class="h-16 w-16 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-4">
                         <i class="fas fa-medal text-2xl"></i>
                     </div>
@@ -577,7 +632,7 @@
                 </div>
 
                 <!-- Líder en Ventas -->
-                <div class="flex flex-col items-center text-center p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark">
+                <div class="flex flex-col items-center text-center p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark responsive-card">
                     <div class="h-16 w-16 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-4">
                         <i class="fas fa-chart-line text-2xl"></i>
                     </div>
@@ -586,7 +641,7 @@
                 </div>
 
                 <!-- Premio Innovación -->
-                <div class="flex flex-col items-center text-center p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark">
+                <div class="flex flex-col items-center text-center p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark responsive-card">
                     <div class="h-16 w-16 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-4">
                         <i class="fas fa-lightbulb text-2xl"></i>
                     </div>
@@ -605,7 +660,7 @@
 
             <div class="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-3">
                 <!-- Testimonio 1 -->
-                <div class="flex flex-col p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark hover:shadow-lg transition-all">
+                <div class="flex flex-col p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark hover:shadow-lg transition-all responsive-card">
                     <p class="text-gray-600 dark:text-gray-400 italic">"Compré mi primer NexGen Motors aquí hace 10 años y desde entonces no he cambiado de concesionario. El servicio postventa es excepcional y siempre me tratan como familia."</p>
                     <div class="mt-6 flex items-center">
                         <div class="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
@@ -619,7 +674,7 @@
                 </div>
 
                 <!-- Testimonio 2 -->
-                <div class="flex flex-col p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark hover:shadow-lg transition-all">
+                <div class="flex flex-col p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark hover:shadow-lg transition-all responsive-card">
                     <p class="text-gray-600 dark:text-gray-400 italic">"Como mujer, a veces me sentía intimidada en otros concesionarios. Aquí me asesoraron con paciencia y profesionalismo, sin presiones. ¡Totalmente recomendado!"</p>
                     <div class="mt-6 flex items-center">
                         <div class="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
@@ -633,7 +688,7 @@
                 </div>
 
                 <!-- Testimonio 3 -->
-                <div class="flex flex-col p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark hover:shadow-lg transition-all">
+                <div class="flex flex-col p-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark hover:shadow-lg transition-all responsive-card">
                     <p class="text-gray-600 dark:text-gray-400 italic">"Para nuestra empresa, encontrar un concesionario confiable era crucial. Han superado nuestras expectativas en servicio y soporte para nuestra flotilla de 12 vehículos NexGen Motors."</p>
                     <div class="mt-6 flex items-center">
                         <div class="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
@@ -654,7 +709,7 @@
         <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
             <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">¿Listo para vivir la experiencia NexGen Motors?</h2>
             <p class="mt-4 text-lg leading-8 text-gray-200">Visítanos y descubre por qué somos el concesionario preferido por miles de familias y empresas en México.</p>
-            <a href="/usuario/cita" class="mt-8 inline-flex items-center justify-center rounded-lg bg-white px-6 py-3 text-base font-semibold text-primary shadow-sm hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">Agendar una visita</a>
+            <a href="/usuario/cita" class="mt-8 inline-flex items-center justify-center rounded-lg bg-white px-6 py-3 text-base font-semibold text-primary shadow-sm hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white btn-primary">Agendar una visita</a>
         </div>
     </section>
 
@@ -751,6 +806,13 @@
     // Cerrar menú móvil con tecla ESC
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
+            closeMobileMenu();
+        }
+    });
+
+    // Detectar cambios de tamaño de pantalla
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
             closeMobileMenu();
         }
     });

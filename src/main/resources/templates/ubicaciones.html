@@ -154,15 +154,18 @@
             color: #0f66bd;
         }
 
-        /* Ajustes responsivos para Hero Section */
+        /* MEJORAS RESPONSIVAS ESPECÍFICAS PARA UBICACIONES */
+
+        /* Ajustes para Hero Section */
         @media (max-width: 768px) {
             .hero-section {
-                height: 40vh;
-                min-height: 300px;
+                height: 30vh !important;
+                min-height: 250px !important;
             }
 
             .hero-title {
-                font-size: 2.5rem !important;
+                font-size: 2rem !important;
+                line-height: 1.2 !important;
             }
 
             .hero-subtitle {
@@ -172,12 +175,12 @@
 
         @media (max-width: 480px) {
             .hero-section {
-                height: 35vh;
-                min-height: 250px;
+                height: 25vh !important;
+                min-height: 200px !important;
             }
 
             .hero-title {
-                font-size: 2rem !important;
+                font-size: 1.75rem !important;
             }
 
             .hero-subtitle {
@@ -185,65 +188,64 @@
             }
         }
 
-        /* Ajustes para los pasos del proceso */
+        /* Ajustes para grid de ubicaciones */
         @media (max-width: 768px) {
-            .process-steps {
-                gap: 1.5rem;
+            .locations-grid {
+                grid-template-columns: 1fr !important;
+                gap: 1.5rem !important;
+            }
+        }
+
+        /* Ajustes para tarjetas de ubicación */
+        @media (max-width: 768px) {
+            .location-card {
+                margin-bottom: 1rem;
             }
 
-            .process-step {
-                padding: 1.5rem;
-            }
-
-            .step-number {
-                width: 3rem;
-                height: 3rem;
-                font-size: 1.25rem;
+            .map-container {
+                height: 200px !important;
             }
         }
 
         @media (max-width: 480px) {
-            .process-steps {
-                gap: 1rem;
+            .map-container {
+                height: 180px !important;
             }
 
-            .process-step {
-                padding: 1rem;
-            }
-
-            .step-number {
-                width: 2.5rem;
-                height: 2.5rem;
-                font-size: 1rem;
+            .location-content {
+                padding: 1rem !important;
             }
         }
 
-        /* Ajustes para la sección de agendamiento */
+        /* Ajustes para información de contacto */
         @media (max-width: 768px) {
-            .agendamiento-section {
-                gap: 2rem;
+            .contact-info {
+                gap: 1rem !important;
             }
 
-            .agendamiento-content {
-                padding: 1.5rem;
+            .contact-item {
+                align-items: flex-start !important;
             }
 
-            .agendamiento-image {
-                order: -1;
+            .contact-icon {
+                margin-top: 0.25rem !important;
+                margin-right: 0.75rem !important;
             }
         }
 
+        /* Ajustes para botones */
         @media (max-width: 480px) {
-            .agendamiento-content {
-                padding: 1rem;
+            .location-btn {
+                width: 100% !important;
+                justify-content: center;
             }
+        }
 
-            .benefits-list {
-                gap: 0.75rem;
-            }
-
-            .benefits-list li {
-                font-size: 0.875rem;
+        /* Ajustes para texto */
+        @media (max-width: 768px) {
+            .responsive-text {
+                font-size: 0.9rem;
+                line-height: 1.5;
             }
         }
 
@@ -307,14 +309,6 @@
             }
         }
 
-        /* Ajustes para botones */
-        @media (max-width: 480px) {
-            .btn-primary {
-                width: 100%;
-                justify-content: center;
-            }
-        }
-
         /* Ajustes para espaciado general */
         @media (max-width: 768px) {
             .py-16 {
@@ -344,6 +338,13 @@
             .mt-16 {
                 margin-top: 2rem;
             }
+        }
+
+        /* Imagen de fondo para Hero Section */
+        .hero-section {
+            background-image: url('https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');
+            background-size: cover;
+            background-position: center;
         }
     </style>
     <script>
@@ -434,9 +435,9 @@
             <h2 class="text-3xl font-bold tracking-tight text-center text-gray-900 dark:text-white sm:text-4xl">Concesionarios NextGenMotors Cartagena</h2>
             <p class="mt-4 text-lg leading-8 text-center text-gray-600 dark:text-gray-400">Visítanos en cualquiera de nuestras 4 ubicaciones estratégicas en la ciudad heroica</p>
 
-            <div class="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-8 locations-grid">
                 <!-- Norte - Bocagrande -->
-                <div class="flex flex-col rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark overflow-hidden hover:shadow-lg transition-all">
+                <div class="location-card flex flex-col rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark overflow-hidden hover:shadow-lg transition-all">
                     <div class="map-container relative">
                         <div class="location-badge">Norte</div>
                         <iframe
@@ -446,41 +447,41 @@
                                 referrerpolicy="no-referrer-when-downgrade">
                         </iframe>
                     </div>
-                    <div class="p-6">
+                    <div class="location-content p-6">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white">NextGenMotors Bocagrande</h3>
-                        <div class="mt-4 space-y-3 text-gray-600 dark:text-gray-400">
-                            <div class="flex items-start">
-                                <i class="fas fa-map-marker-alt mt-1 mr-3 text-primary"></i>
+                        <div class="mt-4 space-y-3 text-gray-600 dark:text-gray-400 contact-info">
+                            <div class="contact-item flex items-start">
+                                <i class="fas fa-map-marker-alt mt-1 mr-3 text-primary contact-icon"></i>
                                 <div>
                                     <p class="font-medium text-gray-900 dark:text-white">Avenida San Martín #12-34</p>
-                                    <p>Bocagrande, Cartagena</p>
-                                    <p>Bolívar, Colombia</p>
+                                    <p class="responsive-text">Bocagrande, Cartagena</p>
+                                    <p class="responsive-text">Bolívar, Colombia</p>
                                 </div>
                             </div>
-                            <div class="flex items-start">
-                                <i class="fas fa-clock mt-1 mr-3 text-primary"></i>
+                            <div class="contact-item flex items-start">
+                                <i class="fas fa-clock mt-1 mr-3 text-primary contact-icon"></i>
                                 <div>
                                     <p class="font-medium text-gray-900 dark:text-white">Horario:</p>
-                                    <p>Lunes a Viernes: 8:00 - 18:00</p>
-                                    <p>Sábados: 9:00 - 14:00</p>
+                                    <p class="responsive-text">Lunes a Viernes: 8:00 - 18:00</p>
+                                    <p class="responsive-text">Sábados: 9:00 - 14:00</p>
                                 </div>
                             </div>
-                            <div class="flex items-start">
-                                <i class="fas fa-phone mt-1 mr-3 text-primary"></i>
+                            <div class="contact-item flex items-start">
+                                <i class="fas fa-phone mt-1 mr-3 text-primary contact-icon"></i>
                                 <div>
-                                    <p><span class="font-medium text-gray-900 dark:text-white">Teléfono:</span> +57 5 654 3210</p>
-                                    <p><span class="font-medium text-gray-900 dark:text-white">Email:</span> bocagrande@nextgenmotors.co</p>
+                                    <p class="responsive-text"><span class="font-medium text-gray-900 dark:text-white">Teléfono:</span> +57 5 654 3210</p>
+                                    <p class="responsive-text"><span class="font-medium text-gray-900 dark:text-white">Email:</span> bocagrande@nextgenmotors.co</p>
                                 </div>
                             </div>
                         </div>
-                        <a href="#" class="mt-6 inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-primary/90 transition-colors">
+                        <a href="#" class="mt-6 inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-primary/90 transition-colors location-btn">
                             Cómo llegar
                         </a>
                     </div>
                 </div>
 
                 <!-- Sur - La Boquilla -->
-                <div class="flex flex-col rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark overflow-hidden hover:shadow-lg transition-all">
+                <div class="location-card flex flex-col rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark overflow-hidden hover:shadow-lg transition-all">
                     <div class="map-container relative">
                         <div class="location-badge">Sur</div>
                         <iframe
@@ -490,41 +491,41 @@
                                 referrerpolicy="no-referrer-when-downgrade">
                         </iframe>
                     </div>
-                    <div class="p-6">
+                    <div class="location-content p-6">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white">NextGenMotors La Boquilla</h3>
-                        <div class="mt-4 space-y-3 text-gray-600 dark:text-gray-400">
-                            <div class="flex items-start">
-                                <i class="fas fa-map-marker-alt mt-1 mr-3 text-primary"></i>
+                        <div class="mt-4 space-y-3 text-gray-600 dark:text-gray-400 contact-info">
+                            <div class="contact-item flex items-start">
+                                <i class="fas fa-map-marker-alt mt-1 mr-3 text-primary contact-icon"></i>
                                 <div>
                                     <p class="font-medium text-gray-900 dark:text-white">Calle 8 #10-15</p>
-                                    <p>La Boquilla, Cartagena</p>
-                                    <p>Bolívar, Colombia</p>
+                                    <p class="responsive-text">La Boquilla, Cartagena</p>
+                                    <p class="responsive-text">Bolívar, Colombia</p>
                                 </div>
                             </div>
-                            <div class="flex items-start">
-                                <i class="fas fa-clock mt-1 mr-3 text-primary"></i>
+                            <div class="contact-item flex items-start">
+                                <i class="fas fa-clock mt-1 mr-3 text-primary contact-icon"></i>
                                 <div>
                                     <p class="font-medium text-gray-900 dark:text-white">Horario:</p>
-                                    <p>Lunes a Viernes: 8:00 - 18:00</p>
-                                    <p>Sábados: 9:00 - 14:00</p>
+                                    <p class="responsive-text">Lunes a Viernes: 8:00 - 18:00</p>
+                                    <p class="responsive-text">Sábados: 9:00 - 14:00</p>
                                 </div>
                             </div>
-                            <div class="flex items-start">
-                                <i class="fas fa-phone mt-1 mr-3 text-primary"></i>
+                            <div class="contact-item flex items-start">
+                                <i class="fas fa-phone mt-1 mr-3 text-primary contact-icon"></i>
                                 <div>
-                                    <p><span class="font-medium text-gray-900 dark:text-white">Teléfono:</span> +57 5 678 9012</p>
-                                    <p><span class="font-medium text-gray-900 dark:text-white">Email:</span> boquilla@nextgenmotors.co</p>
+                                    <p class="responsive-text"><span class="font-medium text-gray-900 dark:text-white">Teléfono:</span> +57 5 678 9012</p>
+                                    <p class="responsive-text"><span class="font-medium text-gray-900 dark:text-white">Email:</span> boquilla@nextgenmotors.co</p>
                                 </div>
                             </div>
                         </div>
-                        <a href="#" class="mt-6 inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-primary/90 transition-colors">
+                        <a href="#" class="mt-6 inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-primary/90 transition-colors location-btn">
                             Cómo llegar
                         </a>
                     </div>
                 </div>
 
                 <!-- Este - El Laguito -->
-                <div class="flex flex-col rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark overflow-hidden hover:shadow-lg transition-all">
+                <div class="location-card flex flex-col rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark overflow-hidden hover:shadow-lg transition-all">
                     <div class="map-container relative">
                         <div class="location-badge">Este</div>
                         <iframe
@@ -534,41 +535,41 @@
                                 referrerpolicy="no-referrer-when-downgrade">
                         </iframe>
                     </div>
-                    <div class="p-6">
+                    <div class="location-content p-6">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white">NextGenMotors El Laguito</h3>
-                        <div class="mt-4 space-y-3 text-gray-600 dark:text-gray-400">
-                            <div class="flex items-start">
-                                <i class="fas fa-map-marker-alt mt-1 mr-3 text-primary"></i>
+                        <div class="mt-4 space-y-3 text-gray-600 dark:text-gray-400 contact-info">
+                            <div class="contact-item flex items-start">
+                                <i class="fas fa-map-marker-alt mt-1 mr-3 text-primary contact-icon"></i>
                                 <div>
                                     <p class="font-medium text-gray-900 dark:text-white">Avenida del Retorno #5-67</p>
-                                    <p>El Laguito, Cartagena</p>
-                                    <p>Bolívar, Colombia</p>
+                                    <p class="responsive-text">El Laguito, Cartagena</p>
+                                    <p class="responsive-text">Bolívar, Colombia</p>
                                 </div>
                             </div>
-                            <div class="flex items-start">
-                                <i class="fas fa-clock mt-1 mr-3 text-primary"></i>
+                            <div class="contact-item flex items-start">
+                                <i class="fas fa-clock mt-1 mr-3 text-primary contact-icon"></i>
                                 <div>
                                     <p class="font-medium text-gray-900 dark:text-white">Horario:</p>
-                                    <p>Lunes a Viernes: 8:00 - 18:00</p>
-                                    <p>Sábados: 9:00 - 14:00</p>
+                                    <p class="responsive-text">Lunes a Viernes: 8:00 - 18:00</p>
+                                    <p class="responsive-text">Sábados: 9:00 - 14:00</p>
                                 </div>
                             </div>
-                            <div class="flex items-start">
-                                <i class="fas fa-phone mt-1 mr-3 text-primary"></i>
+                            <div class="contact-item flex items-start">
+                                <i class="fas fa-phone mt-1 mr-3 text-primary contact-icon"></i>
                                 <div>
-                                    <p><span class="font-medium text-gray-900 dark:text-white">Teléfono:</span> +57 5 789 0123</p>
-                                    <p><span class="font-medium text-gray-900 dark:text-white">Email:</span> laguito@nextgenmotors.co</p>
+                                    <p class="responsive-text"><span class="font-medium text-gray-900 dark:text-white">Teléfono:</span> +57 5 789 0123</p>
+                                    <p class="responsive-text"><span class="font-medium text-gray-900 dark:text-white">Email:</span> laguito@nextgenmotors.co</p>
                                 </div>
                             </div>
                         </div>
-                        <a href="#" class="mt-6 inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-primary/90 transition-colors">
+                        <a href="#" class="mt-6 inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-primary/90 transition-colors location-btn">
                             Cómo llegar
                         </a>
                     </div>
                 </div>
 
                 <!-- Oeste - Manga -->
-                <div class="flex flex-col rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark overflow-hidden hover:shadow-lg transition-all">
+                <div class="location-card flex flex-col rounded-xl border border-gray-200 dark:border-gray-700 bg-background-light dark:bg-background-dark overflow-hidden hover:shadow-lg transition-all">
                     <div class="map-container relative">
                         <div class="location-badge">Oeste</div>
                         <iframe
@@ -578,34 +579,34 @@
                                 referrerpolicy="no-referrer-when-downgrade">
                         </iframe>
                     </div>
-                    <div class="p-6">
+                    <div class="location-content p-6">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white">NextGenMotors Manga</h3>
-                        <div class="mt-4 space-y-3 text-gray-600 dark:text-gray-400">
-                            <div class="flex items-start">
-                                <i class="fas fa-map-marker-alt mt-1 mr-3 text-primary"></i>
+                        <div class="mt-4 space-y-3 text-gray-600 dark:text-gray-400 contact-info">
+                            <div class="contact-item flex items-start">
+                                <i class="fas fa-map-marker-alt mt-1 mr-3 text-primary contact-icon"></i>
                                 <div>
                                     <p class="font-medium text-gray-900 dark:text-white">Calle 30 #25-45</p>
-                                    <p>Barrio Manga, Cartagena</p>
-                                    <p>Bolívar, Colombia</p>
+                                    <p class="responsive-text">Barrio Manga, Cartagena</p>
+                                    <p class="responsive-text">Bolívar, Colombia</p>
                                 </div>
                             </div>
-                            <div class="flex items-start">
-                                <i class="fas fa-clock mt-1 mr-3 text-primary"></i>
+                            <div class="contact-item flex items-start">
+                                <i class="fas fa-clock mt-1 mr-3 text-primary contact-icon"></i>
                                 <div>
                                     <p class="font-medium text-gray-900 dark:text-white">Horario:</p>
-                                    <p>Lunes a Viernes: 8:00 - 18:00</p>
-                                    <p>Sábados: 9:00 - 14:00</p>
+                                    <p class="responsive-text">Lunes a Viernes: 8:00 - 18:00</p>
+                                    <p class="responsive-text">Sábados: 9:00 - 14:00</p>
                                 </div>
                             </div>
-                            <div class="flex items-start">
-                                <i class="fas fa-phone mt-1 mr-3 text-primary"></i>
+                            <div class="contact-item flex items-start">
+                                <i class="fas fa-phone mt-1 mr-3 text-primary contact-icon"></i>
                                 <div>
-                                    <p><span class="font-medium text-gray-900 dark:text-white">Teléfono:</span> +57 5 890 1234</p>
-                                    <p><span class="font-medium text-gray-900 dark:text-white">Email:</span> manga@nextgenmotors.co</p>
+                                    <p class="responsive-text"><span class="font-medium text-gray-900 dark:text-white">Teléfono:</span> +57 5 890 1234</p>
+                                    <p class="responsive-text"><span class="font-medium text-gray-900 dark:text-white">Email:</span> manga@nextgenmotors.co</p>
                                 </div>
                             </div>
                         </div>
-                        <a href="#" class="mt-6 inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-primary/90 transition-colors">
+                        <a href="#" class="mt-6 inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-primary/90 transition-colors location-btn">
                             Cómo llegar
                         </a>
                     </div>
@@ -707,6 +708,13 @@
     // Cerrar menú móvil con tecla ESC
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
+            closeMobileMenu();
+        }
+    });
+
+    // Detectar cambios de tamaño de pantalla
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
             closeMobileMenu();
         }
     });
