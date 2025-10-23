@@ -17,6 +17,306 @@
                 "GRAD" 0,
                 "opsz" 24;
         }
+
+        /* NUEVOS ESTILOS RESPONSIVOS PARA EL NAVBAR */
+
+        /* Menú hamburguesa */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #475569;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        .dark .menu-toggle {
+            color: #cbd5e1;
+        }
+
+        /* Menú móvil */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 300px;
+            height: 100vh;
+            background: white;
+            z-index: 60;
+            transition: right 0.3s ease;
+            padding: 2rem;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+
+        .dark .mobile-menu {
+            background: #1e293b;
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 50;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .mobile-menu-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #475569;
+            cursor: pointer;
+        }
+
+        .dark .mobile-menu-close {
+            color: #cbd5e1;
+        }
+
+        .mobile-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .mobile-nav a {
+            color: #475569;
+            font-weight: 500;
+            text-decoration: none;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e5e7eb;
+            transition: color 0.3s;
+        }
+
+        .dark .mobile-nav a {
+            color: #cbd5e1;
+            border-bottom: 1px solid #374151;
+        }
+
+        .mobile-nav a:hover {
+            color: #0f66bd;
+        }
+
+        /* Ajustes responsivos para Hero Section */
+        @media (max-width: 768px) {
+            .hero-section {
+                height: 40vh;
+                min-height: 300px;
+            }
+
+            .hero-title {
+                font-size: 2.5rem !important;
+            }
+
+            .hero-subtitle {
+                font-size: 1rem !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-section {
+                height: 35vh;
+                min-height: 250px;
+            }
+
+            .hero-title {
+                font-size: 2rem !important;
+            }
+
+            .hero-subtitle {
+                font-size: 0.875rem !important;
+            }
+        }
+
+        /* Ajustes para los pasos del proceso */
+        @media (max-width: 768px) {
+            .process-steps {
+                gap: 1.5rem;
+            }
+
+            .process-step {
+                padding: 1.5rem;
+            }
+
+            .step-number {
+                width: 3rem;
+                height: 3rem;
+                font-size: 1.25rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .process-steps {
+                gap: 1rem;
+            }
+
+            .process-step {
+                padding: 1rem;
+            }
+
+            .step-number {
+                width: 2.5rem;
+                height: 2.5rem;
+                font-size: 1rem;
+            }
+        }
+
+        /* Ajustes para la sección de agendamiento */
+        @media (max-width: 768px) {
+            .agendamiento-section {
+                gap: 2rem;
+            }
+
+            .agendamiento-content {
+                padding: 1.5rem;
+            }
+
+            .agendamiento-image {
+                order: -1;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .agendamiento-content {
+                padding: 1rem;
+            }
+
+            .benefits-list {
+                gap: 0.75rem;
+            }
+
+            .benefits-list li {
+                font-size: 0.875rem;
+            }
+        }
+
+        /* Ajustes para el footer */
+        @media (max-width: 768px) {
+            .footer-column {
+                margin-bottom: 2rem;
+            }
+        }
+
+        /* Ajustes generales de tipografía */
+        @media (max-width: 768px) {
+            .text-3xl {
+                font-size: 1.75rem;
+            }
+
+            .text-2xl {
+                font-size: 1.5rem;
+            }
+
+            .text-xl {
+                font-size: 1.25rem;
+            }
+
+            .text-lg {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .text-3xl {
+                font-size: 1.5rem;
+            }
+
+            .text-2xl {
+                font-size: 1.25rem;
+            }
+
+            .text-xl {
+                font-size: 1.125rem;
+            }
+
+            .text-lg {
+                font-size: 0.875rem;
+            }
+        }
+
+        /* Ajustes específicos para el logo en móviles */
+        @media (max-width: 640px) {
+            .logo-container {
+                gap: 0.5rem;
+            }
+
+            .logo-img {
+                width: 3rem;
+                height: 3rem;
+            }
+
+            .logo-text {
+                font-size: 1rem;
+            }
+        }
+
+        /* Ajustes para botones */
+        @media (max-width: 480px) {
+            .btn-primary {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Ajustes para espaciado general */
+        @media (max-width: 768px) {
+            .py-16 {
+                padding-top: 3rem;
+                padding-bottom: 3rem;
+            }
+
+            .mt-12 {
+                margin-top: 2rem;
+            }
+
+            .mt-16 {
+                margin-top: 3rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .py-16 {
+                padding-top: 2rem;
+                padding-bottom: 2rem;
+            }
+
+            .mt-12 {
+                margin-top: 1.5rem;
+            }
+
+            .mt-16 {
+                margin-top: 2rem;
+            }
+        }
     </style>
     <script>
         tailwind.config = {
@@ -44,39 +344,59 @@
 </head>
 <body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
 <div class="flex min-h-screen flex-col">
-    <!-- Barra de navegación -->
+    <!-- Barra de navegación MEJORADA -->
     <header class="sticky top-0 z-50 border-b border-gray-200/50 dark:border-gray-700/50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="flex h-16 items-center justify-between">
                 <div class="flex items-center gap-8">
-                    <a class="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white" th:href="@{/usuario/Inicio}">
-                        <div class="h-8 w-8 bg-primary rounded-lg flex items-center justify-center">
-                            <span class="text-white font-bold text-sm">NG</span>
+                    <a class="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white logo-container" th:href="@{/usuario/Inicio}">
+                        <!-- Logo actualizado con imagen -->
+                        <div class="h-16 w-16 sm:h-20 sm:w-20 rounded-lg flex items-center justify-center overflow-hidden logo-img">
+                            <img src="/images/LOGO.png" alt="NextGenMotors" class="h-full w-full object-contain">
                         </div>
-                        <span class="font-display">NextGenMotors</span>
+                        <span class="font-display logo-text"><span class="text-primary">NextGen</span>Motors</span>
                     </a>
                     <nav class="hidden md:flex items-center gap-6">
                         <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" th:href="@{/usuario/Inicio}">Inicio</a>
-                        <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="/vehiculos">Vehículos</a>
+                        <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="/vehiculos">Nuestros Modelos</a>
                         <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" th:href="@{/usuario/agendamiento}">Agendamiento online</a>
-                        <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="/usuario/perfil">Mi perfil</a>
                     </nav>
                 </div>
                 <div class="flex items-center gap-4">
-                    <button class="rounded-full p-2 text-gray-600 dark:text-gray-300 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors">
-                        <a class="fas fa-user" href="/usuario/perfil"></a>
+                    <a href="/usuario/perfil" class="rounded-full p-2 text-gray-600 dark:text-gray-300 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors">
+                        <i class="fas fa-user"></i>
+                    </a>
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="fas fa-bars"></i>
                     </button>
                 </div>
             </div>
         </div>
     </header>
 
+    <!-- Menú móvil -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-header">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Menú</h3>
+            <button class="mobile-menu-close" id="mobileMenuClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <nav class="mobile-nav">
+            <a th:href="@{/usuario/Inicio}">Inicio</a>
+            <a href="/vehiculos">Nuestros Modelos</a>
+            <a th:href="@{/usuario/agendamiento}">Agendamiento online</a>
+            <a href="/usuario/perfil">Perfil</a>
+        </nav>
+    </div>
+
     <!-- Hero Section -->
-    <section class="relative h-[40vh] min-h-[300px] w-full bg-cover bg-center">
+    <section class="relative hero-section h-[40vh] min-h-[300px] w-full bg-cover bg-center">
         <div class="absolute inset-0 bg-gradient-to-r from-primary/90 to-primary/70"></div>
         <div class="relative z-10 flex h-full flex-col items-center justify-center px-4 text-white sm:px-6 lg:px-8 text-center">
-            <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">Aviso Legal y Cookies</h1>
-            <p class="mt-4 max-w-2xl text-lg text-gray-200">Información legal y accesorios exclusivos para tu vehículo</p>
+            <h1 class="hero-title text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">Aviso Legal y Cookies</h1>
+            <p class="hero-subtitle mt-4 max-w-2xl text-lg text-gray-200">Información legal y accesorios exclusivos para tu vehículo</p>
         </div>
     </section>
 
@@ -250,7 +570,6 @@
     <i class="fab fa-whatsapp"></i>
 </a>
 
-<script th:src="@{/js/cookies.js}"></script>
 <script>
     // Barra de navegación al hacer scroll
     window.addEventListener('scroll', function() {
@@ -259,6 +578,35 @@
             header.classList.add('shadow-md');
         } else {
             header.classList.remove('shadow-md');
+        }
+    });
+
+    // Menú móvil
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+    const mobileMenuClose = document.getElementById('mobileMenuClose');
+
+    function openMobileMenu() {
+        mobileMenu.classList.add('active');
+        mobileMenuOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileMenu() {
+        mobileMenu.classList.remove('active');
+        mobileMenuOverlay.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
+    menuToggle.addEventListener('click', openMobileMenu);
+    mobileMenuClose.addEventListener('click', closeMobileMenu);
+    mobileMenuOverlay.addEventListener('click', closeMobileMenu);
+
+    // Cerrar menú móvil con tecla ESC
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
+            closeMobileMenu();
         }
     });
 
