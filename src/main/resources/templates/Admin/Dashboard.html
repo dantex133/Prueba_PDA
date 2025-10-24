@@ -602,7 +602,6 @@
         <!-- ===================== END MENSAJE SECTION ===================== -->
 
         <!-- ===================== TEAM SECTION ===================== -->
-
         <section id="team" th:style="${error != null} ? 'display: block;' : 'display: none;'">
             <div class="head-title">
                 <div class="left">
@@ -686,7 +685,6 @@
                                         <input class="form-check-input" type="checkbox" name="diasTrabajo" value="MARTES" id="martes">
                                         <label class="form-check-label" for="martes">Martes</label>
                                     </div>
-                                    <!-- Repetir para los demás días -->
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" name="diasTrabajo" value="MIERCOLES" id="miercoles">
                                         <label class="form-check-label" for="miercoles">Miércoles</label>
@@ -700,6 +698,42 @@
                                         <label class="form-check-label" for="viernes">Viernes</label>
                                     </div>
                                 </div>
+                            </div>
+
+                            <!-- ✅ NUEVA SECCIÓN: Roles del Trabajador -->
+                            <div class="mb-3">
+                                <label class="form-label">Roles del Trabajador <span class="text-danger">*</span></label>
+                                <div class="roles-checkbox-container">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="roles" value="TRB_ANALISIS" id="analista">
+                                        <label class="form-check-label" for="analista">
+                                            <i class='bx bx-analyse'></i> Analista
+                                        </label>
+                                        <small class="form-text text-muted d-block">Realiza análisis y reportes</small>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="roles" value="TRB_ASESOR" id="asesor">
+                                        <label class="form-check-label" for="asesor">
+                                            <i class='bx bx-user-voice'></i> Asesor
+                                        </label>
+                                        <small class="form-text text-muted d-block">Atención al cliente y ventas</small>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="roles" value="TRB_GESTOR" id="gestor">
+                                        <label class="form-check-label" for="gestor">
+                                            <i class='bx bx-task'></i> Gestor
+                                        </label>
+                                        <small class="form-text text-muted d-block">Gestiona procesos y recursos</small>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="roles" value="TRABAJADOR" id="trabajador">
+                                        <label class="form-check-label" for="trabajador">
+                                            <i class='bx bx-user'></i> Trabajador General
+                                        </label>
+                                        <small class="form-text text-muted d-block">Funciones básicas del sistema</small>
+                                    </div>
+                                </div>
+                                <small class="form-text text-muted">Puedes seleccionar uno o más roles según las funciones del trabajador</small>
                             </div>
 
                             <button type="submit" class="btn btn-primary w-100">Registrar Trabajador</button>

@@ -95,12 +95,19 @@ public class AdminController {
             @RequestParam("horaInicio") @DateTimeFormat(pattern = "HH:mm") LocalTime horaInicio,
             @RequestParam("horaFin") @DateTimeFormat(pattern = "HH:mm") LocalTime horaFin,
             @RequestParam(value = "diasTrabajo", required = false) List<String> diasTrabajo,
+            @RequestParam(value = "roles", required = false) List<String> rolesStrings, // ✅ NUEVO PARÁMETRO
             Model model,
             RedirectAttributes redirectAttributes) {
 
-        // Validación básica
+        // Validación básica de días de trabajo
         if (diasTrabajo == null || diasTrabajo.isEmpty()) {
             model.addAttribute("error", "Debe seleccionar al menos un día de trabajo");
+            return manejarErrorRegistro(model, nombre, apellido, correo, identificacion, horaInicio, horaFin);
+        }
+
+        // ✅ NUEVA VALIDACIÓN: Verificar que se seleccione al menos un rol
+        if (rolesStrings == null || rolesStrings.isEmpty()) {
+            model.addAttribute("error", "Debe seleccionar al menos un rol para el trabajador");
             return manejarErrorRegistro(model, nombre, apellido, correo, identificacion, horaInicio, horaFin);
         }
 
@@ -115,9 +122,22 @@ public class AdminController {
             trabajador.setHoraFinTrabajo(horaFin);
             trabajador.setDiasTrabajo(diasTrabajo);
 
+            // ✅ NUEVO: Procesar los roles seleccionados
+            List<Rol> roles = rolesStrings.stream()
+                    .map(rolString -> {
+                        try {
+                            return Rol.valueOf(rolString);
+                        } catch (IllegalArgumentException e) {
+                            throw new RuntimeException("Rol inválido: " + rolString);
+                        }
+                    })
+                    .collect(Collectors.toList());
+
+            trabajador.setRoles(roles);
+
             TrabajadorRepository.save(trabajador);
 
-            redirectAttributes.addFlashAttribute("success", "Trabajador registrado exitosamente");
+            redirectAttributes.addFlashAttribute("success", "Trabajador registrado exitosamente con roles: " + rolesStrings);
             return "redirect:/admin/Dashboard";
 
         } catch (DataIntegrityViolationException e) {
