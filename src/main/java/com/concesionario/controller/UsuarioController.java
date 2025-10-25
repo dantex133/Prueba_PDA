@@ -8,8 +8,9 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.concesionario.model.Trabajador;
+import com.concesionario.model.*;
 import com.concesionario.repository.TrabajadorRepository;
+import com.concesionario.service.TrabajadorDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,9 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.concesionario.model.Cita;
-import com.concesionario.model.Usuario;
-import com.concesionario.model.Vehiculo;
 import com.concesionario.repository.UsuarioRepository;
 import com.concesionario.service.CitaService;
 import com.concesionario.service.UsuarioService;
@@ -46,17 +44,39 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
+    @Autowired
+    private TrabajadorDetailsService trabajadorDetailsService;
+
 
 
     @GetMapping("/perfil")
     public String verPerfil(Model model, Principal principal) {
         String email = principal.getName();
 
-        // Ya lanza excepción internamente
+        // Primero verificar si es trabajador
+        try {
+            Trabajador trabajador = trabajadorDetailsService.findByCorreo(email);
+
+            // Redirigir según el rol del trabajador
+            if (trabajador.tieneRol(Rol.TRB_GESTOR)) {
+                return "redirect:/perfil_gestor";
+            } else if (trabajador.tieneRol(Rol.TRB_ANALISIS)) {
+                return "redirect:/perfil_analisis";
+            } else if (trabajador.tieneRol(Rol.TRB_ASESOR)) {
+                return "redirect:/perfil_asesor";
+            } else if (trabajador.tieneRol(Rol.TRABAJADOR)) {
+                return "redirect:/trabajador/dashboard";
+            }
+            // Si es trabajador pero no tiene rol específico, continuar como usuario normal
+
+        } catch (Exception e) {
+            // No es trabajador, continuar como usuario normal
+        }
+
+        // Lógica original para usuarios normales
         Usuario usuario = usuarioService.findByCorreoUser(email);
         List<Cita> citas = citaService.obtenerCitasPorUsuarioId(usuario.getId());
 
-        // List<Cita> citas = citaService.findByUsuarioId(usuario.getId());
         model.addAttribute("nombreUsuario", usuario.getNombreUser());
         model.addAttribute("citas", citas);
         return "usuario/perfil";

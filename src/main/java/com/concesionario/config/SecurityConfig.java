@@ -6,12 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+
+import java.util.Collection;
 
 @Configuration
 public class SecurityConfig {
@@ -56,7 +59,11 @@ public class SecurityConfig {
                                 "/auth/**"
 
                         ).permitAll()
-                        .requestMatchers("/admin/").hasAnyRole("ADMINISTRADOR", "TRABAJADOR")
+                        // ✅ NUEVO: Protección para roles específicos de trabajadores
+                        .requestMatchers("/perfil_gestor").hasRole("TRB_GESTOR")
+                        .requestMatchers("/perfil_analisis").hasRole("TRB_ANALISIS")
+                        .requestMatchers("/perfil_asesor").hasRole("TRB_ASESOR")
+                        .requestMatchers("/admin/**").hasAnyRole("ADMINISTRADOR", "TRABAJADOR", "TRB_GESTOR", "TRB_ANALISIS", "TRB_ASESOR")
                         .requestMatchers("/usuario/cita", "/usuario/cita/guardar").hasAnyRole("USUARIO", "ADMINISTRADOR", "TRABAJADOR")
                         .anyRequest().authenticated()
                 )
@@ -90,13 +97,23 @@ public class SecurityConfig {
     @Bean
     public AuthenticationSuccessHandler authenticationSuccessHandler() {
         return (request, response, authentication) -> {
-            if (authentication.getAuthorities().stream()
-                    .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMINISTRADOR"))) {
+            // ✅ NUEVA LÓGICA: Redirección inteligente por roles
+            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+            if (authorities.stream().anyMatch(a -> a.getAuthority().equals("ROLE_TRB_GESTOR"))) {
+                response.sendRedirect("/perfil_gestor");
+            }
+            else if (authorities.stream().anyMatch(a -> a.getAuthority().equals("ROLE_TRB_ANALISIS"))) {
+                response.sendRedirect("/perfil_analisis");
+            }
+            else if (authorities.stream().anyMatch(a -> a.getAuthority().equals("ROLE_TRB_ASESOR"))) {
+                response.sendRedirect("/perfil_asesor");
+            }
+            else if (authorities.stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMINISTRADOR"))) {
                 response.sendRedirect("/admin/Dashboard");
             }
-            else if (authentication.getAuthorities().stream()
-                    .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_TRABAJADOR"))) {
-                response.sendRedirect("/admin/Dashboard");
+            else if (authorities.stream().anyMatch(a -> a.getAuthority().equals("ROLE_TRABAJADOR"))) {
+                response.sendRedirect("/trabajador/dashboard");
             }
             else {
                 response.sendRedirect("/usuario/Inicio");

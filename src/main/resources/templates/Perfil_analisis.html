@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Analista - NextGenMotors</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <style>
+        /* ESTILOS BASE IDÉNTICOS AL EJEMPLO ORIGINAL */
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: #f6f7f8;
+            color: #1e293b;
+            margin: 0;
+            padding: 0;
+        }
+
+        .dark body {
+            background-color: #101922;
+            color: #e2e8f0;
+        }
+
+        /* COLORES ESPECÍFICOS PARA ANALISTA - PÚRPURA PROFESIONAL */
+        .analista-primary {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed) !important;
+        }
+        .analista-accent {
+            color: #8b5cf6 !important;
+        }
+        .analista-border {
+            border-color: #8b5cf6 !important;
+        }
+
+        /* Animaciones personalizadas */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 10px rgba(139, 92, 246, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.8); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .glowing {
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        .slide-in {
+            animation: slideIn 0.5s ease-out forwards;
+        }
+
+        /* Barra de navegación - IDÉNTICA AL ORIGINAL PERO CON COLORES ANALISTA */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .dark .navbar {
+            background: rgba(16, 25, 34, 0.9);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            font-weight: 800;
+            font-size: 1.5rem;
+        }
+
+        .logo-nexgen {
+            color: #8b5cf6; /* Color analista */
+        }
+
+        .logo-motors {
+            color: #1e293b;
+        }
+
+        .dark .logo-motors {
+            color: #f8fafc;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: #475569;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            text-decoration: none;
+        }
+
+        .dark .nav-links a {
+            color: #cbd5e1;
+        }
+
+        .nav-links a:hover {
+            color: #8b5cf6; /* Color analista */
+        }
+
+        /* Layout principal */
+        .main-container {
+            display: flex;
+            min-height: calc(100vh - 80px);
+        }
+
+        /* Barra lateral - IDÉNTICA AL ORIGINAL CON COLORES ANALISTA */
+        #sidebar {
+            width: 280px;
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            padding: 2rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .dark #sidebar {
+            background: #1e293b;
+            border-right: 1px solid #334155;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed); /* Color analista */
+            color: white;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            text-decoration: none;
+            box-shadow: 0 4px 10px rgba(139, 92, 246, 0.3);
+        }
+
+        .side-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .side-menu li {
+            margin-bottom: 0.5rem;
+        }
+
+        .side-menu a {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            color: #475569;
+            text-decoration: none;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .dark .side-menu a {
+            color: #cbd5e1;
+        }
+
+        .side-menu a:hover {
+            background: #f1f5f9;
+            color: #8b5cf6; /* Color analista */
+        }
+
+        .dark .side-menu a:hover {
+            background: #334155;
+        }
+
+        .side-menu a i {
+            margin-right: 0.75rem;
+            font-size: 1.25rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .side-menu .logout {
+            color: #ef4444;
+        }
+
+        .side-menu .logout:hover {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        .dark .side-menu .logout:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        /* Contenido principal */
+        main {
+            flex: 1;
+            padding: 2rem;
+            background: #f8fafc;
+        }
+
+        .dark main {
+            background: #0f172a;
+        }
+
+        main section {
+            display: none;
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .dark main section {
+            background: #1e293b;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+
+        main section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        main section#bienvenida {
+            display: block;
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed); /* Color analista */
+            color: white;
+        }
+
+        .dark main section#bienvenida {
+            background: linear-gradient(135deg, #8b5cf6, #1e293b);
+        }
+
+        section h1, section h2 {
+            margin-top: 0;
+            color: #1e293b;
+            font-weight: 700;
+        }
+
+        .dark section h1, .dark section h2 {
+            color: #f1f5f9;
+        }
+
+        section#bienvenida h1, section#bienvenida p {
+            color: white;
+        }
+
+        section#bienvenida h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        section#bienvenida p {
+            font-size: 1.125rem;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        /* Tarjetas de métricas para Analista */
+        .metric-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border-left: 4px solid #8b5cf6;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .dark .metric-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.15);
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #8b5cf6;
+            margin-bottom: 0.5rem;
+        }
+
+        .dark .metric-value {
+            color: #a78bfa;
+        }
+
+        .metric-label {
+            font-size: 0.875rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .dark .metric-label {
+            color: #94a3b8;
+        }
+
+        /* Tablas - IDÉNTICAS AL ORIGINAL CON COLORES ANALISTA */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        thead {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed); /* Color analista */
+            color: white;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .dark th, .dark td {
+            border-bottom: 1px solid #334155;
+        }
+
+        tbody tr {
+            transition: background 0.3s ease;
+        }
+
+        tbody tr:hover {
+            background: #f1f5f9;
+        }
+
+        .dark tbody tr:hover {
+            background: #334155;
+        }
+
+        /* Estados específicos para Analista */
+        .estado-optimo {
+            background: #ede9fe;
+            color: #5b21b6;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .dark .estado-optimo {
+            background: rgba(91, 33, 182, 0.2);
+            color: #a78bfa;
+        }
+
+        .estado-alerta {
+            background: #fef3c7;
+            color: #d97706;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .dark .estado-alerta {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        .estado-critico {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .dark .estado-critico {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        /* Botones para Analista */
+        .btn-analista {
+            display: inline-block;
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(139, 92, 246, 0.3);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-analista:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(139, 92, 246, 0.4);
+        }
+
+        /* NUEVOS ESTILOS RESPONSIVOS (iguales al original) */
+        .menu-toggle { display: none; }
+        .sidebar-mobile-overlay { display: none; }
+        .sidebar-mobile { display: none; }
+
+        @media (max-width: 1024px) {
+            .main-container { flex-direction: column; }
+            #sidebar { display: none; }
+            .nav-links { display: none; }
+            .menu-toggle { display: block; }
+        }
+
+        /* Grid para métricas */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        /* Contenedor de tabla responsiva */
+        .table-container {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#8b5cf6", // Color analista
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        display: ["Manrope", "sans-serif"],
+                    },
+                },
+            },
+        };
+    </script>
+</head>
+<body class="dark:bg-background-dark">
+<!-- Barra de navegación -->
+<nav class="navbar">
+    <div class="nav-logo">
+        <span class="logo-nexgen">NextGen</span>
+        <span class="logo-motors">Motors</span>
+    </div>
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="nav-links">
+        <a th:href="@{/usuario/Inicio}">Inicio</a>
+        <a href="/vehiculos">Nuestros Modelos</a>
+        <a th:href="@{/usuario/agendamiento}">Agendamiento online</a>
+    </div>
+</nav>
+
+<!-- Contenedor principal -->
+<div class="main-container">
+    <!-- Barra lateral -->
+    <section id="sidebar">
+        <a href="#" class="brand">
+            <i class="fas fa-chart-bar mr-2"></i>
+            <span th:text="${nombreUsuario}">Analista</span>
+        </a>
+        <ul class="side-menu top">
+            <li>
+                <a href="#bienvenida">
+                    <i class='fas fa-home'></i>
+                    <span class="text">Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="#analisis-datos">
+                    <i class='fas fa-chart-line'></i>
+                    <span class="text">Análisis de Datos</span>
+                </a>
+            </li>
+            <li>
+                <a href="#base-datos">
+                    <i class='fas fa-database'></i>
+                    <span class="text">Base de Datos</span>
+                </a>
+            </li>
+            <li>
+                <a href="#reportes">
+                    <i class='fas fa-chart-pie'></i>
+                    <span class="text">Reportes</span>
+                </a>
+            </li>
+            <li>
+                <a href="#tendencias">
+                    <i class='fas fa-trending-up'></i>
+                    <span class="text">Tendencias</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" onclick="confirmarCerrarSesion()" class="logout">
+                    <i class='fas fa-sign-out-alt'></i>
+                    <span class="text">Cerrar sesión</span>
+                </a>
+            </li>
+        </ul>
+    </section>
+
+    <!-- Contenido principal -->
+    <main>
+        <!-- Bienvenida ANALISTA -->
+        <section id="bienvenida" class="slide-in">
+            <h1>Bienvenido, <span th:text="${nombreUsuario}">Analista</span></h1>
+            <p>Panel especializado de análisis de datos y business intelligence. Utiliza herramientas avanzadas para extraer insights y generar reportes estratégicos para la toma de decisiones.</p>
+
+            <!-- Métricas principales -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value">15.2K</div>
+                    <div class="metric-label">Registros Procesados</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">94.7%</div>
+                    <div class="metric-label">Precisión Modelos</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">12.3%</div>
+                    <div class="metric-label">Crecimiento Trimestral</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">8.2/10</div>
+                    <div class="metric-label">Score Satisfacción</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Análisis de Datos -->
+        <section id="analisis-datos">
+            <h2>Análisis de Datos</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value">87.5%</div>
+                    <div class="metric-label">Eficiencia Ventas</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">23.4%</div>
+                    <div class="metric-label">Tasa Conversión</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">45</div>
+                    <div class="metric-label">Clientes Nuevos</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">156</div>
+                    <div class="metric-label">Transacciones Día</div>
+                </div>
+            </div>
+
+            <button class="btn-analista mt-4">
+                <i class="fas fa-download mr-2"></i>Exportar Análisis
+            </button>
+        </section>
+
+        <!-- Base de Datos -->
+        <section id="base-datos">
+            <h2>Base de Datos</h2>
+            <div class="table-container">
+                <table id="tabla-datos">
+                    <thead>
+                    <tr>
+                        <th>Conjunto de Datos</th>
+                        <th>Registros</th>
+                        <th>Última Actualización</th>
+                        <th>Calidad</th>
+                        <th>Estado</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Ventas 2024</td>
+                        <td>15,847</td>
+                        <td>24/10/2024</td>
+                        <td>98.2%</td>
+                        <td><span class="estado-optimo">Óptimo</span></td>
+                    </tr>
+                    <tr>
+                        <td>Clientes Activos</td>
+                        <td>8,452</td>
+                        <td>23/10/2024</td>
+                        <td>95.7%</td>
+                        <td><span class="estado-optimo">Óptimo</span></td>
+                    </tr>
+                    <tr>
+                        <td>Inventario</td>
+                        <td>3,214</td>
+                        <td>22/10/2024</td>
+                        <td>87.3%</td>
+                        <td><span class="estado-alerta">Revisión</span></td>
+                    </tr>
+                    <tr>
+                        <td>Marketing</td>
+                        <td>25,689</td>
+                        <td>21/10/2024</td>
+                        <td>76.8%</td>
+                        <td><span class="estado-critico">Crítico</span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Reportes -->
+        <section id="reportes">
+            <h2>Reportes Generados</h2>
+            <div class="space-y-4">
+                <div class="metric-card flex justify-between items-center">
+                    <div>
+                        <h3 class="font-bold text-lg">Reporte Trimestral Q4 2024</h3>
+                        <p class="metric-label">Análisis completo de ventas y tendencias</p>
+                        <p class="text-sm text-gray-500">Generado: 15/10/2024</p>
+                    </div>
+                    <button class="btn-analista">
+                        <i class="fas fa-download mr-2"></i>Descargar
+                    </button>
+                </div>
+                <div class="metric-card flex justify-between items-center">
+                    <div>
+                        <h3 class="font-bold text-lg">Análisis Predictivo Ventas</h3>
+                        <p class="metric-label">Proyecciones para próximo trimestre</p>
+                        <p class="text-sm text-gray-500">Generado: 10/10/2024</p>
+                    </div>
+                    <button class="btn-analista">
+                        <i class="fas fa-download mr-2"></i>Descargar
+                    </button>
+                </div>
+                <div class="metric-card flex justify-between items-center">
+                    <div>
+                        <h3 class="font-bold text-lg">Segmentación Clientes</h3>
+                        <p class="metric-label">Análisis de comportamiento y preferencias</p>
+                        <p class="text-sm text-gray-500">Generado: 05/10/2024</p>
+                    </div>
+                    <button class="btn-analista">
+                        <i class="fas fa-download mr-2"></i>Descargar
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tendencias -->
+        <section id="tendencias">
+            <h2>Tendencias del Mercado</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value text-green-600">+34.2%</div>
+                    <div class="metric-label">Crecimiento Vehículos Eléctricos</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value text-blue-600">+18.7%</div>
+                    <div class="metric-label">Preferencia SUV Compactos</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value text-purple-600">+12.3%</div>
+                    <div class="metric-label">Ventas Online</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value text-orange-600">+8.9%</div>
+                    <div class="metric-label">Financiamiento Solicitado</div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<!-- Scripts idénticos al original -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script>
+    // Navegación entre secciones - IDÉNTICO AL ORIGINAL
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('main section').forEach(section => {
+            section.style.display = 'none';
+        });
+        document.getElementById('bienvenida').style.display = 'block';
+
+        document.querySelectorAll('.side-menu a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (this.getAttribute('href').startsWith('#')) {
+                    e.preventDefault();
+                    document.querySelectorAll('main section').forEach(section => {
+                        section.style.display = 'none';
+                    });
+                    const targetId = this.getAttribute('href').substring(1);
+                    document.getElementById(targetId).style.display = 'block';
+                }
+            });
+        });
+
+        // Inicializar DataTable
+        if ($('#tabla-datos').length) {
+            $('#tabla-datos').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+                },
+                responsive: true,
+                autoWidth: false
+            });
+        }
+    });
+
+    function confirmarCerrarSesion() {
+        if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+            window.location.href = '/logout';
+        }
+    }
+</script>
+</body>
+</html>

@@ -18,15 +18,25 @@ public class TrabajadorDetailsService implements UserDetailsService {
         this.trabajadorRepository = trabajadorRepository;
     }
 
+    public Trabajador findByCorreo(String correo) {
+        return trabajadorRepository.findByCorreo(correo)
+                .orElseThrow(() -> new UsernameNotFoundException("Trabajador no encontrado"));
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Trabajador trabajador = trabajadorRepository.findByCorreo(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Trabajador no encontrado"));
 
+        // ✅ CORRECCIÓN: Convertir los roles reales del trabajador
+        String[] rolesArray = trabajador.getRoles().stream()
+                .map(rol -> rol.name()) // Convierte USUARIO -> "USUARIO", TRB_GESTOR -> "TRB_GESTOR"
+                .toArray(String[]::new);
+
         return User.builder()
                 .username(trabajador.getCorreo())
                 .password(trabajador.getPassword())
-                .roles("TRABAJADOR")
+                .roles(rolesArray) // ✅ Ahora asigna los roles reales
                 .build();
     }
 }
