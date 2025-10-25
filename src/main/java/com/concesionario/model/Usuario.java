@@ -18,34 +18,24 @@ public class Usuario {
 
     private String nombreUser;
     private String apellidoUser;
-    private String identificacionUser; // Cambiado a minúscula
-    private String correoUser; // Cambiado a minúscula
-    private String passwordUser; // Cambiado a minúscula
-
-
+    private String identificacionUser;
+    private String correoUser;
+    private String passwordUser;
     private Rol rol = Rol.USUARIO;
-
-
     private String resetPasswordToken;
     private LocalDateTime resetPasswordTokenExpiry;
 
+    // NUEVOS CAMPOS PARA PREDICCIÓN (se calcularán automáticamente)
+    private Integer cantidadCitas = 0;
+    private Integer antiguedadCuenta = 0;
+    private String estadoUltimaCita = "Pendiente";
+    private String interesVehiculo = "No";
+    private Integer tiempoEntreCitas = 0;
 
-    // Getters y Setters
-    public String getResetPasswordToken() {
-        return resetPasswordToken;
-    }
-
-    public void setResetPasswordToken(String resetPasswordToken) {
-        this.resetPasswordToken = resetPasswordToken;
-    }
-
-    public LocalDateTime getResetPasswordTokenExpiry() {
-        return resetPasswordTokenExpiry;
-    }
-
-    public void setResetPasswordTokenExpiry(LocalDateTime resetPasswordTokenExpiry) {
-        this.resetPasswordTokenExpiry = resetPasswordTokenExpiry;
-    }
+    // RESULTADO DE PREDICCIÓN
+    private String clientePotencial; // Si, No
+    private Double probabilidad;
+    private String observaciones;
 
     // Constructor vacío
     public Usuario() {
@@ -107,6 +97,7 @@ public class Usuario {
     public void setRol(Rol rol) {
         this.rol = rol;
     }
+
     public void setFechaCreacion(LocalDateTime fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
     }
@@ -115,5 +106,84 @@ public class Usuario {
         return fechaCreacion;
     }
 
-    
+    public String getResetPasswordToken() {
+        return resetPasswordToken;
+    }
+
+    public void setResetPasswordToken(String resetPasswordToken) {
+        this.resetPasswordToken = resetPasswordToken;
+    }
+
+    public LocalDateTime getResetPasswordTokenExpiry() {
+        return resetPasswordTokenExpiry;
+    }
+
+    public void setResetPasswordTokenExpiry(LocalDateTime resetPasswordTokenExpiry) {
+        this.resetPasswordTokenExpiry = resetPasswordTokenExpiry;
+    }
+
+    // NUEVOS GETTERS Y SETTERS PARA PREDICCIÓN
+    public Integer getCantidadCitas() {
+        return cantidadCitas;
+    }
+
+    public void setCantidadCitas(Integer cantidadCitas) {
+        this.cantidadCitas = cantidadCitas;
+    }
+
+    public Integer getAntiguedadCuenta() {
+        return antiguedadCuenta;
+    }
+
+    public void setAntiguedadCuenta(Integer antiguedadCuenta) {
+        this.antiguedadCuenta = antiguedadCuenta;
+    }
+
+    public String getEstadoUltimaCita() {
+        return estadoUltimaCita;
+    }
+
+    public void setEstadoUltimaCita(String estadoUltimaCita) {
+        this.estadoUltimaCita = estadoUltimaCita;
+    }
+
+    public String getInteresVehiculo() {
+        return interesVehiculo;
+    }
+
+    public void setInteresVehiculo(String interesVehiculo) {
+        this.interesVehiculo = interesVehiculo;
+    }
+
+    public Integer getTiempoEntreCitas() {
+        return tiempoEntreCitas;
+    }
+
+    public void setTiempoEntreCitas(Integer tiempoEntreCitas) {
+        this.tiempoEntreCitas = tiempoEntreCitas;
+    }
+
+    public String getClientePotencial() {
+        return clientePotencial;
+    }
+
+    public void setClientePotencial(String clientePotencial) {
+        this.clientePotencial = clientePotencial;
+    }
+
+    public Double getProbabilidad() {
+        return probabilidad;
+    }
+
+    public void setProbabilidad(Double probabilidad) {
+        this.probabilidad = probabilidad;
+    }
+
+    public String getObservaciones() {
+        return observaciones;
+    }
+
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
+    }
 }

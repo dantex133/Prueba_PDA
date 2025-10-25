@@ -73,7 +73,7 @@
                 <i class='bx bxs-log-out-circle'></i>
                 <span class="text">Logout</span>
             </a>
-            
+
         </li>
     </ul>
 </section>
@@ -229,6 +229,13 @@
                             <option value="Pick-Ups">Pick-Ups</option>
                             <option value="Camionetas">Camionetas</option>
                             <option value="Automóviles">Automóviles</option>
+                            <option value="Performance">Performance</option>
+                            <option value="Híbridos">Híbridos</option>
+                            <option value="Comerciales">Comerciales</option>
+                            <option value="SUVs">SUVs</option>
+                            <option value="Deportivos">Deportivos</option>
+                            <option value="Eléctricos">Eléctricos</option>
+                            <option value="Lujo">Lujo</option>
                         </select>
                         <input type="text" name="motor" placeholder="Motor" required>
                         <select name="transmision" required>
@@ -288,6 +295,10 @@
                                 <option value="Performance">Performance</option>
                                 <option value="Híbridos">Híbridos</option>
                                 <option value="Comerciales">Comerciales</option>
+                                <option value="SUVs">SUVs</option>
+                                <option value="Deportivos">Deportivos</option>
+                                <option value="Eléctricos">Eléctricos</option>
+                                <option value="Lujo">Lujo</option>
                             </select>
                         </div>
 
@@ -418,6 +429,13 @@
                             <option value="Pick-Ups">Pick-Ups</option>
                             <option value="Camionetas">Camionetas</option>
                             <option value="Automóviles">Automóviles</option>
+                            <option value="Performance">Performance</option>
+                            <option value="Híbridos">Híbridos</option>
+                            <option value="Comerciales">Comerciales</option>
+                            <option value="SUVs">SUVs</option>
+                            <option value="Deportivos">Deportivos</option>
+                            <option value="Eléctricos">Eléctricos</option>
+                            <option value="Lujo">Lujo</option>
                         </select>
                         <input type="text" name="motor" placeholder="Motor" required>
                         <select name="transmision" required>
@@ -519,7 +537,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                            
+
                         <tr th:each="cita : ${citas}" th:data-id="${cita.id}" th:classappend="${cita.estado}">
                             <td th:text="${cita.usuario != null ? cita.usuario.nombre + ' ' + cita.usuario.apellido : 'Sin usuario'}"></td>
                             <!-- <td th:text="${cita.usuario.nombre + ' ' + cita.usuario.apellido}"></td> -->
@@ -532,7 +550,7 @@
                             <span th:unless="${cita.vehiculo != null}" th:text="${cita.modelo}">N/A</span>
                             </td>
                             <!-- <td th:text="${cita.vehiculo != null ? cita.vehiculo.marca + ' ' + cita.vehiculo.modelo : 'Sin vehículo'}"></td> -->
-                            
+
                             <!-- <td th:text="${cita.vehiculo.marca + ' ' + cita.vehiculo.modelo}"></td> -->
 
                             <td th:text="${#temporals.format(cita.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></td>
@@ -568,7 +586,7 @@
                                     <button class="btn-accion btn-notas" th:data-id="${cita.id}">Notas</button>
                                 </div>
                             </td>
-                        </tr> 
+                        </tr>
                         </tbody>
                     </table>
 

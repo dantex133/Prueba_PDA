@@ -18,5 +18,6 @@ public interface CitaRepository extends MongoRepository<Cita, String> {
     // Page<Cita> findAllByOrderByFechaCreacionDesc(Pageable pageable);
     List<Cita> findByTrabajadorIdAndFechaCita(String trabajadorId, String fechaCita);
     List<Cita> findByTrabajadorIdAndFechaCitaAndHoraCita(String trabajadorId, String fechaCita, String horaCita);
+    List<Cita> findByUsuarioIdOrderByFechaCreacionAsc(String usuarioId);
 }
 

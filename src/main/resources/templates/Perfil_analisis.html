@@ -579,6 +579,9 @@
                     <div class="metric-label">Transacciones Día</div>
                 </div>
             </div>
+            <div>
+                <iframe title="concesionariotablero" width="600" height="373.5" src="https://app.powerbi.com/view?r=eyJrIjoiMDljY2M3NWUtMWM1ZS00NjFiLTljNjgtMDQ3NGRlNDVjZGJjIiwidCI6IjlkMTJiZjNmLWU0ZjYtNDdhYi05MTJmLTFhMmYwZmM0OGFhNCIsImMiOjR9" frameborder="0" allowFullScreen="true"></iframe>
+            </div>
 
             <button class="btn-analista mt-4">
                 <i class="fas fa-download mr-2"></i>Exportar Análisis
@@ -672,7 +675,9 @@
 
         <!-- Tendencias -->
         <section id="tendencias">
-            <h2>Tendencias del Mercado</h2>
+            <h2>🎯 Predicción de Clientes Potenciales</h2>
+
+            <!-- Métricas de Tendencias -->
             <div class="metrics-grid">
                 <div class="metric-card">
                     <div class="metric-value text-green-600">+34.2%</div>
@@ -689,6 +694,60 @@
                 <div class="metric-card">
                     <div class="metric-value text-orange-600">+8.9%</div>
                     <div class="metric-label">Financiamiento Solicitado</div>
+                </div>
+            </div>
+
+            <!-- Sistema de Predicción -->
+            <div class="mt-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold">Sistema de Predicción de Clientes</h3>
+                    <button id="cargarUsuariosBtn" class="btn-analista">
+                        <i class="fas fa-sync-alt mr-2"></i>Cargar Usuarios para Análisis
+                    </button>
+                </div>
+
+                <!-- Loading indicator -->
+                <div id="loadingIndicator" class="hidden text-center py-4">
+                    <i class="fas fa-spinner fa-spin text-2xl text-purple-600 mr-2"></i>
+                    <span>Cargando usuarios...</span>
+                </div>
+
+                <!-- Lista de Usuarios para Predicción -->
+                <div id="usuariosContainer" class="hidden">
+                    <div class="table-container">
+                        <table id="tablaUsuarios" class="table-auto w-full">
+                            <thead>
+                            <tr>
+                                <th class="px-4 py-2">Nombre</th>
+                                <th class="px-4 py-2">Email</th>
+                                <th class="px-4 py-2">Citas</th>
+                                <th class="px-4 py-2">Antigüedad</th>
+                                <th class="px-4 py-2">Estado de ultima cita</th>
+                                <th class="px-4 py-2">Interés</th>
+                                <th class="px-4 py-2">Tiempo entre Citas</th>
+                                <th class="px-4 py-2">Potencial</th>
+                                <th class="px-4 py-2">Acción</th>
+                            </tr>
+                            </thead>
+                            <tbody id="usuariosBody">
+                            <!-- Los usuarios se cargarán aquí dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Mensaje cuando no hay usuarios -->
+                <div id="emptyState" class="text-center py-8">
+                    <i class="fas fa-users text-4xl text-gray-400 mb-4"></i>
+                    <p class="text-gray-600 dark:text-gray-400">No hay usuarios cargados para análisis.</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-500 mt-2">
+                        Haz clic en "Cargar Usuarios para Análisis" para comenzar.
+                    </p>
+                </div>
+
+                <!-- Resultado de Predicción -->
+                <div id="resultadoPrediccion" class="metric-card mt-6 hidden">
+                    <!-- El resultado se cargará aquí dinámicamente -->
                 </div>
             </div>
         </section>
@@ -735,6 +794,151 @@
         if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
             window.location.href = '/logout';
         }
+    }
+</script>
+<script>
+    // Función para cargar usuarios
+    document.getElementById('cargarUsuariosBtn').addEventListener('click', function() {
+        cargarUsuarios();
+    });
+
+    function cargarUsuarios() {
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const usuariosContainer = document.getElementById('usuariosContainer');
+        const emptyState = document.getElementById('emptyState');
+
+        loadingIndicator.classList.remove('hidden');
+        usuariosContainer.classList.add('hidden');
+        emptyState.classList.add('hidden');
+
+        fetch('/cargar-usuarios')
+            .then(response => response.json())
+            .then(usuarios => {
+                loadingIndicator.classList.add('hidden');
+
+                if (usuarios && usuarios.length > 0) {
+                    mostrarUsuarios(usuarios);
+                    usuariosContainer.classList.remove('hidden');
+                } else {
+                    emptyState.classList.remove('hidden');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                loadingIndicator.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                alert('Error al cargar los usuarios');
+            });
+    }
+
+    function mostrarUsuarios(usuarios) {
+        const tbody = document.getElementById('usuariosBody');
+        tbody.innerHTML = '';
+
+        usuarios.forEach(usuario => {
+            const row = document.createElement('tr');
+            row.className = 'border-b dark:border-gray-700';
+            row.innerHTML = `
+                <td class="px-4 py-3">${usuario.nombreUser} ${usuario.apellidoUser}</td>
+                <td class="px-4 py-3">${usuario.correoUser}</td>
+                <td class="px-4 py-3 text-center">${usuario.cantidadCitas}</td>
+                <td class="px-4 py-3 text-center">${usuario.antiguedadCuenta} días</td>
+                <td class="px-4 py-3">
+                    <span class="${getEstadoClass(usuario.estadoUltimaCita)}">${usuario.estadoUltimaCita}</span>
+                </td>
+                <td class="px-4 py-3 text-center">
+                    ${usuario.interesVehiculo === 'Si' ?
+                        '<span class="estado-optimo">✅ SI</span>' :
+                        '<span class="estado-critico">❌ NO</span>'}
+                </td>
+                <td class="px-4 py-3 text-center">${usuario.tiempoEntreCitas} días</td>
+                <td class="px-4 py-3 text-center">
+                    ${getPotencialHtml(usuario.clientePotencial)}
+                </td>
+                <td class="px-4 py-3">
+                    <button onclick="predecirUsuario('${usuario.id}')" class="btn-analista py-2 px-3 text-sm">
+                        <i class="fas fa-bolt mr-1"></i>Predecir
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    function predecirUsuario(usuarioId) {
+        const formData = new FormData();
+        formData.append('usuarioId', usuarioId);
+
+        fetch('/predecir-usuario', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                mostrarResultadoPrediccion(data.usuario);
+                // Actualizar la fila en la tabla
+                cargarUsuarios(); // Recargar para ver los cambios
+            } else {
+                alert('Error: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al realizar la predicción');
+        });
+    }
+
+    function mostrarResultadoPrediccion(usuario) {
+        const resultadoDiv = document.getElementById('resultadoPrediccion');
+        resultadoDiv.innerHTML = `
+            <h3 class="text-lg font-bold mb-4">
+                <i class="fas fa-chart-line mr-2"></i>
+                Resultado de Predicción para: ${usuario.nombreUser} ${usuario.apellidoUser}
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div class="text-center">
+                    <div class="text-2xl font-bold ${usuario.clientePotencial === 'Si' ? 'text-green-600' : 'text-red-600'}">
+                        ${usuario.clientePotencial}
+                    </div>
+                    <div class="text-sm text-gray-600">Cliente Potencial</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-purple-600">
+                        ${usuario.probabilidad ? usuario.probabilidad.toFixed(1) + '%' : 'N/A'}
+                    </div>
+                    <div class="text-sm text-gray-600">Probabilidad</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-lg font-semibold">${usuario.observaciones || 'Sin observaciones'}</div>
+                    <div class="text-sm text-gray-600">Recomendación</div>
+                </div>
+            </div>
+            <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                <h4 class="font-bold mb-2">Datos utilizados en el análisis:</h4>
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-2 text-sm">
+                    <div><strong>Citas:</strong> ${usuario.cantidadCitas}</div>
+                    <div><strong>Antigüedad:</strong> ${usuario.antiguedadCuenta} días</div>
+                    <div><strong>Estado:</strong> ${usuario.estadoUltimaCita}</div>
+                    <div><strong>Interés:</strong> ${usuario.interesVehiculo}</div>
+                    <div><strong>Tiempo entre citas:</strong> ${usuario.tiempoEntreCitas} días</div>
+                </div>
+            </div>
+        `;
+        resultadoDiv.classList.remove('hidden');
+    }
+
+    // Funciones auxiliares
+    function getEstadoClass(estado) {
+        if (estado === 'Aprobada') return 'estado-optimo';
+        if (estado === 'Pendiente') return 'estado-alerta';
+        return 'estado-critico';
+    }
+
+    function getPotencialHtml(potencial) {
+        if (potencial === 'Si') return '<span class="estado-optimo">✅ POTENCIAL</span>';
+        if (potencial === 'No') return '<span class="estado-critico">❌ NO POTENCIAL</span>';
+        return '<span class="estado-alerta">⏳ SIN ANALIZAR</span>';
     }
 </script>
 </body>

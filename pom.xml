@@ -33,6 +33,12 @@
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>nz.ac.waikato.cms.weka</groupId>
+            <artifactId>weka-stable</artifactId>
+            <version>3.8.6</version>
+        </dependency>
+
         <!-- Web y Thymeleaf -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

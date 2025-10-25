@@ -1,18 +1,15 @@
 package com.concesionario.service;
 
-
-
 import com.concesionario.model.Rol;
 import com.concesionario.model.Usuario;
-
-// import com.concesionario.repository.TrabajadoresRepository;
-
 import com.concesionario.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UsuarioService {
@@ -20,25 +17,19 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    // @Autowired
-    // private TrabajadoresRepository trabajadoresRepository;
-
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository usuarioRepository,
-                          
-                          PasswordEncoder passwordEncoder) {
+    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
-    // @Transactional
+    // MÉTODOS EXISTENTES
     public void registrarUsuario(String nombre, String apellido,
                                  String email, String identificacion,
                                  String password, Rol rol) {
 
-        // Encriptar la contraseña una sola vez
         String passwordEncriptado = passwordEncoder.encode(password);
 
         Usuario usuario = new Usuario();
@@ -52,23 +43,39 @@ public class UsuarioService {
 
         usuarioRepository.save(usuario);
     }
+
     public long contarUsuarios() {
         return usuarioRepository.count();
     }
-// ||trabajadoresRepository.existsByCorreoTAM(correo);
+
     public boolean existeCorreoEnCualquierTabla(String correo) {
         return usuarioRepository.existsByCorreoUser(correo);
-                
     }
-//  ||trabajadoresRepository.existsByIdentificacion(identificacion);
+
     public boolean existeIdentificacionEnCualquierTabla(String identificacion) {
         return usuarioRepository.existsByIdentificacionUser(identificacion);
-                
     }
-    
+
     public Usuario findByCorreoUser(String correo) {
         return usuarioRepository.findByCorreoUser(correo)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con el correo: " + correo));
     }
 
+    // NUEVOS MÉTODOS NECESARIOS PARA PREDICCIÓN
+    public List<Usuario> findAll() {
+        return usuarioRepository.findAll();
+    }
+
+    public Usuario findById(String id) {
+        Optional<Usuario> usuario = usuarioRepository.findById(id);
+        return usuario.orElse(null);
+    }
+
+    public Usuario save(Usuario usuario) {
+        return usuarioRepository.save(usuario);
+    }
+
+    public Optional<Usuario> findByResetPasswordToken(String token) {
+        return usuarioRepository.findByResetPasswordToken(token);
+    }
 }
