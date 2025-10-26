@@ -1,9 +1,14 @@
 package com.concesionario.controller;
 
 import com.concesionario.model.Usuario;
+import com.concesionario.model.Administrador;
 import com.concesionario.model.Rol;
 import com.concesionario.repository.UsuarioRepository;
+import com.concesionario.repository.AdministradorRepository;
+import com.concesionario.repository.TrabajadorRepository;
 import com.concesionario.service.UsuarioService;
+import com.concesionario.service.AdministradorService;
+import com.concesionario.service.ValidacionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,23 +16,34 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @Controller
 public class AuthController {
+
+    @Autowired
+    private AdministradorRepository administradorRepository;
 
     @Autowired
     private UsuarioRepository usuarioRepository;
 
     @Autowired
+    private TrabajadorRepository trabajadorRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private ValidacionService validacionService;
 
     private final UsuarioService usuarioService;
+    private final AdministradorService administradorService;
 
-
-    public AuthController(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder, UsuarioService usuarioService) {
+    public AuthController(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder, UsuarioService usuarioService, AdministradorService administradorService) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
         this.usuarioService = usuarioService;
+        this.administradorService = administradorService;
     }
 
     @GetMapping("/login")
@@ -53,15 +69,13 @@ public class AuthController {
             Model model) {
 
 
-        // Validar correo existente
-        if (usuarioRepository.existsByCorreoUser(email)) {
-            model.addAttribute("error", "El correo ya está registrado");
-            return "usuario/loginup";
-        }
-
-        // Validar identificación existente
-        if (usuarioRepository.existsByIdentificacionUser(identificacion)) {
-            model.addAttribute("error", "La identificación ya está registrada");
+        Optional<String> errorValidacion = validacionService.validarCorreoEIdentificacion(email, identificacion);
+        if (errorValidacion.isPresent()) {
+            model.addAttribute("error", errorValidacion.get());
+            model.addAttribute("nombre", nombre);
+            model.addAttribute("apellido", apellido);
+            model.addAttribute("email", email);
+            model.addAttribute("identificacion", identificacion);
             return "usuario/loginup";
         }
 
@@ -77,12 +91,12 @@ public class AuthController {
             return "redirect:/login?success=Registro+exitoso";
 
         } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
+            model.addAttribute("error", "Error durante el registro: " + e.getMessage());
             model.addAttribute("nombre", nombre);
             model.addAttribute("apellido", apellido);
             model.addAttribute("email", email);
             model.addAttribute("identificacion", identificacion);
-            return "redirect:/login?success=true";
+            return "usuario/loginup";
         }
     }
 
@@ -100,24 +114,34 @@ public class AuthController {
             @RequestParam String password,
             Model model) {
 
-        if (usuarioRepository.existsByCorreoUser(email)) {
-            model.addAttribute("error", "El correo ya está registrado");
+
+        Optional<String> errorValidacion = validacionService.validarCorreoEIdentificacion(email, identificacion);
+        if (errorValidacion.isPresent()) {
+            model.addAttribute("error", errorValidacion.get());
+            model.addAttribute("nombre", nombre);
+            model.addAttribute("apellido", apellido);
+            model.addAttribute("email", email);
+            model.addAttribute("identificacion", identificacion);
             return "usuario/registro-admin";
         }
 
-        Usuario admin = new Usuario();
-        admin.setNombreUser(nombre);
-        admin.setApellidoUser(apellido);
-        admin.setIdentificacionUser(identificacion);
-        admin.setCorreoUser(email);
-        admin.setPasswordUser(passwordEncoder.encode(password));
-        admin.setRol(Rol.ADMINISTRADOR); // Rol específico para admin
+        try {
+            administradorService.registrarAdministrador(
+                    nombre,
+                    apellido,
+                    identificacion,
+                    email,
+                    password
+            );
+            return "redirect:/login?adminRegistrado=true";
 
-
-        usuarioRepository.save(admin);
-
-        return "redirect:/login?adminRegistrado=true";
+        } catch (Exception e) {
+            model.addAttribute("error", "Error durante el registro: " + e.getMessage());
+            model.addAttribute("nombre", nombre);
+            model.addAttribute("apellido", apellido);
+            model.addAttribute("email", email);
+            model.addAttribute("identificacion", identificacion);
+            return "usuario/registro-admin";
+        }
     }
-
 }
-
