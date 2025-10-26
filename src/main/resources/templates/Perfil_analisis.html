@@ -560,25 +560,7 @@
 
         <!-- Análisis de Datos -->
         <section id="analisis-datos">
-            <h2>Análisis de Datos</h2>
-            <div class="metrics-grid">
-                <div class="metric-card">
-                    <div class="metric-value">87.5%</div>
-                    <div class="metric-label">Eficiencia Ventas</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-value">23.4%</div>
-                    <div class="metric-label">Tasa Conversión</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-value">45</div>
-                    <div class="metric-label">Clientes Nuevos</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-value">156</div>
-                    <div class="metric-label">Transacciones Día</div>
-                </div>
-            </div>
+
             <div>
                 <iframe title="concesionariotablero" width="600" height="373.5" src="https://app.powerbi.com/view?r=eyJrIjoiMDljY2M3NWUtMWM1ZS00NjFiLTljNjgtMDQ3NGRlNDVjZGJjIiwidCI6IjlkMTJiZjNmLWU0ZjYtNDdhYi05MTJmLTFhMmYwZmM0OGFhNCIsImMiOjR9" frameborder="0" allowFullScreen="true"></iframe>
             </div>
@@ -590,49 +572,49 @@
 
         <!-- Base de Datos -->
         <section id="base-datos">
-            <h2>Base de Datos</h2>
-            <div class="table-container">
-                <table id="tabla-datos">
-                    <thead>
-                    <tr>
-                        <th>Conjunto de Datos</th>
-                        <th>Registros</th>
-                        <th>Última Actualización</th>
-                        <th>Calidad</th>
-                        <th>Estado</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>Ventas 2024</td>
-                        <td>15,847</td>
-                        <td>24/10/2024</td>
-                        <td>98.2%</td>
-                        <td><span class="estado-optimo">Óptimo</span></td>
-                    </tr>
-                    <tr>
-                        <td>Clientes Activos</td>
-                        <td>8,452</td>
-                        <td>23/10/2024</td>
-                        <td>95.7%</td>
-                        <td><span class="estado-optimo">Óptimo</span></td>
-                    </tr>
-                    <tr>
-                        <td>Inventario</td>
-                        <td>3,214</td>
-                        <td>22/10/2024</td>
-                        <td>87.3%</td>
-                        <td><span class="estado-alerta">Revisión</span></td>
-                    </tr>
-                    <tr>
-                        <td>Marketing</td>
-                        <td>25,689</td>
-                        <td>21/10/2024</td>
-                        <td>76.8%</td>
-                        <td><span class="estado-critico">Crítico</span></td>
-                    </tr>
-                    </tbody>
-                </table>
+            <h2>Base de Datos - Estadísticas del Sistema</h2>
+
+            <!-- Grid de métricas con iconos -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="metric-content">
+                        <div class="metric-value" th:text="${totalClientes}">0</div>
+                        <div class="metric-label">Clientes Registrados</div>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-car"></i>
+                    </div>
+                    <div class="metric-content">
+                        <div class="metric-value" th:text="${totalVehiculos}">0</div>
+                        <div class="metric-label">Vehículos en Sistema</div>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="metric-content">
+                        <div class="metric-value" th:text="${totalCitas}">0</div>
+                        <div class="metric-label">Citas Programadas</div>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <div class="metric-content">
+                        <div class="metric-value" th:text="${totalTrabajadores}">0</div>
+                        <div class="metric-label">Trabajadores Activos</div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -677,25 +659,7 @@
         <section id="tendencias">
             <h2>🎯 Predicción de Clientes Potenciales</h2>
 
-            <!-- Métricas de Tendencias -->
-            <div class="metrics-grid">
-                <div class="metric-card">
-                    <div class="metric-value text-green-600">+34.2%</div>
-                    <div class="metric-label">Crecimiento Vehículos Eléctricos</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-value text-blue-600">+18.7%</div>
-                    <div class="metric-label">Preferencia SUV Compactos</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-value text-purple-600">+12.3%</div>
-                    <div class="metric-label">Ventas Online</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-value text-orange-600">+8.9%</div>
-                    <div class="metric-label">Financiamiento Solicitado</div>
-                </div>
-            </div>
+
 
             <!-- Sistema de Predicción -->
             <div class="mt-8">
