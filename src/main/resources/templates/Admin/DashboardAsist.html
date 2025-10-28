@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AdminHub - NexGen Motors</title>
+    <title>AsesorUser - NexGen Motors</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
@@ -209,7 +209,6 @@
         }
 
          /* Estilos para botones de gestión de citas */
-/* Estilos mejorados para botones de gestión de citas */
 .btn-gestion-cita {
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
@@ -242,19 +241,19 @@
 }
 
 .btn-rechazar {
-    background: #ef4444 !important; /* Rojo */
+    background: #ef4444 !important; 
 }
 
 .btn-asignar-fecha {
-    background: #3b82f6 !important; /* Azul */
+    background: #3b82f6 !important; 
 }
 
 .btn-pendiente {
-    background: #f59e0b !important; /* Naranja */
+    background: #f59e0b !important; 
 }
 
 .btn-notas {
-    background: #6b7280 !important; /* Gris */
+    background: #6b7280 !important; 
 }
 
 /* Estados hover (ligeramente más oscuros) */
@@ -593,15 +592,12 @@
     <div class="sidebar">
         <div class="p-6 border-b border-gray-700">
             <div class="flex items-center gap-3">
-                <!-- <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-primary to-blue-800 flex items-center justify-center">
-                    <i class='bx bxs-dashboard text-white text-xl'></i>
-                </div>-->
                 <div class="h-20 w-20 rounded-lg flex items-center justify-center overflow-hidden">
                     <img src="https://res.cloudinary.com/dktrgjt6b/image/upload/v1760657181/NEXTGEN_MOTORS_-_LOGO_ncwuwb.png" alt="NextGenMotors" class="h-full w-full object-contain">
                 </div>
 
                 <div>
-                    <span class="text-white font-bold text-lg sidebar-text">AdminUser</span>
+                    <span class="text-white font-bold text-lg sidebar-text">Asesor</span>
                     <p class="text-gray-400 text-sm sidebar-text">NexGen Motors</p>
                 </div>
             </div>
@@ -1435,8 +1431,7 @@
     });
 
 
-  // Gestión de citas - Lógica corregida según especificaciones
-// Gestión de citas - Lógica definitiva corregida
+  // Gestión de citas 
 class GestorCitas {
     constructor() {
         this.citasEstado = new Map(); // Almacena el estado de cada cita
@@ -1812,250 +1807,6 @@ document.addEventListener('DOMContentLoaded', function() {
     window.gestorCitas = new GestorCitas();
 });
 
-
-
-
-// Función para crear el calendario (versión simplificada y corregida)
-function crearCalendario(citaId) {
-    // Crear overlay
-    const overlay = document.createElement('div');
-    overlay.className = 'calendario-overlay';
-    overlay.style.display = 'block';
-    
-    // Crear contenedor del calendario
-    const calendario = document.createElement('div');
-    calendario.className = 'calendario-container';
-    calendario.id = `calendario-${citaId}`;
-    
-    // Obtener fecha actual
-    const hoy = new Date();
-    let añoActual = hoy.getFullYear();
-    let mesActual = hoy.getMonth();
-    
-    // Función para generar el calendario
-    function generarCalendario(año, mes) {
-        const primerDia = new Date(año, mes, 1);
-        const ultimoDia = new Date(año, mes + 1, 0);
-        const diasEnMes = ultimoDia.getDate();
-        const primerDiaSemana = primerDia.getDay();
-        
-        // Header del calendario
-        const header = document.createElement('div');
-        header.className = 'calendario-header';
-        
-        const nombreMes = primerDia.toLocaleString('es', { month: 'long', year: 'numeric' });
-        header.innerHTML = `
-            <button class="btn-mes btn-mes-anterior" type="button">
-                <i class='bx bx-chevron-left'></i>
-            </button>
-            <span class="calendario-mes">${nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1)}</span>
-            <button class="btn-mes btn-mes-siguiente" type="button">
-                <i class='bx bx-chevron-right'></i>
-            </button>
-        `;
-        
-        // Grid de días de la semana
-        const grid = document.createElement('div');
-        grid.className = 'calendario-grid';
-        
-        // Días de la semana
-        const diasSemana = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-        diasSemana.forEach(dia => {
-            const diaElemento = document.createElement('div');
-            diaElemento.className = 'dia-semana';
-            diaElemento.textContent = dia;
-            grid.appendChild(diaElemento);
-        });
-        
-        // Días vacíos al inicio
-        for (let i = 0; i < primerDiaSemana; i++) {
-            const diaVacio = document.createElement('div');
-            diaVacio.className = 'dia-calendario disabled';
-            grid.appendChild(diaVacio);
-        }
-        
-        // Días del mes
-        for (let dia = 1; dia <= diasEnMes; dia++) {
-            const diaElemento = document.createElement('div');
-            diaElemento.className = 'dia-calendario';
-            diaElemento.textContent = dia;
-            diaElemento.dataset.dia = dia;
-            diaElemento.dataset.mes = mes + 1;
-            diaElemento.dataset.año = año;
-            
-            const fechaDia = new Date(año, mes, dia);
-            
-            // Marcar día actual
-            if (dia === hoy.getDate() && mes === hoy.getMonth() && año === hoy.getFullYear()) {
-                diaElemento.classList.add('hoy');
-            }
-            
-            // Deshabilitar días pasados
-            if (fechaDia < hoy && !(dia === hoy.getDate() && mes === hoy.getMonth() && año === hoy.getFullYear())) {
-                diaElemento.classList.add('disabled');
-                diaElemento.style.cursor = 'not-allowed';
-            } else {
-                diaElemento.addEventListener('click', function() {
-                    // Remover selección de otros días
-                    grid.querySelectorAll('.dia-calendario.selected').forEach(d => {
-                        d.classList.remove('selected');
-                    });
-                    
-                    // Seleccionar este día
-                    this.classList.add('selected');
-                    
-                    // Mostrar selector de hora
-                    mostrarSelectorHora(this, calendario, citaId);
-                });
-            }
-            
-            grid.appendChild(diaElemento);
-        }
-        
-        return { header, grid };
-    }
-    
-    // Generar calendario inicial
-    const { header, grid } = generarCalendario(añoActual, mesActual);
-    
-    // Selector de hora (inicialmente oculto)
-    const selectorHora = document.createElement('div');
-    selectorHora.className = 'hora-selector';
-    selectorHora.style.display = 'none';
-    selectorHora.innerHTML = `
-        <label for="hora-${citaId}">Hora:</label>
-        <select id="hora-${citaId}" class="hora">
-            <option value="08:00">8:00 AM</option>
-            <option value="09:00">9:00 AM</option>
-            <option value="10:00">10:00 AM</option>
-            <option value="11:00">11:00 AM</option>
-            <option value="12:00">12:00 PM</option>
-            <option value="13:00">1:00 PM</option>
-            <option value="14:00">2:00 PM</option>
-            <option value="15:00">3:00 PM</option>
-            <option value="16:00">4:00 PM</option>
-            <option value="17:00">5:00 PM</option>
-        </select>
-        <button class="btn-confirmar-fecha" type="button">Confirmar Fecha</button>
-    `;
-    
-    // Ensamblar calendario
-    calendario.appendChild(header);
-    calendario.appendChild(grid);
-    calendario.appendChild(selectorHora);
-    
-    // Añadir al documento
-    document.body.appendChild(overlay);
-    document.body.appendChild(calendario);
-    
-    // Event listeners para navegación entre meses
-    const btnAnterior = header.querySelector('.btn-mes-anterior');
-    const btnSiguiente = header.querySelector('.btn-mes-siguiente');
-    
-    btnAnterior.addEventListener('click', function() {
-        mesActual--;
-        if (mesActual < 0) {
-            mesActual = 11;
-            añoActual--;
-        }
-        actualizarCalendario();
-    });
-    
-    btnSiguiente.addEventListener('click', function() {
-        mesActual++;
-        if (mesActual > 11) {
-            mesActual = 0;
-            añoActual++;
-        }
-        actualizarCalendario();
-    });
-    
-    // Cerrar calendario al hacer clic en el overlay
-    overlay.addEventListener('click', function() {
-        cerrarCalendario(calendario, overlay);
-    });
-    
-    function actualizarCalendario() {
-        const { header: newHeader, grid: newGrid } = generarCalendario(añoActual, mesActual);
-        
-        // Reemplazar header y grid
-        calendario.replaceChild(newHeader, header);
-        calendario.replaceChild(newGrid, grid);
-        
-        // Re-aplicar event listeners a los botones de mes
-        newHeader.querySelector('.btn-mes-anterior').addEventListener('click', function() {
-            mesActual--;
-            if (mesActual < 0) {
-                mesActual = 11;
-                añoActual--;
-            }
-            actualizarCalendario();
-        });
-        
-        newHeader.querySelector('.btn-mes-siguiente').addEventListener('click', function() {
-            mesActual++;
-            if (mesActual > 11) {
-                mesActual = 0;
-                añoActual++;
-            }
-            actualizarCalendario();
-        });
-        
-        // Ocultar selector de hora al cambiar de mes
-        selectorHora.style.display = 'none';
-    }
-}
-
-function mostrarSelectorHora(diaElemento, calendario, citaId) {
-    const selectorHora = calendario.querySelector('.hora-selector');
-    selectorHora.style.display = 'flex';
-    
-    // Configurar botón de confirmación
-    const btnConfirmar = selectorHora.querySelector('.btn-confirmar-fecha');
-    btnConfirmar.onclick = function() {
-        const hora = selectorHora.querySelector('.hora').value;
-        const dia = diaElemento.dataset.dia;
-        const mes = diaElemento.dataset.mes;
-        const año = diaElemento.dataset.año;
-        
-        // Formatear fecha
-        const fecha = new Date(año, mes - 1, dia, hora.split(':')[0]);
-        const fechaFormateada = fecha.toLocaleString('es', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: true
-        });
-        
-        // Actualizar celda de fecha asignada en la tabla
-        const fila = document.querySelector(`tr[th\\:data-id="${citaId}"]`);
-        if (fila) {
-            const celdaFecha = fila.querySelector('td:nth-last-child(3)');
-            celdaFecha.querySelector('span').textContent = fechaFormateada;
-        }
-        
-        // Cerrar calendario
-        const overlay = document.querySelector('.calendario-overlay');
-        cerrarCalendario(calendario, overlay);
-        
-        // Aquí enviarías la fecha al servidor
-        console.log('Fecha asignada para cita', citaId, ':', fechaFormateada);
-        
-        // Mostrar mensaje de confirmación
-        mostrarMensajeExito('Fecha asignada correctamente');
-    };
-}
-
-function cerrarCalendario(calendario, overlay) {
-    if (calendario && calendario.parentNode) {
-        calendario.parentNode.removeChild(calendario);
-    }
-    if (overlay && overlay.parentNode) {
-        overlay.parentNode.removeChild(overlay);
-    }
-}
 </script>
 </body>
 </html>
