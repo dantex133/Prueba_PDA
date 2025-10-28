@@ -1,0 +1,2020 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdminHub - NexGen Motors</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings:
+                "FILL" 0,
+                "wght" 400,
+                "GRAD" 0,
+                "opsz" 24;
+        }
+
+        /* Estilos personalizados para el dashboard */
+        .sidebar {
+            width: 280px;
+            min-height: 100vh;
+            background: #1f2937;
+            transition: all 0.3s ease;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            transform: translateX(0);
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .sidebar.collapsed .sidebar-text {
+            display: none;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            transition: all 0.3s ease;
+            min-height: 100vh;
+            background: #f8fafc;
+        }
+
+        .main-content.expanded {
+            margin-left: 80px;
+        }
+
+        .mobile-menu-open .sidebar {
+            transform: translateX(0);
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+            border: 1px solid #e5e7eb;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            border: 1px solid #e5e7eb;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 2rem;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0f66bd 0%, #0a4d8c 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(15, 102, 189, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+            transform: translateY(-1px);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.875rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.75rem;
+            background-color: white;
+            transition: all 0.3s ease;
+            font-size: 0.875rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #0f66bd;
+            box-shadow: 0 0 0 3px rgba(15, 102, 189, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border-radius: 9999px;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            box-shadow: 0 2px 4px rgba(220, 38, 38, 0.4);
+        }
+
+        .sidebar-link {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: #0f66bd;
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-link.active::before {
+            transform: scaleY(1);
+        }
+
+         /* Estilos para botones de gestión de citas */
+/* Estilos mejorados para botones de gestión de citas */
+.btn-gestion-cita {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.875rem;
+    color: white;
+    white-space: nowrap;
+    flex: 1;
+    min-width: 100px;
+    border: 2px solid transparent;
+}
+
+.btn-gestion-cita:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.btn-gestion-cita.active {
+    transform: translateY(0);
+    border-color: white;
+    box-shadow: 0 0 0 2px white, 0 0 0 4px currentColor;
+}
+
+/* Colores base de los botones (NO cambian) */
+.btn-aprobar {
+    background: #10b981 !important; /* Verde */
+}
+
+.btn-rechazar {
+    background: #ef4444 !important; /* Rojo */
+}
+
+.btn-asignar-fecha {
+    background: #3b82f6 !important; /* Azul */
+}
+
+.btn-pendiente {
+    background: #f59e0b !important; /* Naranja */
+}
+
+.btn-notas {
+    background: #6b7280 !important; /* Gris */
+}
+
+/* Estados hover (ligeramente más oscuros) */
+.btn-aprobar:hover {
+    background: #059669 !important;
+}
+
+.btn-rechazar:hover {
+    background: #dc2626 !important;
+}
+
+.btn-asignar-fecha:hover {
+    background: #2563eb !important;
+}
+
+.btn-pendiente:hover {
+    background: #d97706 !important;
+}
+
+.btn-notas:hover {
+    background: #4b5563 !important;
+}
+
+/* Responsive para botones */
+@media (max-width: 1024px) {
+    .btn-gestion-cita {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.8rem;
+        min-width: 80px;
+    }
+}
+/* Estilos para el calendario de asignación de fecha */
+.calendario-container {
+    position: fixed;
+    z-index: 9999;
+    background: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    border: 1px solid #e5e7eb;
+    padding: 1.5rem;
+    margin-top: 0.5rem;
+    min-width: 320px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.dark .calendario-container {
+    background: #1f2937;
+    border-color: #374151;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.calendario-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.dark .calendario-header {
+    border-bottom-color: #374151;
+}
+
+.calendario-mes {
+    font-weight: 600;
+    font-size: 1.125rem;
+    color: #111827;
+}
+
+.dark .calendario-mes {
+    color: #f9fafb;
+}
+
+.btn-mes {
+    background: #f3f4f6;
+    border: none;
+    border-radius: 0.375rem;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #374151;
+}
+
+.dark .btn-mes {
+    background: #374151;
+    color: #d1d5db;
+}
+
+.btn-mes:hover {
+    background: #e5e7eb;
+}
+
+.dark .btn-mes:hover {
+    background: #4b5563;
+}
+
+.calendario-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.dia-semana {
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.75rem;
+    color: #6b7280;
+    padding: 0.5rem;
+    text-transform: uppercase;
+}
+
+.dark .dia-semana {
+    color: #9ca3af;
+}
+
+.dia-calendario {
+    text-align: center;
+    padding: 0.75rem 0.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+    border: 1px solid transparent;
+}
+
+.dia-calendario:hover {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+}
+
+.dark .dia-calendario:hover {
+    background: #374151;
+    border-color: #4b5563;
+}
+
+.dia-calendario.selected {
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+}
+
+.dia-calendario.disabled {
+    color: #d1d5db;
+    cursor: not-allowed;
+    background: #f9fafb;
+}
+
+.dark .dia-calendario.disabled {
+    color: #4b5563;
+    background: #111827;
+}
+
+.dia-calendario.hoy {
+    border-color: #3b82f6;
+    background: #eff6ff;
+    color: #1e40af;
+}
+
+.dark .dia-calendario.hoy {
+    background: #1e3a8a;
+    color: #dbeafe;
+}
+
+.hora-selector {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.dark .hora-selector {
+    border-top-color: #374151;
+}
+
+.hora-selector label {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #374151;
+    white-space: nowrap;
+}
+
+.dark .hora-selector label {
+    color: #d1d5db;
+}
+
+.hora-selector select {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    border: 1px solid #d1d5db;
+    background: white;
+    font-size: 0.875rem;
+    flex: 1;
+}
+
+.dark .hora-selector select {
+    background: #374151;
+    border-color: #4b5563;
+    color: #e5e7eb;
+}
+
+.btn-confirmar-fecha {
+    background: #10b981;
+    color: white;
+    border: none;
+    border-radius: 0.375rem;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.btn-confirmar-fecha:hover {
+    background: #059669;
+    transform: translateY(-1px);
+}
+
+/* Overlay para el calendario */
+.calendario-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 9998;
+    display: none;
+}
+
+
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-open .sidebar {
+                transform: translateX(0);
+            }
+
+            .stat-card {
+                padding: 1rem;
+            }
+
+            .modal-content {
+                margin: 5% auto;
+                width: 95%;
+                padding: 1.5rem;
+            }
+        }
+
+        /* Modo oscuro */
+        .dark .sidebar {
+            background: #111827;
+        }
+
+        .dark .main-content {
+            background: #101922;
+        }
+
+        .dark .stat-card,
+        .dark .table-container,
+        .dark .modal-content {
+            background: #1f2937;
+            border-color: #374151;
+            color: #e5e7eb;
+        }
+
+        .dark .form-group label {
+            color: #d1d5db;
+        }
+
+        .dark .form-group input,
+        .dark .form-group select,
+        .dark .form-group textarea {
+            background: #374151;
+            border-color: #4b5563;
+            color: #e5e7eb;
+        }
+
+        .dark .form-group input:focus,
+        .dark .form-group select:focus,
+        .dark .form-group textarea:focus {
+            border-color: #0f66bd;
+        }
+
+        .dark .nav-toggle {
+            color: #d1d5db;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#0f66bd",
+                        "background-light": "#f8fafc",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        display: ["Manrope", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        lg: "0.75rem",
+                        xl: "1rem",
+                        full: "9999px",
+                    },
+                },
+            },
+        };
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+<div class="flex">
+    <!-- ===================== SIDEBAR ===================== -->
+    <div class="sidebar">
+        <div class="p-6 border-b border-gray-700">
+            <div class="flex items-center gap-3">
+                <!-- <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-primary to-blue-800 flex items-center justify-center">
+                    <i class='bx bxs-dashboard text-white text-xl'></i>
+                </div>-->
+                <div class="h-20 w-20 rounded-lg flex items-center justify-center overflow-hidden">
+                    <img src="https://res.cloudinary.com/dktrgjt6b/image/upload/v1760657181/NEXTGEN_MOTORS_-_LOGO_ncwuwb.png" alt="NextGenMotors" class="h-full w-full object-contain">
+                </div>
+
+                <div>
+                    <span class="text-white font-bold text-lg sidebar-text">AdminUser</span>
+                    <p class="text-gray-400 text-sm sidebar-text">NexGen Motors</p>
+                </div>
+            </div>
+        </div>
+
+        <ul class="py-4 space-y-1">
+            <li>
+                <a href="#dashboard" class="sidebar-link flex items-center gap-3 px-6 py-4 text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-300 active">
+                    <i class='bx bxs-dashboard text-xl'></i>
+                    <span class="sidebar-text font-medium">Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="#vehiculos" class="sidebar-link flex items-center gap-3 px-6 py-4 text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-300">
+                    <i class='bx bxs-car text-xl'></i>
+                    <span class="sidebar-text font-medium">Vehículos</span>
+                </a>
+            </li>
+            <li>
+                <a href="#anuncios" class="sidebar-link flex items-center gap-3 px-6 py-4 text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-300">
+                    <i class='bx bxs-megaphone text-xl'></i>
+                    <span class="sidebar-text font-medium">Anuncios</span>
+                </a>
+            </li>
+            <li>
+                <a href="#analytics" class="sidebar-link flex items-center gap-3 px-6 py-4 text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-300">
+                    <i class='bx bxs-chart text-xl'></i>
+                    <span class="sidebar-text font-medium">Predicciones</span>
+                </a>
+            </li>
+            <li>
+                <a href="#mensaje" class="sidebar-link flex items-center gap-3 px-6 py-4 text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-300">
+                    <i class='bx bxs-calendar text-xl'></i>
+                    <span class="sidebar-text font-medium">Citas</span>
+                </a>
+            </li>
+            
+        </ul>
+
+        <div class="absolute bottom-0 w-full p-6 border-t border-gray-700">
+            <a href="/logout" class="flex items-center gap-3 px-6 py-4 text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-300 rounded-lg">
+                <i class='bx bxs-log-out-circle text-xl'></i>
+                <span class="sidebar-text font-medium">Cerrar Sesión</span>
+            </a>
+        </div>
+    </div>
+    <!-- ===================== END SIDEBAR ===================== -->
+
+    <!-- ===================== MAIN CONTENT ===================== -->
+    <div class="main-content flex-1">
+        <!-- Navbar -->
+        <nav class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 p-4 lg:p-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <button class="lg:hidden nav-toggle text-2xl cursor-pointer p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                        <i class='bx bx-menu'></i>
+                    </button>
+                    
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <!-- Botón de búsqueda móvil -->
+                    <button class="lg:hidden p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                        <i class='bx bx-search text-xl'></i>
+                    </button>
+
+                    <!-- Notificaciones -->
+                    <div class="relative">
+                        <button class="relative p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors" id="notification-bell">
+                            <i class='bx bxs-bell text-xl'></i>
+                            <span class="notification-badge" id="notification-count">0</span>
+                        </button>
+                        <div class="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 hidden z-50" id="notification-dropdown">
+                            <div class="p-4 max-h-96 overflow-y-auto" id="notification-list">
+                                <div class="text-center text-gray-500 dark:text-gray-400 py-4">
+                                    No hay notificaciones
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- ===================== DASHBOARD SECTION ===================== -->
+        <section id="dashboard" class="p-4 lg:p-6">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
+                <div>
+                    <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+                    <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mt-2">
+                        <a href="#" class="hover:text-primary transition-colors">Dashboard</a>
+                        <i class='bx bx-chevron-right text-xs'></i>
+                        <a href="#" class="text-primary font-medium">Home</a>
+                    </div>
+                </div>
+                <button class="btn-primary">
+                    <i class='bx bxs-cloud-download'></i>
+                    <span>Descargar PDF</span>
+                </button>
+            </div>
+
+            <!-- Estadísticas -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mb-8">
+                <div class="stat-card">
+                    <div class="flex items-center gap-4">
+                        <div class="p-3 bg-blue-100 dark:bg-blue-900 rounded-xl">
+                            <i class='bx bxs-calendar-check text-2xl text-blue-600'></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white" th:text="${totalCitas}">0</h3>
+                            <p class="text-gray-600 dark:text-gray-400">Citas Totales</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="flex items-center gap-4">
+                        <div class="p-3 bg-green-100 dark:bg-green-900 rounded-xl">
+                            <i class='bx bxs-group text-2xl text-green-600'></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white" th:text="${totalUsuarios}">0</h3>
+                            <p class="text-gray-600 dark:text-gray-400">Usuarios Registrados</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="flex items-center gap-4">
+                        <div class="p-3 bg-purple-100 dark:bg-purple-900 rounded-xl">
+                            <i class='bx bxs-car text-2xl text-purple-600'></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white" th:text="${totalVehiculos}">0</h3>
+                            <p class="text-gray-600 dark:text-gray-400">Vehículos en Stock</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Power BI Dashboard -->
+            <div class="table-container">
+                <div class="p-4 lg:p-6">
+                    <h3 class="text-lg lg:text-xl font-semibold text-gray-900 dark:text-white mb-4">Dashboard Analytics</h3>
+                    <div class="rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
+                        <iframe title="concesionariotablero" width="100%" height="500" src="https://app.powerbi.com/view?r=eyJrIjoiMDljY2M3NWUtMWM1ZS00NjFiLTljNjgtMDQ3NGRlNDVjZGJjIiwidCI6IjlkMTJiZjNmLWU0ZjYtNDdhYi05MTJmLTFhMmYwZmM0OGFhNCIsImMiOjR9" frameborder="0" allowFullScreen="true"></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== VEHÍCULOS SECTION ===================== -->
+        <section id="vehiculos" class="p-4 lg:p-6 hidden">
+            <div class="mb-6">
+                <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Vehículos</h1>
+                <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mt-2">
+                    <a href="#" class="hover:text-primary transition-colors">Dashboard</a>
+                    <i class='bx bx-chevron-right text-xs'></i>
+                    <a href="#" class="text-primary font-medium">Vehículos</a>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <div class="p-4 lg:p-6">
+                    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
+                        <h3 class="text-lg lg:text-xl font-semibold text-gray-900 dark:text-white">Vehículos en Stock</h3>
+                        <button onclick="mostrarModal('modal-vehiculo')" class="btn-primary">
+                            <i class='bx bx-plus'></i>
+                            <span>Añadir Vehículo</span>
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table id="tabla-vehiculos" class="w-full min-w-full">
+                            <thead class="bg-gray-50 dark:bg-gray-700">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Marca</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Modelo</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Año</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Precio</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Categoría</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Imagen</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                <tr th:each="vehiculo : ${vehiculos}" class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white" th:text="${vehiculo.marca}"></td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white" th:text="${vehiculo.modelo}"></td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white" th:text="${vehiculo.año}"></td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white" th:text="${vehiculo.precio}"></td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white" th:text="${vehiculo.categoria}"></td>
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <img th:src="${vehiculo.imagenUrl}" class="w-16 h-12 object-cover rounded-lg shadow-sm">
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm font-medium">
+                                        <div class="flex gap-2">
+                                            <button th:attr="onclick=|mostrarModalEditar('${vehiculo.id}')|" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors">Editar</button>
+                                            <a th:href="@{/admin/eliminar/{id}(id=${vehiculo.id})}" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 transition-colors" onclick="return confirm('¿Estás seguro de eliminar este vehículo?')">Eliminar</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== ANUNCIOS SECTION ===================== -->
+        <section id="anuncios" class="p-4 lg:p-6 hidden">
+            <div class="mb-6">
+                <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Anuncios</h1>
+                <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mt-2">
+                    <a href="#" class="hover:text-primary transition-colors">Dashboard</a>
+                    <i class='bx bx-chevron-right text-xs'></i>
+                    <a href="#" class="text-primary font-medium">Anuncios</a>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <div class="p-4 lg:p-6">
+                    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
+                        <h3 class="text-lg lg:text-xl font-semibold text-gray-900 dark:text-white">Anuncios Destacados</h3>
+                        <button onclick="mostrarModal('modal-anuncio')" class="btn-primary">
+                            <i class='bx bx-plus'></i>
+                            <span>Crear Anuncio</span>
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table id="tabla-anuncios" class="w-full min-w-full">
+                            <thead class="bg-gray-50 dark:bg-gray-700">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Marca</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Modelo</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Año</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Precio</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Categoría</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Imagen</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                <tr th:each="anuncio : ${anuncios}" class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white" th:text="${anuncio.marca}"></td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white" th:text="${anuncio.modelo}"></td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white" th:text="${anuncio.año}"></td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white" th:text="${anuncio.precio}"></td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white" th:text="${anuncio.categoria}"></td>
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <img th:src="${anuncio.imagenUrl}" class="w-16 h-12 object-cover rounded-lg shadow-sm">
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm font-medium">
+                                        <div class="flex gap-2">
+                                            <button th:attr="onclick=|mostrarModalEditar('${anuncio.id}')|" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors">Editar</button>
+                                            <a th:href="@{/admin/eliminar/{id}(id=${anuncio.id})}" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 transition-colors" onclick="return confirm('¿Estás seguro de eliminar este anuncio?')">Eliminar</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== ANALYTICS SECTION ===================== -->
+        <section id="analytics" class="p-4 lg:p-6 hidden">
+            <div class="mb-6">
+                <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Predicciones</h1>
+                <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mt-2">
+                    <a href="#" class="hover:text-primary transition-colors">Dashboard</a>
+                    <i class='bx bx-chevron-right text-xs'></i>
+                    <a href="#" class="text-primary font-medium">Predicciones</a>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <div class="p-4 lg:p-6">
+                    <h3 class="text-lg lg:text-xl font-semibold text-gray-900 dark:text-white mb-4">Gráficos y Estadísticas</h3>
+                    <div class="rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
+                        <iframe title="concesionariotablero" width="100%" height="500" src="https://app.powerbi.com/view?r=eyJrIjoiMDljY2M3NWUtMWM1ZS00NjFiLTljNjgtMDQ3NGRlNDVjZGJjIiwidCI6IjlkMTJiZjNmLWU0ZjYtNDdhYi05MTJmLTFhMmYwZmM0OGFhNCIsImMiOjR9" frameborder="0" allowFullScreen="true"></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== MENSAJE SECTION ===================== -->
+<!-- ===================== MENSAJE SECTION ===================== -->
+<section id="mensaje" class="p-4 lg:p-6 hidden">
+    <div class="mb-6">
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+            <div>
+            <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Gestión de Citas</h1>
+            <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mt-2">
+                <a href="#" class="hover:text-primary transition-colors">Dashboard</a>
+                <i class='bx bx-chevron-right text-xs'></i>
+                <a href="#" class="text-primary font-medium">Citas</a>
+            </div>
+            </div>
+            <select id="filtro-estado" class="form-group w-full lg:w-48">
+                <option value="TODAS">Todas las citas</option>
+                <option value="Pendiente">Pendientes</option>
+                <option value="Aprobada">Aprobadas</option>
+                <option value="Rechazada">Rechazadas</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <div class="overflow-x-auto">
+            <table id="tabla-citas" class="w-full min-w-full">
+                <thead class="bg-gray-50 dark:bg-gray-700">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Cliente</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Tipo</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Auto</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Fecha Solicitud</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Comentario</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Estado</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Fecha Asignada</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Notas</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                    <tr th:each="cita : ${citas}" th:data-id="${cita.id}" class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                        <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white" th:text="${cita.usuario != null ? cita.usuario.nombre + ' ' + cita.usuario.apellido : 'Sin usuario'}"></td>
+                        <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white" th:text="${cita.tipo}"></td>
+                        <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                            <span th:if="${cita.vehiculo != null}" th:text="${cita.vehiculo.marca + ' ' + cita.vehiculo.modelo}"></span>
+                            <span th:unless="${cita.vehiculo != null}" th:text="${cita.modelo}">N/A</span>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white" th:text="${#temporals.format(cita.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td class="px-4 py-4 text-sm text-gray-900 dark:text-white max-w-xs truncate" th:text="${cita.comentario}"></td>
+                        <td class="px-4 py-4 whitespace-nowrap">
+                            <span th:text="${cita.estado}" 
+                                  class="estado-badge"
+                                  th:classappend="${cita.estado == 'Pendiente'} ? 'estado-pendiente' : 
+                                                 ${cita.estado == 'Aprobada'} ? 'estado-aprobada' : 
+                                                 'estado-rechazada'"></span>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                            <span th:if="${cita.fechaAsignada != null}" th:text="${#temporals.format(cita.fechaAsignada, 'dd/MM/yyyy hh:mm a')}"></span>
+                            <span th:unless="${cita.fechaAsignada != null}">-</span>
+                        </td>
+                        <td class="px-4 py-4 text-sm text-gray-900 dark:text-white max-w-xs truncate" th:text="${cita.notasAdmin ?: 'Sin notas'}"></td>
+                        <td class="px-4 py-4 whitespace-nowrap text-sm font-medium">
+                            <!-- Solo una sección de botones por cita -->
+                            <div class="flex flex-col lg:flex-row gap-2" th:id="'botones-cita-' + ${cita.id}">
+                                <!-- Botones base que siempre estarán disponibles -->
+                                <button class="btn-gestion-cita btn-aprobar" 
+                                        th:data-id="${cita.id}" 
+                                        data-accion="aprobar"
+                                        th:if="${cita.estado == 'Pendiente'}">Aprobar</button>
+                                <button class="btn-gestion-cita btn-rechazar" 
+                                        th:data-id="${cita.id}" 
+                                        data-accion="rechazar"
+                                        th:if="${cita.estado == 'Pendiente'}">Rechazar</button>
+                                <button class="btn-gestion-cita btn-asignar-fecha" 
+                                        th:data-id="${cita.id}" 
+                                        data-accion="asignar-fecha"
+                                        th:if="${cita.estado == 'Aprobada'}">Asignar Fecha</button>
+                                <button class="btn-gestion-cita btn-pendiente" 
+                                        th:data-id="${cita.id}" 
+                                        data-accion="pendiente"
+                                        th:if="${cita.estado == 'Aprobada' or cita.estado == 'Rechazada'}">A Pendiente</button>
+                                <button class="btn-gestion-cita btn-notas" 
+                                        th:data-id="${cita.id}" 
+                                        data-accion="notas">Notas</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Mensaje cuando no hay citas -->
+                    <tr th:if="${#lists.isEmpty(citas)}" class="text-center">
+                        <td colspan="9" class="px-4 py-8 text-gray-500 dark:text-gray-400">
+                            <div class="flex flex-col items-center justify-center">
+                                <i class='bx bx-calendar-x text-4xl mb-2 text-gray-300'></i>
+                                <p class="text-lg font-medium">No hay citas disponibles</p>
+                                <p class="text-sm">Todas las citas han sido procesadas</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+
+    </div>
+</div>
+
+<!-- Modal para Añadir Vehículo -->
+<div id="modal-vehiculo" class="modal">
+    <div class="modal-content">
+        <span class="close text-2xl cursor-pointer float-right hover:text-gray-600 transition-colors" onclick="cerrarModal('modal-vehiculo')">&times;</span>
+        <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Añadir Nuevo Vehículo</h2>
+        <form th:action="@{/admin/guardar-vehiculo}" method="post" enctype="multipart/form-data" class="space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label>Marca</label>
+                    <input type="text" name="marca" placeholder="Marca" required>
+                </div>
+                <div class="form-group">
+                    <label>Modelo</label>
+                    <input type="text" name="modelo" placeholder="Modelo" required>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label>Año</label>
+                    <input type="number" name="año" placeholder="Año" required>
+                </div>
+                <div class="form-group">
+                    <label>Precio</label>
+                    <input type="number" step="0.01" name="precio" placeholder="Precio" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Categoría</label>
+                <select name="categoria" required>
+                    <option value="Pick-Ups">Pick-Ups</option>
+                    <option value="Camionetas">Camionetas</option>
+                    <option value="Automóviles">Automóviles</option>
+                </select>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label>Motor</label>
+                    <input type="text" name="motor" placeholder="Motor" required>
+                </div>
+                <div class="form-group">
+                    <label>Transmisión</label>
+                    <select name="transmision" required>
+                        <option value="Automática">Automática</option>
+                        <option value="Manual">Manual</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label>Combustible</label>
+                    <select name="combustible" required>
+                        <option value="Gasolina">Gasolina</option>
+                        <option value="Diésel">Diésel</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Pasajeros</label>
+                    <input type="number" name="pasajeros" placeholder="Pasajeros" required min="1" max="10">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Descripción técnica</label>
+                <textarea name="descripcion" placeholder="Descripción técnica" required rows="4"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="colores">Colores disponibles (separados por comas)</label>
+                <input type="text" id="colores" name="colores" placeholder="Ej: Rojo, Azul, Negro">
+            </div>
+
+            <div class="form-group">
+                <label>Imagen</label>
+                <input type="file" name="imagen" required class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-blue-700">
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-4 pt-4">
+                <button type="submit" class="btn-primary flex-1">Guardar Vehículo</button>
+                <button type="button" class="btn-secondary" onclick="cerrarModal('modal-vehiculo')">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal para Editar Vehículo -->
+<div id="modal-editar-vehiculo" class="modal">
+    <div class="modal-content">
+        <span class="close text-2xl cursor-pointer float-right hover:text-gray-600 transition-colors" onclick="cerrarModal('modal-editar-vehiculo')">&times;</span>
+        <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Editar Vehículo</h2>
+        <form id="form-editar-vehiculo" method="post" enctype="multipart/form-data" class="space-y-6">
+            <input type="hidden" name="id" id="editar-id">
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label for="editar-marca">Marca</label>
+                    <input type="text" id="editar-marca" name="marca" required>
+                </div>
+                <div class="form-group">
+                    <label for="editar-modelo">Modelo</label>
+                    <input type="text" id="editar-modelo" name="modelo" required>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label for="editar-año">Año</label>
+                    <input type="number" id="editar-año" name="año" required>
+                </div>
+                <div class="form-group">
+                    <label for="editar-precio">Precio</label>
+                    <input type="number" step="0.01" id="editar-precio" name="precio" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="editar-categoria">Categoría</label>
+                <select id="editar-categoria" name="categoria" required>
+                    <option value="Pick-Ups">Pick-Ups</option>
+                    <option value="Camionetas">Camionetas</option>
+                    <option value="Automóviles">Automóviles</option>
+                    <option value="Performance">Performance</option>
+                    <option value="Híbridos">Híbridos</option>
+                    <option value="Comerciales">Comerciales</option>
+                </select>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label for="editar-motor">Motor</label>
+                    <input type="text" id="editar-motor" name="motor" required>
+                </div>
+                <div class="form-group">
+                    <label for="editar-transmision">Transmisión</label>
+                    <select id="editar-transmision" name="transmision" required>
+                        <option value="Automática">Automática</option>
+                        <option value="Manual">Manual</option>
+                        <option value="CVT">CVT</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label for="editar-combustible">Combustible</label>
+                    <select id="editar-combustible" name="combustible" required>
+                        <option value="Gasolina">Gasolina</option>
+                        <option value="Diésel">Diésel</option>
+                        <option value="Híbrido">Híbrido</option>
+                        <option value="Eléctrico">Eléctrico</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editar-pasajeros">Pasajeros</label>
+                    <input type="number" id="editar-pasajeros" name="pasajeros" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="editar-descripcion">Descripción</label>
+                <textarea id="editar-descripcion" name="descripcion" required rows="4"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="editar-colores">Colores disponibles (separados por comas)</label>
+                <input type="text" id="editar-colores" name="colores" placeholder="Ej: Rojo, Azul, Negro">
+            </div>
+
+            <div class="form-group">
+                <label for="editar-imagen">Imagen</label>
+                <input type="file" id="editar-imagen" name="imagen" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-blue-700">
+                <img id="editar-imagen-preview" src="" alt="Imagen actual" class="mt-2 rounded-lg shadow-sm" style="max-width: 200px; display: none;">
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-4 pt-4">
+                <button type="submit" class="btn-primary flex-1">Guardar Cambios</button>
+                <button type="button" class="btn-secondary" onclick="cerrarModal('modal-editar-vehiculo')">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal para Anuncio -->
+<div id="modal-anuncio" class="modal">
+    <div class="modal-content">
+        <span class="close text-2xl cursor-pointer float-right hover:text-gray-600 transition-colors" onclick="cerrarModal('modal-anuncio')">&times;</span>
+        <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Crear Nuevo Anuncio</h2>
+        <form th:action="@{/admin/guardar-anuncio}" method="post" enctype="multipart/form-data" class="space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label>Marca</label>
+                    <input type="text" name="marca" placeholder="Marca" required>
+                </div>
+                <div class="form-group">
+                    <label>Modelo</label>
+                    <input type="text" name="modelo" placeholder="Modelo" required>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label>Año</label>
+                    <input type="number" name="año" placeholder="Año" required>
+                </div>
+                <div class="form-group">
+                    <label>Precio</label>
+                    <input type="number" step="0.01" name="precio" placeholder="Precio" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Categoría</label>
+                <select name="categoria" required>
+                    <option value="Pick-Ups">Pick-Ups</option>
+                    <option value="Camionetas">Camionetas</option>
+                    <option value="Automóviles">Automóviles</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Descripción destacada</label>
+                <textarea name="descripcion" placeholder="Descripción destacada" required rows="4"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="colores-anuncio">Colores disponibles (separados por comas)</label>
+                <input type="text" id="colores-anuncio" name="colores" placeholder="Ej: Rojo, Azul, Negro">
+            </div>
+
+            <div class="form-group">
+                <label>Imagen</label>
+                <input type="file" name="imagen" required class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-blue-700">
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-4 pt-4">
+                <button type="submit" class="btn-primary flex-1">Crear Anuncio</button>
+                <button type="button" class="btn-secondary" onclick="cerrarModal('modal-anuncio')">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<script>
+    // Funciones para manejar los modales
+    function mostrarModal(modalId) {
+        document.getElementById(modalId).style.display = 'block';
+    }
+
+    function cerrarModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+
+    // Cerrar modales al hacer clic fuera
+    window.onclick = function(event) {
+        if (event.target.className === 'modal') {
+            event.target.style.display = 'none';
+        }
+    }
+
+    // Navegación entre secciones
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebarLinks = document.querySelectorAll('.sidebar-link');
+        const sections = document.querySelectorAll('section[id]');
+        const navToggle = document.querySelector('.nav-toggle');
+
+        // Navegación entre secciones
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href').substring(1);
+                
+                // Ocultar todas las secciones
+                sections.forEach(section => {
+                    section.classList.add('hidden');
+                });
+                
+                // Mostrar la sección objetivo
+                document.getElementById(targetId).classList.remove('hidden');
+                
+                // Actualizar enlace activo
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+
+                // Cerrar sidebar en móviles
+                if (window.innerWidth < 1024) {
+                    document.body.classList.remove('mobile-menu-open');
+                }
+            });
+        });
+
+        // Toggle sidebar móvil
+        navToggle.addEventListener('click', function() {
+            document.body.classList.toggle('mobile-menu-open');
+        });
+
+        // Cerrar sidebar al hacer clic fuera en móviles
+        document.addEventListener('click', function(e) {
+            if (window.innerWidth < 1024 && 
+                !e.target.closest('.sidebar') && 
+                !e.target.closest('.nav-toggle') &&
+                document.body.classList.contains('mobile-menu-open')) {
+                document.body.classList.remove('mobile-menu-open');
+            }
+        });
+
+        // Inicializar DataTables
+        $('#tabla-vehiculos, #tabla-anuncios, #tabla-citas').DataTable({
+            responsive: true,
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+            },
+            pageLength: 10,
+            dom: '<"flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-4"lfr>t<"flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mt-4"ip>'
+        });
+
+        // Notificaciones
+        const notificationBell = document.getElementById('notification-bell');
+        const notificationDropdown = document.getElementById('notification-dropdown');
+
+        if (notificationBell && notificationDropdown) {
+            notificationBell.addEventListener('click', function(e) {
+                e.stopPropagation();
+                notificationDropdown.classList.toggle('hidden');
+            });
+
+            // Cerrar dropdown al hacer clic fuera
+            document.addEventListener('click', function() {
+                notificationDropdown.classList.add('hidden');
+            });
+        }
+    });
+
+    // Validación de formularios
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.forms['RegistroT'];
+        if (form) {
+            const correoInput = document.getElementById('correo');
+            const passwordInput = document.getElementById('password');
+            const identificacionInput = document.getElementById('identificacion');
+
+            // Crear elemento para mensajes de error
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl mb-6';
+            errorDiv.style.display = 'none';
+            form.insertBefore(errorDiv, form.firstChild);
+
+            // Función para validar email
+            function isValidEmail(email) {
+                const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return regex.test(email);
+            }
+
+            // Función para validar solo números
+            function isOnlyNumbers(input) {
+                return /^\d+$/.test(input);
+            }
+
+            // Validar identificación en tiempo real (solo números)
+            identificacionInput.addEventListener('input', function() {
+                if (!isOnlyNumbers(this.value)) {
+                    this.setCustomValidity('La identificación debe contener solo números');
+                } else {
+                    this.setCustomValidity('');
+                }
+            });
+
+            // Validar formulario al enviar
+            form.addEventListener('submit', function(e) {
+                let errorMessages = [];
+
+                // Validar email
+                const email = correoInput.value.trim();
+                if (!email) {
+                    errorMessages.push('Por favor introduzca su correo electrónico');
+                } else if (!isValidEmail(email)) {
+                    errorMessages.push('Por favor introduzca un correo electrónico válido');
+                }
+
+                // Validar contraseña (8 caracteres)
+                const password = passwordInput.value.trim();
+                if (!password) {
+                    errorMessages.push('Por favor introduzca una contraseña');
+                } else if (password.length < 8) {
+                    errorMessages.push('La contraseña debe tener al menos 8 caracteres');
+                }
+
+                // Validar identificación (solo números)
+                const identificacion = identificacionInput.value.trim();
+                if (!identificacion) {
+                    errorMessages.push('Por favor introduzca su identificación');
+                } else if (!isOnlyNumbers(identificacion)) {
+                    errorMessages.push('La identificación debe contener solo números');
+                }
+
+                // Validar otros campos obligatorios
+                const nombre = document.getElementById('nombre').value.trim();
+                const apellido = document.getElementById('apellido').value.trim();
+
+                if (!nombre) {
+                    errorMessages.push('Por favor introduzca su nombre');
+                }
+
+                if (!apellido) {
+                    errorMessages.push('Por favor introduzca su apellido');
+                }
+
+                // Mostrar errores o enviar formulario
+                if (errorMessages.length > 0) {
+                    e.preventDefault();
+                    errorDiv.innerHTML = errorMessages.join('<br>');
+                    errorDiv.style.display = 'block';
+
+                    // Desplazarse al primer error
+                    window.scrollTo({
+                        top: errorDiv.offsetTop - 20,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+
+            // Ocultar mensajes de error al empezar a editar
+            const inputs = form.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    if (errorDiv.style.display === 'block') {
+                        errorDiv.style.display = 'none';
+                    }
+                });
+            });
+        }
+    });
+
+
+  // Gestión de citas - Lógica corregida según especificaciones
+// Gestión de citas - Lógica definitiva corregida
+class GestorCitas {
+    constructor() {
+        this.citasEstado = new Map(); // Almacena el estado de cada cita
+        this.init();
+    }
+
+    init() {
+        this.inicializarBotones();
+        this.inicializarFiltro();
+        this.inicializarEventListeners();
+    }
+
+    inicializarBotones() {
+        // Inicializar botones según el estado actual de cada cita
+        document.querySelectorAll('.botones-cita-container').forEach(contenedor => {
+            const citaId = contenedor.id.replace('botones-cita-', '');
+            const estado = contenedor.getAttribute('th:data-estado') || contenedor.dataset.estado;
+            this.actualizarBotonesCita(citaId, estado);
+        });
+    }
+
+    inicializarFiltro() {
+        const filtroEstado = document.getElementById('filtro-estado');
+        if (filtroEstado) {
+            filtroEstado.addEventListener('change', (e) => {
+                this.filtrarCitasPorEstado(e.target.value);
+            });
+        }
+    }
+
+    inicializarEventListeners() {
+        // Delegación de eventos para los botones
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('btn-gestion-cita')) {
+                this.manejarClickBoton(e.target);
+            }
+        });
+    }
+
+    manejarClickBoton(boton) {
+        const citaId = boton.dataset.id;
+        const accion = boton.dataset.accion;
+        
+        // Remover active de todos los botones de esta cita
+        this.removerActiveBotones(citaId);
+        
+        // Añadir active al botón clickeado
+        boton.classList.add('active');
+        
+        // Ejecutar la acción correspondiente
+        this.ejecutarAccion(citaId, accion);
+    }
+
+    removerActiveBotones(citaId) {
+        const contenedor = document.getElementById(`botones-cita-${citaId}`);
+        if (contenedor) {
+            contenedor.querySelectorAll('.btn-gestion-cita').forEach(btn => {
+                btn.classList.remove('active');
+            });
+        }
+    }
+
+    ejecutarAccion(citaId, accion) {
+        switch(accion) {
+            case 'aprobar':
+                this.aprobarCita(citaId);
+                break;
+            case 'rechazar':
+                this.rechazarCita(citaId);
+                break;
+            case 'notas':
+                this.abrirNotas(citaId);
+                break;
+            case 'asignar-fecha':
+                this.asignarFecha(citaId);
+                break;
+            case 'pendiente':
+                this.cambiarAPendiente(citaId);
+                break;
+        }
+    }
+
+    aprobarCita(citaId) {
+        console.log('Aprobando cita:', citaId);
+        
+        // Actualizar estado visual
+        this.actualizarEstadoCita(citaId, 'Aprobada');
+        
+        // Actualizar botones
+        this.actualizarBotonesCita(citaId, 'Aprobada');
+        
+        this.mostrarMensajeExito('Cita aprobada correctamente');
+    }
+
+    rechazarCita(citaId) {
+        console.log('Rechazando cita:', citaId);
+        
+        // Actualizar estado visual
+        this.actualizarEstadoCita(citaId, 'Rechazada');
+        
+        // Actualizar botones
+        this.actualizarBotonesCita(citaId, 'Rechazada');
+        
+        this.mostrarMensajeExito('Cita rechazada correctamente');
+    }
+
+    cambiarAPendiente(citaId) {
+        console.log('Cambiando cita a pendiente:', citaId);
+        
+        // Actualizar estado visual
+        this.actualizarEstadoCita(citaId, 'Pendiente');
+        
+        // Actualizar botones
+        this.actualizarBotonesCita(citaId, 'Pendiente');
+        
+        this.mostrarMensajeExito('Cita cambiada a pendiente');
+    }
+
+    abrirNotas(citaId) {
+        console.log('Abriendo notas para cita:', citaId);
+        
+        const fila = document.querySelector(`tr[th\\:data-id="${citaId}"]`);
+        const notasActuales = fila.querySelector('td:nth-last-child(2)').textContent;
+        
+        const nuevasNotas = prompt('Ingrese las notas para esta cita:', notasActuales);
+        if (nuevasNotas !== null) {
+            fila.querySelector('td:nth-last-child(2)').textContent = nuevasNotas;
+            this.mostrarMensajeExito('Notas actualizadas correctamente');
+        }
+    }
+
+    asignarFecha(citaId) {
+        console.log('Asignando fecha para cita:', citaId);
+        this.crearCalendario(citaId);
+    }
+
+    actualizarEstadoCita(citaId, nuevoEstado) {
+        const fila = document.querySelector(`tr[th\\:data-id="${citaId}"]`);
+        if (fila) {
+            const estadoBadge = fila.querySelector('.estado-badge');
+            estadoBadge.textContent = nuevoEstado;
+            
+            // Actualizar clases CSS según el estado
+            estadoBadge.className = 'estado-badge ' + 
+                (nuevoEstado === 'Pendiente' ? 'estado-pendiente' :
+                 nuevoEstado === 'Aprobada' ? 'estado-aprobada' : 'estado-rechazada');
+            
+            // Actualizar el atributo data-estado
+            const contenedorBotones = document.getElementById(`botones-cita-${citaId}`);
+            contenedorBotones.dataset.estado = nuevoEstado;
+        }
+    }
+
+    actualizarBotonesCita(citaId, estado) {
+        const contenedor = document.getElementById(`botones-cita-${citaId}`);
+        if (!contenedor) return;
+
+        let botonesHTML = '';
+
+        switch(estado) {
+            case 'Pendiente':
+                botonesHTML = `
+                    <button class="btn-gestion-cita btn-aprobar" 
+                            data-id="${citaId}" 
+                            data-accion="aprobar">Aprobar</button>
+                    <button class="btn-gestion-cita btn-rechazar" 
+                            data-id="${citaId}" 
+                            data-accion="rechazar">Rechazar</button>
+                    <button class="btn-gestion-cita btn-notas" 
+                            data-id="${citaId}" 
+                            data-accion="notas">Notas</button>
+                `;
+                break;
+                
+            case 'Aprobada':
+                botonesHTML = `
+                    <button class="btn-gestion-cita btn-asignar-fecha" 
+                            data-id="${citaId}" 
+                            data-accion="asignar-fecha">Asignar Fecha</button>
+                    <button class="btn-gestion-cita btn-pendiente" 
+                            data-id="${citaId}" 
+                            data-accion="pendiente">A Pendiente</button>
+                    <button class="btn-gestion-cita btn-notas" 
+                            data-id="${citaId}" 
+                            data-accion="notas">Notas</button>
+                `;
+                break;
+                
+            case 'Rechazada':
+                botonesHTML = `
+                    <button class="btn-gestion-cita btn-pendiente" 
+                            data-id="${citaId}" 
+                            data-accion="pendiente">A Pendiente</button>
+                    <button class="btn-gestion-cita btn-notas" 
+                            data-id="${citaId}" 
+                            data-accion="notas">Notas</button>
+                `;
+                break;
+        }
+
+        contenedor.innerHTML = botonesHTML;
+    }
+
+    filtrarCitasPorEstado(estado) {
+        const tabla = document.getElementById('tabla-citas');
+        const filas = tabla.querySelectorAll('tbody tr');
+        let citasVisibles = 0;
+        
+        filas.forEach(fila => {
+            if (fila.querySelector('.estado-badge')) {
+                const estadoCita = fila.querySelector('.estado-badge').textContent;
+                
+                if (estado === 'TODAS' || estadoCita === estado) {
+                    fila.style.display = '';
+                    citasVisibles++;
+                } else {
+                    fila.style.display = 'none';
+                }
+            }
+        });
+    }
+
+    mostrarMensajeExito(mensaje) {
+        const mensajeExito = document.createElement('div');
+        mensajeExito.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-10000 transform transition-transform duration-300';
+        mensajeExito.textContent = mensaje;
+        mensajeExito.style.zIndex = '10000';
+        
+        document.body.appendChild(mensajeExito);
+        
+        setTimeout(() => {
+            mensajeExito.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                if (mensajeExito.parentNode) {
+                    mensajeExito.parentNode.removeChild(mensajeExito);
+                }
+            }, 300);
+        }, 3000);
+    }
+
+    // Función para crear el calendario (versión simplificada)
+    crearCalendario(citaId) {
+        // Crear overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'calendario-overlay';
+        overlay.style.display = 'block';
+        
+        // Crear contenedor del calendario
+        const calendario = document.createElement('div');
+        calendario.className = 'calendario-container';
+        
+        // Contenido simple del calendario para demostración
+        calendario.innerHTML = `
+            <div class="calendario-header">
+                <h3 class="text-lg font-semibold">Seleccionar Fecha y Hora</h3>
+            </div>
+            <div class="p-4">
+                <div class="form-group">
+                    <label>Fecha:</label>
+                    <input type="date" class="fecha-input w-full p-2 border rounded">
+                </div>
+                <div class="form-group">
+                    <label>Hora:</label>
+                    <select class="hora-input w-full p-2 border rounded">
+                        <option value="08:00">8:00 AM</option>
+                        <option value="09:00">9:00 AM</option>
+                        <option value="10:00">10:00 AM</option>
+                        <option value="11:00">11:00 AM</option>
+                        <option value="12:00">12:00 PM</option>
+                        <option value="13:00">1:00 PM</option>
+                        <option value="14:00">2:00 PM</option>
+                        <option value="15:00">3:00 PM</option>
+                        <option value="16:00">4:00 PM</option>
+                        <option value="17:00">5:00 PM</option>
+                    </select>
+                </div>
+                <div class="flex gap-2 mt-4">
+                    <button class="btn-confirmar-fecha flex-1" data-cita-id="${citaId}">Confirmar</button>
+                    <button class="btn-secondary flex-1" onclick="this.closest('.calendario-container').remove(); document.querySelector('.calendario-overlay').remove();">Cancelar</button>
+                </div>
+            </div>
+        `;
+        
+        // Añadir al documento
+        document.body.appendChild(overlay);
+        document.body.appendChild(calendario);
+        
+        // Event listener para confirmar fecha
+        calendario.querySelector('.btn-confirmar-fecha').addEventListener('click', (e) => {
+            const fechaInput = calendario.querySelector('.fecha-input');
+            const horaInput = calendario.querySelector('.hora-input');
+            
+            if (fechaInput.value && horaInput.value) {
+                const fecha = new Date(fechaInput.value + 'T' + horaInput.value);
+                const fechaFormateada = fecha.toLocaleString('es', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                });
+                
+                // Actualizar en la tabla
+                const fila = document.querySelector(`tr[th\\:data-id="${citaId}"]`);
+                if (fila) {
+                    const celdaFecha = fila.querySelector('td:nth-last-child(3)');
+                    celdaFecha.querySelector('span').textContent = fechaFormateada;
+                }
+                
+                // Cerrar calendario
+                calendario.remove();
+                overlay.remove();
+                
+                this.mostrarMensajeExito('Fecha asignada correctamente');
+            } else {
+                alert('Por favor selecciona una fecha y hora');
+            }
+        });
+        
+        // Cerrar al hacer clic en el overlay
+        overlay.addEventListener('click', () => {
+            calendario.remove();
+            overlay.remove();
+        });
+    }
+}
+
+// Inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+    window.gestorCitas = new GestorCitas();
+});
+
+
+
+
+// Función para crear el calendario (versión simplificada y corregida)
+function crearCalendario(citaId) {
+    // Crear overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'calendario-overlay';
+    overlay.style.display = 'block';
+    
+    // Crear contenedor del calendario
+    const calendario = document.createElement('div');
+    calendario.className = 'calendario-container';
+    calendario.id = `calendario-${citaId}`;
+    
+    // Obtener fecha actual
+    const hoy = new Date();
+    let añoActual = hoy.getFullYear();
+    let mesActual = hoy.getMonth();
+    
+    // Función para generar el calendario
+    function generarCalendario(año, mes) {
+        const primerDia = new Date(año, mes, 1);
+        const ultimoDia = new Date(año, mes + 1, 0);
+        const diasEnMes = ultimoDia.getDate();
+        const primerDiaSemana = primerDia.getDay();
+        
+        // Header del calendario
+        const header = document.createElement('div');
+        header.className = 'calendario-header';
+        
+        const nombreMes = primerDia.toLocaleString('es', { month: 'long', year: 'numeric' });
+        header.innerHTML = `
+            <button class="btn-mes btn-mes-anterior" type="button">
+                <i class='bx bx-chevron-left'></i>
+            </button>
+            <span class="calendario-mes">${nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1)}</span>
+            <button class="btn-mes btn-mes-siguiente" type="button">
+                <i class='bx bx-chevron-right'></i>
+            </button>
+        `;
+        
+        // Grid de días de la semana
+        const grid = document.createElement('div');
+        grid.className = 'calendario-grid';
+        
+        // Días de la semana
+        const diasSemana = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+        diasSemana.forEach(dia => {
+            const diaElemento = document.createElement('div');
+            diaElemento.className = 'dia-semana';
+            diaElemento.textContent = dia;
+            grid.appendChild(diaElemento);
+        });
+        
+        // Días vacíos al inicio
+        for (let i = 0; i < primerDiaSemana; i++) {
+            const diaVacio = document.createElement('div');
+            diaVacio.className = 'dia-calendario disabled';
+            grid.appendChild(diaVacio);
+        }
+        
+        // Días del mes
+        for (let dia = 1; dia <= diasEnMes; dia++) {
+            const diaElemento = document.createElement('div');
+            diaElemento.className = 'dia-calendario';
+            diaElemento.textContent = dia;
+            diaElemento.dataset.dia = dia;
+            diaElemento.dataset.mes = mes + 1;
+            diaElemento.dataset.año = año;
+            
+            const fechaDia = new Date(año, mes, dia);
+            
+            // Marcar día actual
+            if (dia === hoy.getDate() && mes === hoy.getMonth() && año === hoy.getFullYear()) {
+                diaElemento.classList.add('hoy');
+            }
+            
+            // Deshabilitar días pasados
+            if (fechaDia < hoy && !(dia === hoy.getDate() && mes === hoy.getMonth() && año === hoy.getFullYear())) {
+                diaElemento.classList.add('disabled');
+                diaElemento.style.cursor = 'not-allowed';
+            } else {
+                diaElemento.addEventListener('click', function() {
+                    // Remover selección de otros días
+                    grid.querySelectorAll('.dia-calendario.selected').forEach(d => {
+                        d.classList.remove('selected');
+                    });
+                    
+                    // Seleccionar este día
+                    this.classList.add('selected');
+                    
+                    // Mostrar selector de hora
+                    mostrarSelectorHora(this, calendario, citaId);
+                });
+            }
+            
+            grid.appendChild(diaElemento);
+        }
+        
+        return { header, grid };
+    }
+    
+    // Generar calendario inicial
+    const { header, grid } = generarCalendario(añoActual, mesActual);
+    
+    // Selector de hora (inicialmente oculto)
+    const selectorHora = document.createElement('div');
+    selectorHora.className = 'hora-selector';
+    selectorHora.style.display = 'none';
+    selectorHora.innerHTML = `
+        <label for="hora-${citaId}">Hora:</label>
+        <select id="hora-${citaId}" class="hora">
+            <option value="08:00">8:00 AM</option>
+            <option value="09:00">9:00 AM</option>
+            <option value="10:00">10:00 AM</option>
+            <option value="11:00">11:00 AM</option>
+            <option value="12:00">12:00 PM</option>
+            <option value="13:00">1:00 PM</option>
+            <option value="14:00">2:00 PM</option>
+            <option value="15:00">3:00 PM</option>
+            <option value="16:00">4:00 PM</option>
+            <option value="17:00">5:00 PM</option>
+        </select>
+        <button class="btn-confirmar-fecha" type="button">Confirmar Fecha</button>
+    `;
+    
+    // Ensamblar calendario
+    calendario.appendChild(header);
+    calendario.appendChild(grid);
+    calendario.appendChild(selectorHora);
+    
+    // Añadir al documento
+    document.body.appendChild(overlay);
+    document.body.appendChild(calendario);
+    
+    // Event listeners para navegación entre meses
+    const btnAnterior = header.querySelector('.btn-mes-anterior');
+    const btnSiguiente = header.querySelector('.btn-mes-siguiente');
+    
+    btnAnterior.addEventListener('click', function() {
+        mesActual--;
+        if (mesActual < 0) {
+            mesActual = 11;
+            añoActual--;
+        }
+        actualizarCalendario();
+    });
+    
+    btnSiguiente.addEventListener('click', function() {
+        mesActual++;
+        if (mesActual > 11) {
+            mesActual = 0;
+            añoActual++;
+        }
+        actualizarCalendario();
+    });
+    
+    // Cerrar calendario al hacer clic en el overlay
+    overlay.addEventListener('click', function() {
+        cerrarCalendario(calendario, overlay);
+    });
+    
+    function actualizarCalendario() {
+        const { header: newHeader, grid: newGrid } = generarCalendario(añoActual, mesActual);
+        
+        // Reemplazar header y grid
+        calendario.replaceChild(newHeader, header);
+        calendario.replaceChild(newGrid, grid);
+        
+        // Re-aplicar event listeners a los botones de mes
+        newHeader.querySelector('.btn-mes-anterior').addEventListener('click', function() {
+            mesActual--;
+            if (mesActual < 0) {
+                mesActual = 11;
+                añoActual--;
+            }
+            actualizarCalendario();
+        });
+        
+        newHeader.querySelector('.btn-mes-siguiente').addEventListener('click', function() {
+            mesActual++;
+            if (mesActual > 11) {
+                mesActual = 0;
+                añoActual++;
+            }
+            actualizarCalendario();
+        });
+        
+        // Ocultar selector de hora al cambiar de mes
+        selectorHora.style.display = 'none';
+    }
+}
+
+function mostrarSelectorHora(diaElemento, calendario, citaId) {
+    const selectorHora = calendario.querySelector('.hora-selector');
+    selectorHora.style.display = 'flex';
+    
+    // Configurar botón de confirmación
+    const btnConfirmar = selectorHora.querySelector('.btn-confirmar-fecha');
+    btnConfirmar.onclick = function() {
+        const hora = selectorHora.querySelector('.hora').value;
+        const dia = diaElemento.dataset.dia;
+        const mes = diaElemento.dataset.mes;
+        const año = diaElemento.dataset.año;
+        
+        // Formatear fecha
+        const fecha = new Date(año, mes - 1, dia, hora.split(':')[0]);
+        const fechaFormateada = fecha.toLocaleString('es', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        });
+        
+        // Actualizar celda de fecha asignada en la tabla
+        const fila = document.querySelector(`tr[th\\:data-id="${citaId}"]`);
+        if (fila) {
+            const celdaFecha = fila.querySelector('td:nth-last-child(3)');
+            celdaFecha.querySelector('span').textContent = fechaFormateada;
+        }
+        
+        // Cerrar calendario
+        const overlay = document.querySelector('.calendario-overlay');
+        cerrarCalendario(calendario, overlay);
+        
+        // Aquí enviarías la fecha al servidor
+        console.log('Fecha asignada para cita', citaId, ':', fechaFormateada);
+        
+        // Mostrar mensaje de confirmación
+        mostrarMensajeExito('Fecha asignada correctamente');
+    };
+}
+
+function cerrarCalendario(calendario, overlay) {
+    if (calendario && calendario.parentNode) {
+        calendario.parentNode.removeChild(calendario);
+    }
+    if (overlay && overlay.parentNode) {
+        overlay.parentNode.removeChild(overlay);
+    }
+}
+</script>
+</body>
+</html>
