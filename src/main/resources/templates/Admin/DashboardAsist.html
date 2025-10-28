@@ -1676,31 +1676,36 @@ class GestorCitas {
             }, 300);
         }, 3000);
     }
-
-    // Función para crear el calendario (versión simplificada)
-    crearCalendario(citaId) {
-        // Crear overlay
-        const overlay = document.createElement('div');
-        overlay.className = 'calendario-overlay';
-        overlay.style.display = 'block';
-        
-        // Crear contenedor del calendario
-        const calendario = document.createElement('div');
-        calendario.className = 'calendario-container';
-        
-        // Contenido simple del calendario para demostración
-        calendario.innerHTML = `
-            <div class="calendario-header">
-                <h3 class="text-lg font-semibold">Seleccionar Fecha y Hora</h3>
-            </div>
-            <div class="p-4">
-                <div class="form-group">
-                    <label>Fecha:</label>
-                    <input type="date" class="fecha-input w-full p-2 border rounded">
+    
+    // Función para crear el calendario (apartado de asignar citas)
+crearCalendario(citaId) {
+    // Crear overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center';
+    overlay.style.display = 'flex';
+    
+    // Crear contenedor del calendario
+    const calendario = document.createElement('div');
+    calendario.className = 'bg-white dark:bg-gray-800 rounded-lg shadow-xl w-11/12 max-w-md';
+    
+    // Obtener fecha actual y formatear para input date (YYYY-MM-DD)
+    const hoy = new Date();
+    const fechaMinima = hoy.toISOString().split('T')[0];
+    
+    calendario.innerHTML = `
+        <div class="p-6">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Seleccionar Fecha y Hora</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Fecha:</label>
+                    <input type="date" 
+                           class="fecha-input w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                           min="${fechaMinima}">
+                    
                 </div>
-                <div class="form-group">
-                    <label>Hora:</label>
-                    <select class="hora-input w-full p-2 border rounded">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Hora:</label>
+                    <select class="hora-input w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
                         <option value="08:00">8:00 AM</option>
                         <option value="09:00">9:00 AM</option>
                         <option value="10:00">10:00 AM</option>
@@ -1713,56 +1718,93 @@ class GestorCitas {
                         <option value="17:00">5:00 PM</option>
                     </select>
                 </div>
-                <div class="flex gap-2 mt-4">
-                    <button class="btn-confirmar-fecha flex-1" data-cita-id="${citaId}">Confirmar</button>
-                    <button class="btn-secondary flex-1" onclick="this.closest('.calendario-container').remove(); document.querySelector('.calendario-overlay').remove();">Cancelar</button>
-                </div>
             </div>
-        `;
+            <div class="flex gap-3 mt-6">
+                <button class="btn-confirmar-fecha flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition-colors" data-cita-id="${citaId}">Confirmar</button>
+                <button class="btn-cancelar flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded-md transition-colors">Cancelar</button>
+            </div>
+        </div>
+    `;
+    
+    // Añadir al documento
+    document.body.appendChild(overlay);
+    overlay.appendChild(calendario);
+    
+    // Obtener referencia al input de fecha
+    const fechaInput = calendario.querySelector('.fecha-input');
+    
+    // Validar también en tiempo real por si el usuario intenta manipular el DOM
+    fechaInput.addEventListener('change', function() {
+        const fechaSeleccionada = new Date(this.value);
+        const fechaHoy = new Date();
+        fechaHoy.setHours(0, 0, 0, 0); // Resetear horas para comparar solo la fecha
         
-        // Añadir al documento
-        document.body.appendChild(overlay);
-        document.body.appendChild(calendario);
+        if (fechaSeleccionada < fechaHoy) {
+            alert('No puedes seleccionar una fecha anterior al día de hoy');
+            this.value = fechaMinima; // Resetear al día actual
+        }
+    });
+    
+    // Event listener para confirmar fecha
+    calendario.querySelector('.btn-confirmar-fecha').addEventListener('click', (e) => {
+        const fechaInput = calendario.querySelector('.fecha-input');
+        const horaInput = calendario.querySelector('.hora-input');
         
-        // Event listener para confirmar fecha
-        calendario.querySelector('.btn-confirmar-fecha').addEventListener('click', (e) => {
-            const fechaInput = calendario.querySelector('.fecha-input');
-            const horaInput = calendario.querySelector('.hora-input');
+        // Validar que la fecha no sea anterior al día actual
+        const fechaSeleccionada = new Date(fechaInput.value);
+        const fechaHoy = new Date();
+        fechaHoy.setHours(0, 0, 0, 0);
+        
+        if (fechaSeleccionada < fechaHoy) {
+            alert('No puedes seleccionar una fecha anterior al día de hoy');
+            return;
+        }
+        
+        if (fechaInput.value && horaInput.value) {
+            const fecha = new Date(fechaInput.value + 'T' + horaInput.value);
+            const fechaFormateada = fecha.toLocaleString('es', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            });
             
-            if (fechaInput.value && horaInput.value) {
-                const fecha = new Date(fechaInput.value + 'T' + horaInput.value);
-                const fechaFormateada = fecha.toLocaleString('es', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: true
-                });
-                
-                // Actualizar en la tabla
-                const fila = document.querySelector(`tr[th\\:data-id="${citaId}"]`);
-                if (fila) {
-                    const celdaFecha = fila.querySelector('td:nth-last-child(3)');
-                    celdaFecha.querySelector('span').textContent = fechaFormateada;
+            // Actualizar en la tabla
+            const fila = document.querySelector(`tr[th\\:data-id="${citaId}"]`);
+            if (fila) {
+                const celdaFecha = fila.querySelector('td:nth-last-child(3)');
+                const spanFecha = celdaFecha.querySelector('span');
+                if (spanFecha) {
+                    spanFecha.textContent = fechaFormateada;
+                } else {
+                    celdaFecha.innerHTML = `<span>${fechaFormateada}</span>`;
                 }
-                
-                // Cerrar calendario
-                calendario.remove();
-                overlay.remove();
-                
-                this.mostrarMensajeExito('Fecha asignada correctamente');
-            } else {
-                alert('Por favor selecciona una fecha y hora');
             }
-        });
-        
-        // Cerrar al hacer clic en el overlay
-        overlay.addEventListener('click', () => {
-            calendario.remove();
+            
+            // Cerrar calendario
             overlay.remove();
-        });
-    }
+            
+            this.mostrarMensajeExito('Fecha asignada correctamente');
+        } else {
+            alert('Por favor selecciona una fecha y hora');
+        }
+    });
+    
+    // Event listener para cancelar
+    calendario.querySelector('.btn-cancelar').addEventListener('click', () => {
+        overlay.remove();
+    });
+    
+    // Cerrar al hacer clic en el overlay
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            overlay.remove();
+        }
+    });
+
+}
 }
 
 // Inicializar cuando el DOM esté listo
