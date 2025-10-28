@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AdminHub - NexGen Motors</title>
+    <title>Administrador - NexGen Motors</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
@@ -1163,41 +1163,6 @@
                             </div>
                         </div>
 
-                        <!-- <div class="form-group">
-                            <label>Días de Trabajo</label>
-                            <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
-                                <div class="flex items-center">
-                                    <input type="checkbox" name="diasTrabajo" value="LUNES" id="lunes" class="mr-2 rounded">
-                                    <label for="lunes" class="text-sm">Lunes</label>
-                                </div>
-                                <div class="flex items-center">
-                                    <input type="checkbox" name="diasTrabajo" value="MARTES" id="martes" class="mr-2 rounded">
-                                    <label for="martes" class="text-sm">Martes</label>
-                                </div>
-                                <div class="flex items-center">
-                                    <input type="checkbox" name="diasTrabajo" value="MIERCOLES" id="miercoles" class="mr-2 rounded">
-                                    <label for="miercoles" class="text-sm">Miércoles</label>
-                                </div>
-                                <div class="flex items-center">
-                                    <input type="checkbox" name="diasTrabajo" value="JUEVES" id="jueves" class="mr-2 rounded">
-                                    <label for="jueves" class="text-sm">Jueves</label>
-                                </div>
-                                <div class="flex items-center">
-                                    <input type="checkbox" name="diasTrabajo" value="VIERNES" id="viernes" class="mr-2 rounded">
-                                    <label for="viernes" class="text-sm">Viernes</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col lg:flex-row gap-4">
-                            <button type="submit" class="btn-primary flex-1">Registrar Trabajador</button>
-                            <a href="/admin/Dashboard" class="btn-secondary text-center">Cancelar</a>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </section> -->
-
          <div class="form-group">
                             <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-4">Días de Trabajo</label>
                             
@@ -1786,340 +1751,442 @@
         // Inicializar estado
         actualizarDiasSeleccionados();
 
-  // Gestión de citas - Lógica corregida según especificaciones
-// Gestión de citas - Lógica definitiva corregida
-class GestorCitas {
-    constructor() {
-        this.citasEstado = new Map(); // Almacena el estado de cada cita
-        this.init();
-    }
+  // Gestión de citas 
 
-    init() {
-        this.inicializarBotones();
-        this.inicializarFiltro();
-        this.inicializarEventListeners();
-    }
 
-    inicializarBotones() {
-        // Inicializar botones según el estado actual de cada cita
-        document.querySelectorAll('.botones-cita-container').forEach(contenedor => {
-            const citaId = contenedor.id.replace('botones-cita-', '');
-            const estado = contenedor.getAttribute('th:data-estado') || contenedor.dataset.estado;
-            this.actualizarBotonesCita(citaId, estado);
-        });
-    }
-
-    inicializarFiltro() {
-        const filtroEstado = document.getElementById('filtro-estado');
-        if (filtroEstado) {
-            filtroEstado.addEventListener('change', (e) => {
-                this.filtrarCitasPorEstado(e.target.value);
-            });
+// Gestión de citas - Lógica corregida según especificaciones
+    class GestorCitas {
+        constructor() {
+            this.init();
         }
-    }
 
-    inicializarEventListeners() {
-        // Delegación de eventos para los botones
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('btn-gestion-cita')) {
-                this.manejarClickBoton(e.target);
-            }
-        });
-    }
-
-    manejarClickBoton(boton) {
-        const citaId = boton.dataset.id;
-        const accion = boton.dataset.accion;
-        
-        // Remover active de todos los botones de esta cita
-        this.removerActiveBotones(citaId);
-        
-        // Añadir active al botón clickeado
-        boton.classList.add('active');
-        
-        // Ejecutar la acción correspondiente
-        this.ejecutarAccion(citaId, accion);
-    }
-
-    removerActiveBotones(citaId) {
-        const contenedor = document.getElementById(`botones-cita-${citaId}`);
-        if (contenedor) {
-            contenedor.querySelectorAll('.btn-gestion-cita').forEach(btn => {
-                btn.classList.remove('active');
-            });
+        init() {
+            this.inicializarBotones();
+            this.inicializarFiltro();
+            this.inicializarEventListeners();
         }
-    }
 
-    ejecutarAccion(citaId, accion) {
-        switch(accion) {
-            case 'aprobar':
-                this.aprobarCita(citaId);
-                break;
-            case 'rechazar':
-                this.rechazarCita(citaId);
-                break;
-            case 'notas':
-                this.abrirNotas(citaId);
-                break;
-            case 'asignar-fecha':
-                this.asignarFecha(citaId);
-                break;
-            case 'pendiente':
-                this.cambiarAPendiente(citaId);
-                break;
+        inicializarBotones() {
+            // Los botones ya están definidos en el HTML según el estado inicial
+            // No necesitamos modificarlos aquí
+            console.log('Botones inicializados según estado inicial de cada cita');
         }
-    }
 
-    aprobarCita(citaId) {
-        console.log('Aprobando cita:', citaId);
-        
-        // Actualizar estado visual
-        this.actualizarEstadoCita(citaId, 'Aprobada');
-        
-        // Actualizar botones
-        this.actualizarBotonesCita(citaId, 'Aprobada');
-        
-        this.mostrarMensajeExito('Cita aprobada correctamente');
-    }
-
-    rechazarCita(citaId) {
-        console.log('Rechazando cita:', citaId);
-        
-        // Actualizar estado visual
-        this.actualizarEstadoCita(citaId, 'Rechazada');
-        
-        // Actualizar botones
-        this.actualizarBotonesCita(citaId, 'Rechazada');
-        
-        this.mostrarMensajeExito('Cita rechazada correctamente');
-    }
-
-    cambiarAPendiente(citaId) {
-        console.log('Cambiando cita a pendiente:', citaId);
-        
-        // Actualizar estado visual
-        this.actualizarEstadoCita(citaId, 'Pendiente');
-        
-        // Actualizar botones
-        this.actualizarBotonesCita(citaId, 'Pendiente');
-        
-        this.mostrarMensajeExito('Cita cambiada a pendiente');
-    }
-
-    abrirNotas(citaId) {
-        console.log('Abriendo notas para cita:', citaId);
-        
-        const fila = document.querySelector(`tr[th\\:data-id="${citaId}"]`);
-        const notasActuales = fila.querySelector('td:nth-last-child(2)').textContent;
-        
-        const nuevasNotas = prompt('Ingrese las notas para esta cita:', notasActuales);
-        if (nuevasNotas !== null) {
-            fila.querySelector('td:nth-last-child(2)').textContent = nuevasNotas;
-            this.mostrarMensajeExito('Notas actualizadas correctamente');
-        }
-    }
-
-    asignarFecha(citaId) {
-        console.log('Asignando fecha para cita:', citaId);
-        this.crearCalendario(citaId);
-    }
-
-    actualizarEstadoCita(citaId, nuevoEstado) {
-        const fila = document.querySelector(`tr[th\\:data-id="${citaId}"]`);
-        if (fila) {
-            const estadoBadge = fila.querySelector('.estado-badge');
-            estadoBadge.textContent = nuevoEstado;
-            
-            // Actualizar clases CSS según el estado
-            estadoBadge.className = 'estado-badge ' + 
-                (nuevoEstado === 'Pendiente' ? 'estado-pendiente' :
-                 nuevoEstado === 'Aprobada' ? 'estado-aprobada' : 'estado-rechazada');
-            
-            // Actualizar el atributo data-estado
-            const contenedorBotones = document.getElementById(`botones-cita-${citaId}`);
-            contenedorBotones.dataset.estado = nuevoEstado;
-        }
-    }
-
-    actualizarBotonesCita(citaId, estado) {
-        const contenedor = document.getElementById(`botones-cita-${citaId}`);
-        if (!contenedor) return;
-
-        let botonesHTML = '';
-
-        switch(estado) {
-            case 'Pendiente':
-                botonesHTML = `
-                    <button class="btn-gestion-cita btn-aprobar" 
-                            data-id="${citaId}" 
-                            data-accion="aprobar">Aprobar</button>
-                    <button class="btn-gestion-cita btn-rechazar" 
-                            data-id="${citaId}" 
-                            data-accion="rechazar">Rechazar</button>
-                    <button class="btn-gestion-cita btn-notas" 
-                            data-id="${citaId}" 
-                            data-accion="notas">Notas</button>
-                `;
-                break;
+        inicializarFiltro() {
+            const filtroEstado = document.getElementById('filtro-estado');
+            if (filtroEstado) {
+                // Configurar el color del texto
+                filtroEstado.classList.add('text-gray-900', 'dark:text-white', 'bg-white', 'dark:bg-gray-700', 'border', 'border-gray-300', 'dark:border-gray-600', 'rounded-md', 'px-3', 'py-2');
                 
-            case 'Aprobada':
-                botonesHTML = `
-                    <button class="btn-gestion-cita btn-asignar-fecha" 
-                            data-id="${citaId}" 
-                            data-accion="asignar-fecha">Asignar Fecha</button>
-                    <button class="btn-gestion-cita btn-pendiente" 
-                            data-id="${citaId}" 
-                            data-accion="pendiente">A Pendiente</button>
-                    <button class="btn-gestion-cita btn-notas" 
-                            data-id="${citaId}" 
-                            data-accion="notas">Notas</button>
-                `;
-                break;
-                
-            case 'Rechazada':
-                botonesHTML = `
-                    <button class="btn-gestion-cita btn-pendiente" 
-                            data-id="${citaId}" 
-                            data-accion="pendiente">A Pendiente</button>
-                    <button class="btn-gestion-cita btn-notas" 
-                            data-id="${citaId}" 
-                            data-accion="notas">Notas</button>
-                `;
-                break;
-        }
-
-        contenedor.innerHTML = botonesHTML;
-    }
-
-    filtrarCitasPorEstado(estado) {
-        const tabla = document.getElementById('tabla-citas');
-        const filas = tabla.querySelectorAll('tbody tr');
-        let citasVisibles = 0;
-        
-        filas.forEach(fila => {
-            if (fila.querySelector('.estado-badge')) {
-                const estadoCita = fila.querySelector('.estado-badge').textContent;
-                
-                if (estado === 'TODAS' || estadoCita === estado) {
-                    fila.style.display = '';
-                    citasVisibles++;
-                } else {
-                    fila.style.display = 'none';
-                }
-            }
-        });
-    }
-
-    mostrarMensajeExito(mensaje) {
-        const mensajeExito = document.createElement('div');
-        mensajeExito.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-10000 transform transition-transform duration-300';
-        mensajeExito.textContent = mensaje;
-        mensajeExito.style.zIndex = '10000';
-        
-        document.body.appendChild(mensajeExito);
-        
-        setTimeout(() => {
-            mensajeExito.style.transform = 'translateX(100%)';
-            setTimeout(() => {
-                if (mensajeExito.parentNode) {
-                    mensajeExito.parentNode.removeChild(mensajeExito);
-                }
-            }, 300);
-        }, 3000);
-    }
-
-    // Función para crear el calendario (versión simplificada)
-    crearCalendario(citaId) {
-        // Crear overlay
-        const overlay = document.createElement('div');
-        overlay.className = 'calendario-overlay';
-        overlay.style.display = 'block';
-        
-        // Crear contenedor del calendario
-        const calendario = document.createElement('div');
-        calendario.className = 'calendario-container';
-        
-        // Contenido simple del calendario para demostración
-        calendario.innerHTML = `
-            <div class="calendario-header">
-                <h3 class="text-lg font-semibold">Seleccionar Fecha y Hora</h3>
-            </div>
-            <div class="p-4">
-                <div class="form-group">
-                    <label>Fecha:</label>
-                    <input type="date" class="fecha-input w-full p-2 border rounded">
-                </div>
-                <div class="form-group">
-                    <label>Hora:</label>
-                    <select class="hora-input w-full p-2 border rounded">
-                        <option value="08:00">8:00 AM</option>
-                        <option value="09:00">9:00 AM</option>
-                        <option value="10:00">10:00 AM</option>
-                        <option value="11:00">11:00 AM</option>
-                        <option value="12:00">12:00 PM</option>
-                        <option value="13:00">1:00 PM</option>
-                        <option value="14:00">2:00 PM</option>
-                        <option value="15:00">3:00 PM</option>
-                        <option value="16:00">4:00 PM</option>
-                        <option value="17:00">5:00 PM</option>
-                    </select>
-                </div>
-                <div class="flex gap-2 mt-4">
-                    <button class="btn-confirmar-fecha flex-1" data-cita-id="${citaId}">Confirmar</button>
-                    <button class="btn-secondary flex-1" onclick="this.closest('.calendario-container').remove(); document.querySelector('.calendario-overlay').remove();">Cancelar</button>
-                </div>
-            </div>
-        `;
-        
-        // Añadir al documento
-        document.body.appendChild(overlay);
-        document.body.appendChild(calendario);
-        
-        // Event listener para confirmar fecha
-        calendario.querySelector('.btn-confirmar-fecha').addEventListener('click', (e) => {
-            const fechaInput = calendario.querySelector('.fecha-input');
-            const horaInput = calendario.querySelector('.hora-input');
-            
-            if (fechaInput.value && horaInput.value) {
-                const fecha = new Date(fechaInput.value + 'T' + horaInput.value);
-                const fechaFormateada = fecha.toLocaleString('es', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: true
+                filtroEstado.addEventListener('change', (e) => {
+                    this.filtrarCitasPorEstado(e.target.value);
                 });
-                
-                // Actualizar en la tabla
-                const fila = document.querySelector(`tr[th\\:data-id="${citaId}"]`);
-                if (fila) {
-                    const celdaFecha = fila.querySelector('td:nth-last-child(3)');
-                    celdaFecha.querySelector('span').textContent = fechaFormateada;
+            }
+        }
+
+        inicializarEventListeners() {
+            // Delegación de eventos para los botones
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('btn-gestion-cita')) {
+                    this.manejarClickBoton(e.target);
+                }
+            });
+        }
+
+        manejarClickBoton(boton) {
+            const citaId = boton.dataset.id;
+            const accion = boton.dataset.accion;
+            
+            // Ejecutar la acción correspondiente
+            this.ejecutarAccion(citaId, accion);
+        }
+
+        ejecutarAccion(citaId, accion) {
+            switch(accion) {
+                case 'aprobar':
+                    this.aprobarCita(citaId);
+                    break;
+                case 'rechazar':
+                    this.rechazarCita(citaId);
+                    break;
+                case 'notas':
+                    this.abrirNotas(citaId);
+                    break;
+                case 'asignar-fecha':
+                    this.asignarFecha(citaId);
+                    break;
+                case 'pendiente':
+                    this.cambiarAPendiente(citaId);
+                    break;
+            }
+        }
+
+        aprobarCita(citaId) {
+            console.log('Aprobando cita:', citaId);
+            
+            // Actualizar estado visual
+            this.actualizarEstadoCita(citaId, 'Aprobada');
+            
+            // Actualizar botones según nuevo estado
+            this.actualizarBotonesCita(citaId, 'Aprobada');
+            
+            this.mostrarMensajeExito('Cita aprobada correctamente');
+        }
+
+        rechazarCita(citaId) {
+            console.log('Rechazando cita:', citaId);
+            
+            // Actualizar estado visual
+            this.actualizarEstadoCita(citaId, 'Rechazada');
+            
+            // Actualizar botones según nuevo estado
+            this.actualizarBotonesCita(citaId, 'Rechazada');
+            
+            this.mostrarMensajeExito('Cita rechazada correctamente');
+        }
+
+        cambiarAPendiente(citaId) {
+            console.log('Cambiando cita a pendiente:', citaId);
+            
+            // Actualizar estado visual
+            this.actualizarEstadoCita(citaId, 'Pendiente');
+            
+            // Actualizar botones según nuevo estado
+            this.actualizarBotonesCita(citaId, 'Pendiente');
+            
+            this.mostrarMensajeExito('Cita cambiada a pendiente');
+        }
+
+        abrirNotas(citaId) {
+            console.log('Abriendo notas para cita:', citaId);
+            
+            const fila = document.querySelector(`tr[th\\:data-id="${citaId}"]`);
+            if (!fila) return;
+            
+            const celdas = fila.querySelectorAll('td');
+            const notasActuales = celdas[7].textContent; // Columna de notas
+            
+            const nuevasNotas = prompt('Ingrese las notas para esta cita:', notasActuales);
+            if (nuevasNotas !== null) {
+                celdas[7].textContent = nuevasNotas;
+                this.mostrarMensajeExito('Notas actualizadas correctamente');
+            }
+        }
+
+        asignarFecha(citaId) {
+            console.log('Asignando fecha para cita:', citaId);
+            this.crearCalendario(citaId);
+        }
+
+        actualizarEstadoCita(citaId, nuevoEstado) {
+            const fila = document.querySelector(`tr[th\\:data-id="${citaId}"]`);
+            if (fila) {
+                const estadoBadge = fila.querySelector('.estado-badge');
+                if (estadoBadge) {
+                    estadoBadge.textContent = nuevoEstado;
+                    
+                    // Actualizar clases CSS según el estado con texto más oscuro
+                    estadoBadge.className = 'estado-badge font-semibold text-gray-900 dark:text-white ' + 
+                        (nuevoEstado === 'Pendiente' ? 'estado-pendiente' :
+                         nuevoEstado === 'Aprobada' ? 'estado-aprobada' : 'estado-rechazada');
+                }
+            }
+        }
+
+        actualizarBotonesCita(citaId, estado) {
+            const contenedor = document.getElementById(`botones-cita-${citaId}`);
+            if (!contenedor) return;
+
+            let botonesHTML = '';
+
+            switch(estado) {
+                case 'Pendiente':
+                    botonesHTML = `
+                        <button class="btn-gestion-cita btn-aprobar bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md text-sm transition-colors" 
+                                data-id="${citaId}" 
+                                data-accion="aprobar">Aprobar</button>
+                        <button class="btn-gestion-cita btn-rechazar bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md text-sm transition-colors" 
+                                data-id="${citaId}" 
+                                data-accion="rechazar">Rechazar</button>
+                        <button class="btn-gestion-cita btn-notas bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm transition-colors" 
+                                data-id="${citaId}" 
+                                data-accion="notas">Notas</button>
+                    `;
+                    break;
+                    
+                case 'Aprobada':
+                    botonesHTML = `
+                        <button class="btn-gestion-cita btn-asignar-fecha bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded-md text-sm transition-colors" 
+                                data-id="${citaId}" 
+                                data-accion="asignar-fecha">Asignar Fecha</button>
+                        <button class="btn-gestion-cita btn-pendiente bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded-md text-sm transition-colors" 
+                                data-id="${citaId}" 
+                                data-accion="pendiente">A Pendiente</button>
+                        <button class="btn-gestion-cita btn-notas bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm transition-colors" 
+                                data-id="${citaId}" 
+                                data-accion="notas">Notas</button>
+                    `;
+                    break;
+                    
+                case 'Rechazada':
+                    botonesHTML = `
+                        <button class="btn-gestion-cita btn-pendiente bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded-md text-sm transition-colors" 
+                                data-id="${citaId}" 
+                                data-accion="pendiente">A Pendiente</button>
+                        <button class="btn-gestion-cita btn-notas bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm transition-colors" 
+                                data-id="${citaId}" 
+                                data-accion="notas">Notas</button>
+                    `;
+                    break;
+            }
+
+            contenedor.innerHTML = botonesHTML;
+        }
+
+        filtrarCitasPorEstado(estado) {
+            const tabla = document.getElementById('tabla-citas');
+            if (!tabla) return;
+            
+            const filas = tabla.querySelectorAll('tbody tr');
+            let citasVisibles = 0;
+            
+            filas.forEach(fila => {
+                // Saltar la fila de "no hay citas"
+                if (fila.classList.contains('text-center')) {
+                    fila.style.display = 'none';
+                    return;
                 }
                 
-                // Cerrar calendario
-                calendario.remove();
-                overlay.remove();
-                
-                this.mostrarMensajeExito('Fecha asignada correctamente');
-            } else {
-                alert('Por favor selecciona una fecha y hora');
+                const estadoBadge = fila.querySelector('.estado-badge');
+                if (estadoBadge) {
+                    const estadoCita = estadoBadge.textContent.trim();
+                    
+                    if (estado === 'TODAS' || estadoCita === estado) {
+                        fila.style.display = '';
+                        citasVisibles++;
+                    } else {
+                        fila.style.display = 'none';
+                    }
+                }
+            });
+
+            // Mostrar mensaje de "no hay citas" si no hay citas visibles
+            this.mostrarOcultarMensajeNoCitas(citasVisibles);
+        }
+
+        mostrarOcultarMensajeNoCitas(citasVisibles) {
+            const tabla = document.getElementById('tabla-citas');
+            if (!tabla) return;
+            
+            const filaNoCitas = tabla.querySelector('tr.text-center');
+            if (filaNoCitas) {
+                if (citasVisibles === 0) {
+                    filaNoCitas.style.display = '';
+                } else {
+                    filaNoCitas.style.display = 'none';
+                }
             }
-        });
-        
-        // Cerrar al hacer clic en el overlay
-        overlay.addEventListener('click', () => {
-            calendario.remove();
-            overlay.remove();
-        });
+        }
+
+        mostrarMensajeExito(mensaje) {
+            const mensajeExito = document.createElement('div');
+            mensajeExito.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-10000 transform transition-transform duration-300';
+            mensajeExito.textContent = mensaje;
+            mensajeExito.style.zIndex = '10000';
+            
+            document.body.appendChild(mensajeExito);
+            
+            setTimeout(() => {
+                mensajeExito.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (mensajeExito.parentNode) {
+                        mensajeExito.parentNode.removeChild(mensajeExito);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Función para crear el calendario con estilo consistente
+        crearCalendario(citaId) {
+            // Crear overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+            overlay.style.display = 'flex';
+            
+            // Obtener fecha actual y formatear para input date (YYYY-MM-DD)
+            const hoy = new Date();
+            const fechaMinima = hoy.toISOString().split('T')[0];
+            
+            // Crear contenedor del calendario
+            const calendario = document.createElement('div');
+            calendario.className = 'bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md border border-gray-200 dark:border-gray-700';
+            
+            calendario.innerHTML = `
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white">Asignar Fecha y Hora</h3>
+                        <button class="btn-cerrar text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Fecha de la cita</label>
+                            <input type="date" 
+                                   class="fecha-input w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                   min="${fechaMinima}"
+                                   required>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 flex items-center">
+                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                </svg>
+                                Solo se permiten fechas a partir de hoy
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Hora de la cita</label>
+                            <select class="hora-input w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                <option value="08:00">8:00 AM</option>
+                                <option value="09:00">9:00 AM</option>
+                                <option value="10:00">10:00 AM</option>
+                                <option value="11:00">11:00 AM</option>
+                                <option value="12:00">12:00 PM</option>
+                                <option value="13:00">1:00 PM</option>
+                                <option value="14:00">2:00 PM</option>
+                                <option value="15:00">3:00 PM</option>
+                                <option value="16:00">4:00 PM</option>
+                                <option value="17:00">5:00 PM</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-3 mt-8">
+                        <button class="btn-confirmar-fecha flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-transform" 
+                                data-cita-id="${citaId}">
+                            Confirmar Fecha
+                        </button>
+                        <button class="btn-cancelar flex-1 bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 py-3 px-4 rounded-lg font-medium transition-colors">
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Añadir al documento
+            document.body.appendChild(overlay);
+            overlay.appendChild(calendario);
+            
+            // Obtener referencias a los elementos
+            const fechaInput = calendario.querySelector('.fecha-input');
+            const btnCerrar = calendario.querySelector('.btn-cerrar');
+            const btnCancelar = calendario.querySelector('.btn-cancelar');
+            const btnConfirmar = calendario.querySelector('.btn-confirmar-fecha');
+            
+            // Validar en tiempo real por si el usuario intenta manipular el DOM
+            fechaInput.addEventListener('change', function() {
+                const fechaSeleccionada = new Date(this.value);
+                const fechaHoy = new Date();
+                fechaHoy.setHours(0, 0, 0, 0); // Resetear horas para comparar solo la fecha
+                
+                if (fechaSeleccionada < fechaHoy) {
+                    this.classList.add('border-red-500', 'ring-2', 'ring-red-200');
+                    setTimeout(() => {
+                        alert('No puedes seleccionar una fecha anterior al día de hoy');
+                        this.value = fechaMinima;
+                        this.classList.remove('border-red-500', 'ring-2', 'ring-red-200');
+                    }, 100);
+                } else {
+                    this.classList.remove('border-red-500', 'ring-2', 'ring-red-200');
+                }
+            });
+            
+            // Event listeners para los botones
+            btnConfirmar.addEventListener('click', (e) => {
+                const fechaInput = calendario.querySelector('.fecha-input');
+                const horaInput = calendario.querySelector('.hora-input');
+                
+                // Validar que la fecha no sea anterior al día actual
+                const fechaSeleccionada = new Date(fechaInput.value);
+                const fechaHoy = new Date();
+                fechaHoy.setHours(0, 0, 0, 0);
+                
+                if (fechaSeleccionada < fechaHoy) {
+                    fechaInput.classList.add('border-red-500', 'ring-2', 'ring-red-200');
+                    setTimeout(() => {
+                        alert('No puedes seleccionar una fecha anterior al día de hoy');
+                        fechaInput.value = fechaMinima;
+                        fechaInput.classList.remove('border-red-500', 'ring-2', 'ring-red-200');
+                    }, 100);
+                    return;
+                }
+                
+                if (fechaInput.value && horaInput.value) {
+                    const fecha = new Date(fechaInput.value + 'T' + horaInput.value);
+                    const fechaFormateada = fecha.toLocaleString('es', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true
+                    });
+                    
+                    // Actualizar en la tabla
+                    const fila = document.querySelector(`tr[th\\:data-id="${citaId}"]`);
+                    if (fila) {
+                        const celdaFecha = fila.querySelector('td:nth-last-child(3)');
+                        const spanFecha = celdaFecha.querySelector('span');
+                        if (spanFecha) {
+                            spanFecha.textContent = fechaFormateada;
+                        } else {
+                            celdaFecha.innerHTML = `<span class="text-gray-900 dark:text-white">${fechaFormateada}</span>`;
+                        }
+                    }
+                    
+                    // Cerrar calendario
+                    overlay.remove();
+                    
+                    this.mostrarMensajeExito('Fecha asignada correctamente');
+                } else {
+                    // Efecto visual de error
+                    if (!fechaInput.value) {
+                        fechaInput.classList.add('border-red-500', 'ring-2', 'ring-red-200');
+                        setTimeout(() => fechaInput.classList.remove('border-red-500', 'ring-2', 'ring-red-200'), 2000);
+                    }
+                    alert('Por favor selecciona una fecha y hora');
+                }
+            });
+            
+            // Event listeners para cerrar
+            btnCerrar.addEventListener('click', () => overlay.remove());
+            btnCancelar.addEventListener('click', () => overlay.remove());
+            
+            // Cerrar al hacer clic en el overlay
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.remove();
+                }
+            });
+            
+            // Prevenir que el clic en el calendario cierre el modal
+            calendario.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+            
+            // Enfocar el input de fecha al abrir
+            setTimeout(() => fechaInput.focus(), 100);
+        }
     }
-}
 
 // Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
     window.gestorCitas = new GestorCitas();
 });
+
 
 
 
