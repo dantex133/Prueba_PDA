@@ -1624,82 +1624,202 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script th:src="@{/js/script.js}" defer></script>
 
 <script>
-    // Funciones para manejar los modales
-    function mostrarModal(modalId) {
-        document.getElementById(modalId).style.display = 'block';
-    }
-
-    function cerrarModal(modalId) {
-        document.getElementById(modalId).style.display = 'none';
-    }
-
-    // Cerrar modales al hacer clic fuera
-    window.onclick = function(event) {
-        if (event.target.className === 'modal') {
-            event.target.style.display = 'none';
-        }
-    }
-
-    // Navegación entre secciones
     document.addEventListener('DOMContentLoaded', function() {
+        // ===== FUNCIONES PARA MANEJAR MODALES =====
+        function mostrarModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function cerrarModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Cerrar modales al hacer clic fuera
+        window.onclick = function(event) {
+            if (event.target.className === 'modal') {
+                event.target.style.display = 'none';
+            }
+        };
+
+        // ===== VALIDACIÓN DEL FORMULARIO DE REGISTRO =====
+        const form = document.forms['RegistroT'];
+        if (form) {
+            const correoInput = document.getElementById('CorreoUser');
+            const passwordInput = document.getElementById('password');
+            const identificacionInput = document.getElementById('Identifiacion');
+
+            // Crear elemento para mensajes de error
+            const errorDiv = document.createElement('div');
+            errorDiv.style.color = 'red';
+            errorDiv.style.margin = '10px 0';
+            errorDiv.style.padding = '10px';
+            errorDiv.style.borderRadius = '5px';
+            errorDiv.style.backgroundColor = '#ffeeee';
+            errorDiv.style.display = 'none';
+            form.insertBefore(errorDiv, form.querySelector('.create-account'));
+
+            // Función para validar email
+            function isValidEmail(email) {
+                const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return regex.test(email);
+            }
+
+            // Función para validar solo números
+            function isOnlyNumbers(input) {
+                return /^\d+$/.test(input);
+            }
+
+            // Validar identificación en tiempo real (solo números)
+            if (identificacionInput) {
+                identificacionInput.addEventListener('input', function() {
+                    if (!isOnlyNumbers(this.value)) {
+                        this.setCustomValidity('La identificación debe contener solo números');
+                    } else {
+                        this.setCustomValidity('');
+                    }
+                });
+            }
+
+            // Validar formulario al enviar
+            form.addEventListener('submit', function(e) {
+                let errorMessages = [];
+
+                // Validar email
+                if (correoInput) {
+                    const email = correoInput.value.trim();
+                    if (!email) {
+                        errorMessages.push('Por favor introduzca su correo electrónico');
+                    } else if (!isValidEmail(email)) {
+                        errorMessages.push('Por favor introduzca un correo electrónico válido');
+                    }
+                }
+
+                // Validar contraseña (8 caracteres)
+                if (passwordInput) {
+                    const password = passwordInput.value.trim();
+                    if (!password) {
+                        errorMessages.push('Por favor introduzca una contraseña');
+                    } else if (password.length < 8) {
+                        errorMessages.push('La contraseña debe tener al menos 8 caracteres');
+                    }
+                }
+
+                // Validar identificación (solo números)
+                if (identificacionInput) {
+                    const identificacion = identificacionInput.value.trim();
+                    if (!identificacion) {
+                        errorMessages.push('Por favor introduzca su identificación');
+                    } else if (!isOnlyNumbers(identificacion)) {
+                        errorMessages.push('La identificación debe contener solo números');
+                    }
+                }
+
+                // Validar otros campos obligatorios
+                const nombre = document.getElementById('NombreUser')?.value.trim();
+                const apellido = document.getElementById('ApellidoUser')?.value.trim();
+
+                if (!nombre) {
+                    errorMessages.push('Por favor introduzca su nombre');
+                }
+
+                if (!apellido) {
+                    errorMessages.push('Por favor introduzca su apellido');
+                }
+
+                // Mostrar errores o enviar formulario
+                if (errorMessages.length > 0) {
+                    e.preventDefault();
+                    errorDiv.innerHTML = errorMessages.join('<br>');
+                    errorDiv.style.display = 'block';
+
+                    // Desplazarse al primer error
+                    window.scrollTo({
+                        top: errorDiv.offsetTop - 20,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+
+            // Ocultar mensajes de error al empezar a editar
+            const inputs = form.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    if (errorDiv.style.display === 'block') {
+                        errorDiv.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+        // ===== NAVEGACIÓN Y UI =====
         const sidebarLinks = document.querySelectorAll('.sidebar-link');
         const sections = document.querySelectorAll('section[id]');
         const navToggle = document.querySelector('.nav-toggle');
 
         // Navegación entre secciones
-        sidebarLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
+        if (sidebarLinks.length > 0 && sections.length > 0) {
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
 
-                const targetId = this.getAttribute('href').substring(1);
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetSection = document.getElementById(targetId);
 
-                // Ocultar todas las secciones
-                sections.forEach(section => {
-                    section.classList.add('hidden');
+                    if (targetSection) {
+                        // Ocultar todas las secciones
+                        sections.forEach(section => {
+                            section.classList.add('hidden');
+                        });
+
+                        // Mostrar la sección objetivo
+                        targetSection.classList.remove('hidden');
+
+                        // Actualizar enlace activo
+                        sidebarLinks.forEach(l => l.classList.remove('active'));
+                        this.classList.add('active');
+
+                        // Cerrar sidebar en móviles
+                        if (window.innerWidth < 1024) {
+                            document.body.classList.remove('mobile-menu-open');
+                        }
+                    }
                 });
+            });
+        }
 
-                // Mostrar la sección objetivo
-                document.getElementById(targetId).classList.remove('hidden');
+        // Toggle sidebar móvil
+        if (navToggle) {
+            navToggle.addEventListener('click', function() {
+                document.body.classList.toggle('mobile-menu-open');
+            });
 
-                // Actualizar enlace activo
-                sidebarLinks.forEach(l => l.classList.remove('active'));
-                this.classList.add('active');
-
-                // Cerrar sidebar en móviles
-                if (window.innerWidth < 1024) {
+            // Cerrar sidebar al hacer clic fuera en móviles
+            document.addEventListener('click', function(e) {
+                if (window.innerWidth < 1024 &&
+                    !e.target.closest('.sidebar') &&
+                    !e.target.closest('.nav-toggle') &&
+                    document.body.classList.contains('mobile-menu-open')) {
                     document.body.classList.remove('mobile-menu-open');
                 }
             });
-        });
+        }
 
-        // Toggle sidebar móvil
-        navToggle.addEventListener('click', function() {
-            document.body.classList.toggle('mobile-menu-open');
-        });
+        // ===== DATATABLES =====
+        if (typeof $.fn.DataTable !== 'undefined') {
+            $('#tabla-vehiculos, #tabla-anuncios, #tabla-citas').DataTable({
+                responsive: true,
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+                },
+                pageLength: 10,
+                dom: '<"flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-4"lfr>t<"flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mt-4"ip>'
+            });
+        }
 
-        // Cerrar sidebar al hacer clic fuera en móviles
-        document.addEventListener('click', function(e) {
-            if (window.innerWidth < 1024 &&
-                !e.target.closest('.sidebar') &&
-                !e.target.closest('.nav-toggle') &&
-                document.body.classList.contains('mobile-menu-open')) {
-                document.body.classList.remove('mobile-menu-open');
-            }
-        });
-
-        // Inicializar DataTables
-        $('#tabla-vehiculos, #tabla-anuncios, #tabla-citas').DataTable({
-            responsive: true,
-            language: {
-                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
-            },
-            pageLength: 10,
-            dom: '<"flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-4"lfr>t<"flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mt-4"ip>'
-        });
-
-        // Notificaciones
+        // ===== NOTIFICACIONES =====
         const notificationBell = document.getElementById('notification-bell');
         const notificationDropdown = document.getElementById('notification-dropdown');
 
@@ -1716,12 +1836,18 @@
         }
     });
 
+    // ===== FUNCIONES GLOBALES =====
     // Función para mostrar modal de edición (placeholder)
     function mostrarModalEditar(id) {
         // Aquí iría la lógica para cargar los datos del vehículo/anuncio
         console.log('Editando elemento con ID:', id);
         mostrarModal('modal-editar-vehiculo');
     }
+
+    // Hacer las funciones de modal disponibles globalmente
+    window.mostrarModal = mostrarModal;
+    window.cerrarModal = cerrarModal;
+    window.mostrarModalEditar = mostrarModalEditar;
 </script>
 </body>
 </html>
