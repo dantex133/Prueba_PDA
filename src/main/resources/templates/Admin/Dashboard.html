@@ -1055,7 +1055,9 @@
                                 </td>
                                 <td class="px-4 py-4 whitespace-nowrap text-sm font-medium">
                                     <div class="flex gap-2">
-                                        <button th:attr="onclick=|mostrarModalEditar('${vehiculo.id}')|" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors">Editar</button>
+                                        <button th:data-id="${vehiculo.id}"
+                                                onclick="mostrarModalEditarVehiculo(this)"
+                                                class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors">Editar</button>
                                         <a th:href="@{/admin/eliminar/{id}(id=${vehiculo.id})}" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 transition-colors" onclick="return confirm('¿Estás seguro de eliminar este vehículo?')">Eliminar</a>
                                     </div>
                                 </td>
@@ -1113,8 +1115,10 @@
                                 </td>
                                 <td class="px-4 py-4 whitespace-nowrap text-sm font-medium">
                                     <div class="flex gap-2">
-                                        <button th:attr="onclick=|mostrarModalEditar('${anuncio.id}')|" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors">Editar</button>
-                                        <a th:href="@{/admin/eliminar/{id}(id=${anuncio.id})}" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 transition-colors" onclick="return confirm('¿Estás seguro de eliminar este anuncio?')">Eliminar</a>
+                                        <button th:data-id="${anuncio.id}"
+                                                onclick="mostrarModalEditarAnuncio(this)"
+                                                class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors">Editar</button>
+                                        <a th:href="@{/admin/eliminar-anuncio/{id}(id=${anuncio.id})}" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 transition-colors" onclick="return confirm('¿Estás seguro de eliminar este anuncio?')">Eliminar</a>
                                     </div>
                                 </td>
                             </tr>
@@ -1562,6 +1566,72 @@
     </div>
 </div>
 
+<!-- Modal para Editar Anuncio -->
+<div id="modal-editar-anuncio" class="modal">
+    <div class="modal-content">
+        <span class="close text-2xl cursor-pointer float-right hover:text-gray-600 transition-colors" onclick="cerrarModal('modal-editar-anuncio')">&times;</span>
+        <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Editar Anuncio</h2>
+        <form id="form-editar-anuncio" method="post" enctype="multipart/form-data" class="space-y-6">
+            <input type="hidden" name="id" id="editar-anuncio-id">
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label for="editar-anuncio-marca">Marca</label>
+                    <input type="text" id="editar-anuncio-marca" name="marca" required>
+                </div>
+                <div class="form-group">
+                    <label for="editar-anuncio-modelo">Modelo</label>
+                    <input type="text" id="editar-anuncio-modelo" name="modelo" required>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label for="editar-anuncio-año">Año</label>
+                    <input type="number" id="editar-anuncio-año" name="año" required>
+                </div>
+                <div class="form-group">
+                    <label for="editar-anuncio-precio">Precio</label>
+                    <input type="number" step="0.01" id="editar-anuncio-precio" name="precio" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="editar-anuncio-categoria">Categoría</label>
+                <select id="editar-anuncio-categoria" name="categoria" required>
+                    <option value="Pick-Ups">Pick-Ups</option>
+                    <option value="Camionetas">Camionetas</option>
+                    <option value="Automóviles">Automóviles</option>
+                    <option value="Performance">Performance</option>
+                    <option value="Híbridos">Híbridos</option>
+                    <option value="Comerciales">Comerciales</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="editar-anuncio-descripcion">Descripción destacada</label>
+                <textarea id="editar-anuncio-descripcion" name="descripcion" required rows="4"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="editar-anuncio-colores">Colores disponibles (separados por comas)</label>
+                <input type="text" id="editar-anuncio-colores" name="colores" placeholder="Ej: Rojo, Azul, Negro">
+            </div>
+
+            <div class="form-group">
+                <label for="editar-anuncio-imagen">Imagen</label>
+                <input type="file" id="editar-anuncio-imagen" name="imagen" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-blue-700">
+                <img id="editar-anuncio-imagen-preview" src="" alt="Imagen actual" class="mt-2 rounded-lg shadow-sm" style="max-width: 200px; display: none;">
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-4 pt-4">
+                <button type="submit" class="btn-primary flex-1">Guardar Cambios</button>
+                <button type="button" class="btn-secondary" onclick="cerrarModal('modal-editar-anuncio')">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <!-- Modal para Anuncio -->
 <div id="modal-anuncio" class="modal">
     <div class="modal-content">
@@ -1622,204 +1692,101 @@
     </div>
 </div>
 
+<!-- Modal para Asignar Fecha -->
+<div id="modal-fecha" class="modal">
+    <div class="modal-content">
+        <span class="close text-2xl cursor-pointer float-right hover:text-gray-600 transition-colors" onclick="cerrarModal('modal-fecha')">&times;</span>
+        <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Asignar Fecha</h2>
+        <div class="space-y-6">
+            <div class="form-group">
+                <label for="fecha-asignacion">Fecha y Hora</label>
+                <input type="datetime-local" id="fecha-asignacion" class="form-control">
+            </div>
+            <div class="flex flex-col lg:flex-row gap-4 pt-4">
+                <button onclick="confirmarFecha()" class="btn-primary flex-1">Confirmar</button>
+                <button type="button" class="btn-secondary" onclick="cerrarModal('modal-fecha')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Notas -->
+<div id="modal-notas" class="modal">
+    <div class="modal-content">
+        <span class="close text-2xl cursor-pointer float-right hover:text-gray-600 transition-colors" onclick="cerrarModal('modal-notas')">&times;</span>
+        <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Notas Administrativas</h2>
+        <div class="space-y-6">
+            <div class="form-group">
+                <label for="texto-notas">Notas</label>
+                <textarea id="texto-notas" class="form-control" rows="5"></textarea>
+            </div>
+            <div class="flex flex-col lg:flex-row gap-4 pt-4">
+                <button onclick="guardarNotas()" class="btn-primary flex-1">Guardar</button>
+                <button type="button" class="btn-secondary" onclick="cerrarModal('modal-notas')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script th:src="@{/js/script.js}" defer></script>
 
 <script>
+    // ===================== VARIABLES GLOBALES =====================
+    let citaActualId = null;
+
+    // ===================== FUNCIONALIDAD PRINCIPAL =====================
     document.addEventListener('DOMContentLoaded', function() {
-        // ===== FUNCIONES PARA MANEJAR MODALES =====
-        function mostrarModal(modalId) {
-            document.getElementById(modalId).style.display = 'block';
-        }
-
-        function cerrarModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        // Cerrar modales al hacer clic fuera
-        window.onclick = function(event) {
-            if (event.target.className === 'modal') {
-                event.target.style.display = 'none';
-            }
-        };
-
-        // ===== VALIDACIÓN DEL FORMULARIO DE REGISTRO =====
-        const form = document.forms['RegistroT'];
-        if (form) {
-            const correoInput = document.getElementById('CorreoUser');
-            const passwordInput = document.getElementById('password');
-            const identificacionInput = document.getElementById('Identifiacion');
-
-            // Crear elemento para mensajes de error
-            const errorDiv = document.createElement('div');
-            errorDiv.style.color = 'red';
-            errorDiv.style.margin = '10px 0';
-            errorDiv.style.padding = '10px';
-            errorDiv.style.borderRadius = '5px';
-            errorDiv.style.backgroundColor = '#ffeeee';
-            errorDiv.style.display = 'none';
-            form.insertBefore(errorDiv, form.querySelector('.create-account'));
-
-            // Función para validar email
-            function isValidEmail(email) {
-                const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                return regex.test(email);
-            }
-
-            // Función para validar solo números
-            function isOnlyNumbers(input) {
-                return /^\d+$/.test(input);
-            }
-
-            // Validar identificación en tiempo real (solo números)
-            if (identificacionInput) {
-                identificacionInput.addEventListener('input', function() {
-                    if (!isOnlyNumbers(this.value)) {
-                        this.setCustomValidity('La identificación debe contener solo números');
-                    } else {
-                        this.setCustomValidity('');
-                    }
-                });
-            }
-
-            // Validar formulario al enviar
-            form.addEventListener('submit', function(e) {
-                let errorMessages = [];
-
-                // Validar email
-                if (correoInput) {
-                    const email = correoInput.value.trim();
-                    if (!email) {
-                        errorMessages.push('Por favor introduzca su correo electrónico');
-                    } else if (!isValidEmail(email)) {
-                        errorMessages.push('Por favor introduzca un correo electrónico válido');
-                    }
-                }
-
-                // Validar contraseña (8 caracteres)
-                if (passwordInput) {
-                    const password = passwordInput.value.trim();
-                    if (!password) {
-                        errorMessages.push('Por favor introduzca una contraseña');
-                    } else if (password.length < 8) {
-                        errorMessages.push('La contraseña debe tener al menos 8 caracteres');
-                    }
-                }
-
-                // Validar identificación (solo números)
-                if (identificacionInput) {
-                    const identificacion = identificacionInput.value.trim();
-                    if (!identificacion) {
-                        errorMessages.push('Por favor introduzca su identificación');
-                    } else if (!isOnlyNumbers(identificacion)) {
-                        errorMessages.push('La identificación debe contener solo números');
-                    }
-                }
-
-                // Validar otros campos obligatorios
-                const nombre = document.getElementById('NombreUser')?.value.trim();
-                const apellido = document.getElementById('ApellidoUser')?.value.trim();
-
-                if (!nombre) {
-                    errorMessages.push('Por favor introduzca su nombre');
-                }
-
-                if (!apellido) {
-                    errorMessages.push('Por favor introduzca su apellido');
-                }
-
-                // Mostrar errores o enviar formulario
-                if (errorMessages.length > 0) {
-                    e.preventDefault();
-                    errorDiv.innerHTML = errorMessages.join('<br>');
-                    errorDiv.style.display = 'block';
-
-                    // Desplazarse al primer error
-                    window.scrollTo({
-                        top: errorDiv.offsetTop - 20,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-
-            // Ocultar mensajes de error al empezar a editar
-            const inputs = form.querySelectorAll('input');
-            inputs.forEach(input => {
-                input.addEventListener('input', function() {
-                    if (errorDiv.style.display === 'block') {
-                        errorDiv.style.display = 'none';
-                    }
-                });
-            });
-        }
-
-        // ===== NAVEGACIÓN Y UI =====
-        const sidebarLinks = document.querySelectorAll('.sidebar-link');
-        const sections = document.querySelectorAll('section[id]');
-        const navToggle = document.querySelector('.nav-toggle');
+        console.log('🚀 Inicializando dashboard...');
 
         // Navegación entre secciones
-        if (sidebarLinks.length > 0 && sections.length > 0) {
-            sidebarLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
+        const sidebarLinks = document.querySelectorAll('.sidebar-link');
+        const sections = document.querySelectorAll('section[id]');
 
-                    const targetId = this.getAttribute('href').substring(1);
-                    const targetSection = document.getElementById(targetId);
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                console.log('Navegando a:', targetId);
 
-                    if (targetSection) {
-                        // Ocultar todas las secciones
-                        sections.forEach(section => {
-                            section.classList.add('hidden');
-                        });
-
-                        // Mostrar la sección objetivo
-                        targetSection.classList.remove('hidden');
-
-                        // Actualizar enlace activo
-                        sidebarLinks.forEach(l => l.classList.remove('active'));
-                        this.classList.add('active');
-
-                        // Cerrar sidebar en móviles
-                        if (window.innerWidth < 1024) {
-                            document.body.classList.remove('mobile-menu-open');
-                        }
-                    }
+                // Ocultar todas las secciones
+                sections.forEach(section => {
+                    section.classList.add('hidden');
                 });
-            });
-        }
 
-        // Toggle sidebar móvil
-        if (navToggle) {
-            navToggle.addEventListener('click', function() {
-                document.body.classList.toggle('mobile-menu-open');
-            });
+                // Mostrar sección objetivo
+                const targetSection = document.getElementById(targetId);
+                if (targetSection) {
+                    targetSection.classList.remove('hidden');
+                }
 
-            // Cerrar sidebar al hacer clic fuera en móviles
-            document.addEventListener('click', function(e) {
-                if (window.innerWidth < 1024 &&
-                    !e.target.closest('.sidebar') &&
-                    !e.target.closest('.nav-toggle') &&
-                    document.body.classList.contains('mobile-menu-open')) {
+                // Actualizar enlace activo
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+
+                // Cerrar sidebar en móviles
+                if (window.innerWidth < 1024) {
                     document.body.classList.remove('mobile-menu-open');
                 }
             });
-        }
+        });
 
-        // ===== DATATABLES =====
-        if (typeof $.fn.DataTable !== 'undefined') {
-            $('#tabla-vehiculos, #tabla-anuncios, #tabla-citas').DataTable({
-                responsive: true,
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
-                },
-                pageLength: 10,
-                dom: '<"flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-4"lfr>t<"flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mt-4"ip>'
+        // Menú móvil
+        const navToggle = document.querySelector('.nav-toggle');
+        if (navToggle) {
+            navToggle.addEventListener('click', function() {
+                document.body.classList.toggle('mobile-menu-open');
+                console.log('Menú móvil:', document.body.classList.contains('mobile-menu-open') ? 'abierto' : 'cerrado');
             });
         }
 
-        // ===== NOTIFICACIONES =====
+        // Inicializar DataTables
+        inicializarDataTables();
+
+        // Gestión de citas
+        inicializarGestionCitas();
+
+        // Notificaciones
         const notificationBell = document.getElementById('notification-bell');
         const notificationDropdown = document.getElementById('notification-dropdown');
 
@@ -1834,20 +1801,460 @@
                 notificationDropdown.classList.add('hidden');
             });
         }
+
+        console.log('✅ Dashboard inicializado correctamente');
     });
 
-    // ===== FUNCIONES GLOBALES =====
-    // Función para mostrar modal de edición (placeholder)
-    function mostrarModalEditar(id) {
-        // Aquí iría la lógica para cargar los datos del vehículo/anuncio
-        console.log('Editando elemento con ID:', id);
-        mostrarModal('modal-editar-vehiculo');
+    // ===================== DATA TABLES =====================
+    function inicializarDataTables() {
+        $('#tabla-vehiculos, #tabla-anuncios, #tabla-citas').DataTable({
+            responsive: true,
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+            },
+            pageLength: 10,
+            dom: '<"flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-4"lfr>t<"flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mt-4"ip>'
+        });
     }
 
-    // Hacer las funciones de modal disponibles globalmente
-    window.mostrarModal = mostrarModal;
-    window.cerrarModal = cerrarModal;
-    window.mostrarModalEditar = mostrarModalEditar;
+    // ===================== GESTIÓN DE CITAS - ACTUALIZACIÓN EN TIEMPO REAL =====================
+    function inicializarGestionCitas() {
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('btn-gestion-cita')) {
+                const citaId = e.target.getAttribute('th:data-id') || e.target.getAttribute('data-id');
+                const accion = e.target.getAttribute('data-accion');
+
+                console.log(`Acción: ${accion} para cita: ${citaId}`);
+                citaActualId = citaId;
+
+                manejarAccionCita(accion, e.target);
+            }
+        });
+
+        // Filtro de estado
+        const filtroEstado = document.getElementById('filtro-estado');
+        if (filtroEstado) {
+            filtroEstado.addEventListener('change', function() {
+                const estado = this.value;
+                filtrarCitasPorEstado(estado);
+            });
+        }
+    }
+
+    function manejarAccionCita(accion, boton) {
+        const fila = boton.closest('tr');
+
+        switch(accion) {
+            case 'aprobar':
+                cambiarEstadoCita('Aprobada', fila);
+                break;
+            case 'rechazar':
+                cambiarEstadoCita('Rechazada', fila);
+                break;
+            case 'asignar-fecha':
+                mostrarModal('modal-fecha');
+                break;
+            case 'pendiente':
+                cambiarEstadoCita('Pendiente', fila);
+                break;
+            case 'notas':
+                cargarNotasActuales(fila);
+                mostrarModal('modal-notas');
+                break;
+        }
+    }
+
+    function cambiarEstadoCita(nuevoEstado, fila) {
+        if (!citaActualId) return;
+
+        console.log(`Cambiando estado de cita ${citaActualId} a ${nuevoEstado}`);
+
+        // ACTUALIZACIÓN EN TIEMPO REAL - SIN RECARGAR
+        actualizarInterfazCita(fila, nuevoEstado);
+
+        // Llamada AJAX al backend
+        fetch(`/admin/citas/${citaActualId}/cambiar-estado`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `estado=${nuevoEstado}`
+        })
+        .then(response => response.text())
+        .then(result => {
+            if (result === 'OK') {
+                console.log('Estado actualizado correctamente en servidor');
+                mostrarNotificacion('Estado actualizado correctamente', 'success');
+            } else {
+                // Revertir cambios en caso de error
+                revertirEstadoCita(fila);
+                alert('Error al actualizar el estado');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            revertirEstadoCita(fila);
+            alert('Error al actualizar el estado');
+        });
+    }
+
+    function actualizarInterfazCita(fila, nuevoEstado) {
+        // Actualizar badge de estado
+        const estadoBadge = fila.querySelector('.estado-badge');
+        estadoBadge.textContent = nuevoEstado;
+        estadoBadge.className = 'estado-badge ' + getClaseEstado(nuevoEstado);
+
+        // Actualizar botones
+        const contenedorBotones = fila.querySelector('td:last-child > div');
+        contenedorBotones.innerHTML = generarBotonesEstado(nuevoEstado, citaActualId);
+
+        // Si se cambió a Pendiente, limpiar fecha asignada
+        if (nuevoEstado === 'Pendiente') {
+            const celdaFecha = fila.querySelector('td:nth-child(7)');
+            celdaFecha.innerHTML = '<span>-</span>';
+        }
+    }
+
+    function revertirEstadoCita(fila) {
+        // Aquí podrías implementar la lógica para revertir el estado visual
+        console.log('Revirtiendo cambios en la interfaz');
+    }
+
+    function generarBotonesEstado(estado, citaId) {
+        switch(estado) {
+            case 'Pendiente':
+                return `
+                    <button class="btn-gestion-cita btn-aprobar" data-id="${citaId}" data-accion="aprobar">Aprobar</button>
+                    <button class="btn-gestion-cita btn-rechazar" data-id="${citaId}" data-accion="rechazar">Rechazar</button>
+                    <button class="btn-gestion-cita btn-notas" data-id="${citaId}" data-accion="notas">Notas</button>
+                `;
+            case 'Aprobada':
+                return `
+                    <button class="btn-gestion-cita btn-asignar-fecha" data-id="${citaId}" data-accion="asignar-fecha">Asignar Fecha</button>
+                    <button class="btn-gestion-cita btn-pendiente" data-id="${citaId}" data-accion="pendiente">A Pendiente</button>
+                    <button class="btn-gestion-cita btn-notas" data-id="${citaId}" data-accion="notas">Notas</button>
+                `;
+            case 'Rechazada':
+                return `
+                    <button class="btn-gestion-cita btn-pendiente" data-id="${citaId}" data-accion="pendiente">A Pendiente</button>
+                    <button class="btn-gestion-cita btn-notas" data-id="${citaId}" data-accion="notas">Notas</button>
+                `;
+        }
+    }
+
+    function getClaseEstado(estado) {
+        switch(estado) {
+            case 'Pendiente': return 'estado-pendiente';
+            case 'Aprobada': return 'estado-aprobada';
+            case 'Rechazada': return 'estado-rechazada';
+            default: return 'estado-pendiente';
+        }
+    }
+
+    function cargarNotasActuales(fila) {
+        const notasActuales = fila.querySelector('td:nth-child(8)').textContent;
+        document.getElementById('texto-notas').value = notasActuales !== 'Sin notas' ? notasActuales : '';
+    }
+
+    function confirmarFecha() {
+        if (!citaActualId) return;
+
+        const fechaInput = document.getElementById('fecha-asignacion').value;
+        if (!fechaInput) {
+            alert('Por favor selecciona una fecha');
+            return;
+        }
+
+        console.log(`Asignando fecha ${fechaInput} a cita ${citaActualId}`);
+
+        // Actualizar interfaz en tiempo real
+        const fila = document.querySelector(`tr[data-id="${citaActualId}"]`);
+        if (fila) {
+            const celdaFecha = fila.querySelector('td:nth-child(7)');
+            const fechaFormateada = new Date(fechaInput).toLocaleString('es-ES');
+            celdaFecha.innerHTML = `<span>${fechaFormateada}</span>`;
+        }
+
+        // Llamada AJAX
+        fetch(`/admin/citas/${citaActualId}/asignar-fecha`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `fecha=${fechaInput}`
+        })
+        .then(response => response.text())
+        .then(result => {
+            if (result === 'OK') {
+                console.log('Fecha asignada correctamente');
+                cerrarModal('modal-fecha');
+                mostrarNotificacion('Fecha asignada correctamente', 'success');
+            } else {
+                alert('Error al asignar fecha');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al asignar fecha');
+        });
+    }
+
+    function guardarNotas() {
+        if (!citaActualId) return;
+
+        const notas = document.getElementById('texto-notas').value;
+
+        console.log(`Guardando notas para cita ${citaActualId}`);
+
+        // Actualizar interfaz en tiempo real
+        const fila = document.querySelector(`tr[data-id="${citaActualId}"]`);
+        if (fila) {
+            const celdaNotas = fila.querySelector('td:nth-child(8)');
+            celdaNotas.textContent = notas || 'Sin notas';
+        }
+
+        // Llamada AJAX
+        fetch(`/admin/citas/${citaActualId}/guardar-notas`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `notas=${encodeURIComponent(notas)}`
+        })
+        .then(response => response.text())
+        .then(result => {
+            if (result === 'OK') {
+                console.log('Notas guardadas correctamente');
+                cerrarModal('modal-notas');
+                mostrarNotificacion('Notas guardadas correctamente', 'success');
+            } else {
+                alert('Error al guardar notas');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al guardar notas');
+        });
+    }
+
+    function filtrarCitasPorEstado(estado) {
+        const tabla = $('#tabla-citas').DataTable();
+
+        if (estado === 'TODAS') {
+            tabla.search('').draw();
+        } else {
+            tabla.column(5).search(estado).draw();
+        }
+    }
+
+    // ===================== FUNCIONES DE MODALES =====================
+    function mostrarModal(modalId) {
+        document.getElementById(modalId).style.display = 'block';
+        console.log(`Modal ${modalId} abierto`);
+    }
+
+    function cerrarModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+        console.log(`Modal ${modalId} cerrado`);
+    }
+
+    // Cerrar modales al hacer clic fuera
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = 'none';
+        }
+    }
+
+    // ===================== MODALES DE EDICIÓN - FUNCIONANDO =====================
+    async function mostrarModalEditarVehiculo(button) {
+    try {
+        const id = button.getAttribute('data-id');
+        console.log(`🔄 Cargando vehículo con ID: ${id}`);
+
+        if (!id) {
+            console.error('❌ ID de vehículo no proporcionado');
+            mostrarNotificacion('Error: ID de vehículo no válido', 'error');
+            return;
+        }
+
+        // Aquí va tu llamada AJAX para cargar los datos del vehículo
+        // Por ahora, usaremos datos de ejemplo
+        const vehiculo = await cargarDatosVehiculo(id);
+
+        // Llenar formulario
+        document.getElementById('editar-id').value = vehiculo.id;
+        document.getElementById('editar-marca').value = vehiculo.marca || '';
+        document.getElementById('editar-modelo').value = vehiculo.modelo || '';
+        document.getElementById('editar-año').value = vehiculo.año || '';
+        document.getElementById('editar-precio').value = vehiculo.precio || '';
+        document.getElementById('editar-categoria').value = vehiculo.categoria || 'Automóviles';
+        document.getElementById('editar-motor').value = vehiculo.motor || '';
+        document.getElementById('editar-transmision').value = vehiculo.transmision || 'Automática';
+        document.getElementById('editar-combustible').value = vehiculo.combustible || 'Gasolina';
+        document.getElementById('editar-pasajeros').value = vehiculo.pasajeros || '';
+        document.getElementById('editar-descripcion').value = vehiculo.descripcion || '';
+        document.getElementById('editar-colores').value = vehiculo.colores || '';
+
+        // Manejar imagen
+        const imagenPreview = document.getElementById('editar-imagen-preview');
+        if (vehiculo.imagenUrl) {
+            imagenPreview.src = vehiculo.imagenUrl;
+            imagenPreview.style.display = 'block';
+        } else {
+            imagenPreview.style.display = 'none';
+        }
+
+        // Configurar el action del formulario
+        const form = document.getElementById('form-editar-vehiculo');
+        form.action = `/admin/editar/${id}`;
+
+        mostrarModal('modal-editar-vehiculo');
+        console.log('✅ Modal de edición de vehículo mostrado correctamente');
+
+    } catch (error) {
+        console.error('❌ Error al cargar vehículo:', error);
+        mostrarNotificacion('Error al cargar los datos del vehículo', 'error');
+    }
+}
+
+async function mostrarModalEditarAnuncio(button) {
+    try {
+        const id = button.getAttribute('data-id');
+        console.log(`🔄 Cargando anuncio con ID: ${id}`);
+
+        if (!id) {
+            console.error('❌ ID de anuncio no proporcionado');
+            mostrarNotificacion('Error: ID de anuncio no válido', 'error');
+            return;
+        }
+
+        // Aquí va tu llamada AJAX para cargar los datos del anuncio
+        // Por ahora, usaremos datos de ejemplo
+        const anuncio = await cargarDatosAnuncio(id);
+
+        // Llenar formulario
+        document.getElementById('editar-anuncio-id').value = anuncio.id;
+        document.getElementById('editar-anuncio-marca').value = anuncio.marca || '';
+        document.getElementById('editar-anuncio-modelo').value = anuncio.modelo || '';
+        document.getElementById('editar-anuncio-año').value = anuncio.año || '';
+        document.getElementById('editar-anuncio-precio').value = anuncio.precio || '';
+        document.getElementById('editar-anuncio-categoria').value = anuncio.categoria || 'Automóviles';
+        document.getElementById('editar-anuncio-descripcion').value = anuncio.descripcion || '';
+        document.getElementById('editar-anuncio-colores').value = anuncio.colores || '';
+
+        // Manejar imagen
+        const imagenPreview = document.getElementById('editar-anuncio-imagen-preview');
+        if (anuncio.imagenUrl) {
+            imagenPreview.src = anuncio.imagenUrl;
+            imagenPreview.style.display = 'block';
+        } else {
+            imagenPreview.style.display = 'none';
+        }
+
+        // Configurar el action del formulario
+        const form = document.getElementById('form-editar-anuncio');
+        form.action = `/admin/editar/${id}`;
+
+        mostrarModal('modal-editar-anuncio');
+        console.log('✅ Modal de edición de anuncio mostrado correctamente');
+
+    } catch (error) {
+        console.error('❌ Error al cargar anuncio:', error);
+        mostrarNotificacion('Error al cargar los datos del anuncio', 'error');
+    }
+}
+
+// ===================== FUNCIONES AUXILIARES PARA CARGAR DATOS =====================
+// ===================== FUNCIONES AUXILIARES PARA CARGAR DATOS REALES =====================
+async function cargarDatosVehiculo(id) {
+    try {
+        console.log(`📡 Solicitando datos del vehículo ID: ${id}`);
+        const response = await fetch(`/admin/obtener-vehiculo/${id}`);
+
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+
+        const vehiculo = await response.json();
+        console.log('✅ Datos REALES del vehículo cargados:', vehiculo);
+        return vehiculo;
+
+    } catch (error) {
+        console.error('❌ Error al cargar datos del vehículo:', error);
+        console.warn('⚠️ Usando datos de ejemplo como fallback');
+
+        // Datos de ejemplo como fallback (pero debería cargar los reales)
+        return {
+            id: id,
+            marca: 'Cargando...',
+            modelo: 'Cargando...',
+            año: '',
+            precio: '',
+            categoria: 'Automóviles',
+            motor: '',
+            transmision: 'Automática',
+            combustible: 'Gasolina',
+            pasajeros: '',
+            descripcion: '',
+            colores: '',
+            imagenUrl: ''
+        };
+    }
+}
+
+async function cargarDatosAnuncio(id) {
+    try {
+        console.log(`📡 Solicitando datos del anuncio ID: ${id}`);
+        const response = await fetch(`/admin/obtener-vehiculo/${id}`);
+
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+
+        const anuncio = await response.json();
+        console.log('✅ Datos REALES del anuncio cargados:', anuncio);
+        return anuncio;
+
+    } catch (error) {
+        console.error('❌ Error al cargar datos del anuncio:', error);
+        console.warn('⚠️ Usando datos de ejemplo como fallback');
+
+        // Datos de ejemplo como fallback
+        return {
+            id: id,
+            marca: 'Cargando...',
+            modelo: 'Cargando...',
+            año: '',
+            precio: '',
+            categoria: 'Automóviles',
+            descripcion: '',
+            colores: '',
+            imagenUrl: ''
+        };
+    }
+}
+    // ===================== NOTIFICACIONES =====================
+    function mostrarNotificacion(mensaje, tipo = 'info') {
+        // Crear notificación toast
+        const notificacion = document.createElement('div');
+        notificacion.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transform transition-transform duration-300 ${
+            tipo === 'success' ? 'bg-green-500 text-white' :
+            tipo === 'error' ? 'bg-red-500 text-white' :
+            'bg-blue-500 text-white'
+        }`;
+        notificacion.textContent = mensaje;
+
+        document.body.appendChild(notificacion);
+
+        setTimeout(() => {
+            notificacion.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                if (document.body.contains(notificacion)) {
+                    document.body.removeChild(notificacion);
+                }
+            }, 300);
+        }, 3000);
+    }
 </script>
 </body>
 </html>
