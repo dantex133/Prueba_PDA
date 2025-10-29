@@ -1118,7 +1118,9 @@
                                         <button th:data-id="${anuncio.id}"
                                                 onclick="mostrarModalEditarAnuncio(this)"
                                                 class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors">Editar</button>
-                                        <a th:href="@{/admin/eliminar-anuncio/{id}(id=${anuncio.id})}" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 transition-colors" onclick="return confirm('¿Estás seguro de eliminar este anuncio?')">Eliminar</a>
+                                        <a th:href="@{/admin/eliminar/{id}(id=${anuncio.id})}"
+                                           class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 transition-colors"
+                                           onclick="return confirm('¿Estás seguro de eliminar este anuncio?')">Eliminar</a>
                                     </div>
                                 </td>
                             </tr>
@@ -1508,6 +1510,8 @@
                     <option value="Performance">Performance</option>
                     <option value="Híbridos">Híbridos</option>
                     <option value="Comerciales">Comerciales</option>
+                    <option value="SUVs">SUVs</option>
+                    <option value="Deportivos">Deportivos</option>
                 </select>
             </div>
 
@@ -1605,7 +1609,41 @@
                     <option value="Performance">Performance</option>
                     <option value="Híbridos">Híbridos</option>
                     <option value="Comerciales">Comerciales</option>
+                    <option value="SUVs">SUVs</option>
+                    <option value="Deportivos">Deportivos</option>
                 </select>
+            </div>
+
+            <!-- ✅ AGREGA ESTOS CAMPOS FALTANTES -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label for="editar-anuncio-motor">Motor</label>
+                    <input type="text" id="editar-anuncio-motor" name="motor" required>
+                </div>
+                <div class="form-group">
+                    <label for="editar-anuncio-transmision">Transmisión</label>
+                    <select id="editar-anuncio-transmision" name="transmision" required>
+                        <option value="Automática">Automática</option>
+                        <option value="Manual">Manual</option>
+                        <option value="CVT">CVT</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label for="editar-anuncio-combustible">Combustible</label>
+                    <select id="editar-anuncio-combustible" name="combustible" required>
+                        <option value="Gasolina">Gasolina</option>
+                        <option value="Diésel">Diésel</option>
+                        <option value="Híbrido">Híbrido</option>
+                        <option value="Eléctrico">Eléctrico</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editar-anuncio-pasajeros">Pasajeros</label>
+                    <input type="number" id="editar-anuncio-pasajeros" name="pasajeros" required>
+                </div>
             </div>
 
             <div class="form-group">
@@ -1666,7 +1704,44 @@
                     <option value="Pick-Ups">Pick-Ups</option>
                     <option value="Camionetas">Camionetas</option>
                     <option value="Automóviles">Automóviles</option>
+                    <option value="Performance">Performance</option>
+                    <option value="Híbridos">Híbridos</option>
+                    <option value="Comerciales">Comerciales</option>
+                    <option value="SUVs">SUVs</option>
+                    <option value="Deportivos">Deportivos</option>
                 </select>
+            </div>
+
+            <!-- ✅ CAMPOS AGREGADOS PARA ANUNCIOS -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label>Motor</label>
+                    <input type="text" name="motor" placeholder="Motor" required>
+                </div>
+                <div class="form-group">
+                    <label>Transmisión</label>
+                    <select name="transmision" required>
+                        <option value="Automática">Automática</option>
+                        <option value="Manual">Manual</option>
+                        <option value="CVT">CVT</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label>Combustible</label>
+                    <select name="combustible" required>
+                        <option value="Gasolina">Gasolina</option>
+                        <option value="Diésel">Diésel</option>
+                        <option value="Híbrido">Híbrido</option>
+                        <option value="Eléctrico">Eléctrico</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Pasajeros</label>
+                    <input type="number" name="pasajeros" placeholder="Pasajeros" required min="1" max="10">
+                </div>
             </div>
 
             <div class="form-group">
@@ -2128,19 +2203,34 @@ async function mostrarModalEditarAnuncio(button) {
             return;
         }
 
-        // Aquí va tu llamada AJAX para cargar los datos del anuncio
-        // Por ahora, usaremos datos de ejemplo
+        // Cargar datos del anuncio
         const anuncio = await cargarDatosAnuncio(id);
+        console.log('📋 Datos COMPLETOS del anuncio recibidos:', anuncio);
 
-        // Llenar formulario
+        // Llenar formulario COMPLETO
         document.getElementById('editar-anuncio-id').value = anuncio.id;
         document.getElementById('editar-anuncio-marca').value = anuncio.marca || '';
         document.getElementById('editar-anuncio-modelo').value = anuncio.modelo || '';
         document.getElementById('editar-anuncio-año').value = anuncio.año || '';
         document.getElementById('editar-anuncio-precio').value = anuncio.precio || '';
         document.getElementById('editar-anuncio-categoria').value = anuncio.categoria || 'Automóviles';
+        document.getElementById('editar-anuncio-motor').value = anuncio.motor || '';
+        document.getElementById('editar-anuncio-transmision').value = anuncio.transmision || 'Automática';
+        document.getElementById('editar-anuncio-combustible').value = anuncio.combustible || 'Gasolina';
+        document.getElementById('editar-anuncio-pasajeros').value = anuncio.pasajeros || '';
         document.getElementById('editar-anuncio-descripcion').value = anuncio.descripcion || '';
-        document.getElementById('editar-anuncio-colores').value = anuncio.colores || '';
+
+        // Procesar colores
+        let coloresString = '';
+        if (anuncio.colores) {
+            if (Array.isArray(anuncio.colores)) {
+                coloresString = anuncio.colores.join(', ');
+            } else {
+                coloresString = anuncio.colores;
+            }
+        }
+        document.getElementById('editar-anuncio-colores').value = coloresString;
+        console.log('🎨 Colores procesados:', coloresString);
 
         // Manejar imagen
         const imagenPreview = document.getElementById('editar-anuncio-imagen-preview');
@@ -2151,7 +2241,7 @@ async function mostrarModalEditarAnuncio(button) {
             imagenPreview.style.display = 'none';
         }
 
-        // Configurar el action del formulario
+        // ✅ Usar el mismo endpoint de edición
         const form = document.getElementById('form-editar-anuncio');
         form.action = `/admin/editar/${id}`;
 
