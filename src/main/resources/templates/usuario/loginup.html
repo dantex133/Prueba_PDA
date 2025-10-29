@@ -375,6 +375,47 @@
             transition: all 0.2s ease;
             margin-top: 8px;
         }
+
+        /* NUEVO: Estilos para proveedores de email */
+        .email-providers {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .email-provider {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+        }
+
+        .dark .email-provider {
+            background: #334155;
+            border-color: #475569;
+            color: #94a3b8;
+        }
+
+        .email-provider i {
+            font-size: 1rem;
+        }
+
+        .email-note {
+            text-align: center;
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-top: 0.5rem;
+        }
+
+        .dark .email-note {
+            color: #94a3b8;
+        }
     </style>
     <script>
         tailwind.config = {
@@ -529,16 +570,33 @@
                             <input type="hidden" id="hidden-email" name="email" th:value="${email}">
                             <input type="hidden" id="hidden-password" name="password">
 
-                            <!-- Paso 1: Email -->
+                            <!-- Paso 1: Email - ACTUALIZADO -->
                             <div id="step1-content">
                                 <div class="input-with-icon">
-                                    <input type="email" id="email" class="form-input" placeholder="Introduce tu email" required
+                                    <input type="email" id="email" class="form-input" placeholder="Introduce tu email (Gmail, Hotmail, Outlook, etc.)" required
                                            th:value="${email}">
                                     <div class="input-icon">
                                         <i class="fas fa-envelope"></i>
                                     </div>
                                 </div>
-                                <p class="text-center text-gray-600 dark:text-gray-400 mb-4">Te enviaremos un código de verificación a este email.</p>
+
+                                <!-- NUEVO: Indicadores de proveedores de email aceptados -->
+                                <div class="email-providers">
+                                    <div class="email-provider">
+                                        <i class="fab fa-google text-red-500"></i>
+                                        <span>Gmail</span>
+                                    </div>
+                                    <div class="email-provider">
+                                        <i class="fab fa-microsoft text-blue-500"></i>
+                                        <span>Hotmail/Outlook</span>
+                                    </div>
+                                    <div class="email-provider">
+                                        <i class="fas fa-at text-purple-500"></i>
+                                        <span>Otros</span>
+                                    </div>
+                                </div>
+
+                                <p class="email-note">Aceptamos todos los proveedores de email principales</p>
                             </div>
 
                             <!-- Paso 2: Contraseña -->
@@ -625,7 +683,7 @@
     </footer>
 </div>
 
-<!-- Script para el formulario de registro -->
+<!-- Script para el formulario de registro - ACTUALIZADO -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         let currentStep = 1;
@@ -717,13 +775,13 @@
             return hasMinLength && hasUpperCase && hasNumber;
         }
 
-        // Manejar clic en siguiente
+        // Manejar clic en siguiente - ACTUALIZADO con mensajes más específicos
         nextButton.addEventListener('click', function() {
             let isValid = true;
 
             if (currentStep === 1) {
                 if (!validateEmail(emailField.value)) {
-                    errorMessage.textContent = 'Por favor, introduce un email válido.';
+                    errorMessage.textContent = 'Por favor, introduce un email válido (Gmail, Hotmail, Outlook, etc.).';
                     errorMessage.style.display = 'block';
                     isValid = false;
                 } else {
@@ -759,6 +817,15 @@
         // Validar contraseña en tiempo real
         passwordField.addEventListener('input', function() {
             validatePassword(passwordField.value);
+        });
+
+        // NUEVO: Validar email en tiempo real para dar feedback inmediato
+        emailField.addEventListener('blur', function() {
+            if (emailField.value && !validateEmail(emailField.value)) {
+                emailField.style.borderColor = '#ef4444';
+            } else {
+                emailField.style.borderColor = '#e2e8f0';
+            }
         });
 
         // Inicializar

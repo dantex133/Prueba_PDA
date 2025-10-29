@@ -1,5 +1,6 @@
 package com.concesionario.controller;
 
+import com.concesionario.model.Trabajador;
 import com.concesionario.model.Vehiculo;
 import com.concesionario.repository.CitaRepository;
 import com.concesionario.repository.TrabajadorRepository;
@@ -7,6 +8,7 @@ import com.concesionario.repository.UsuarioRepository;
 import com.concesionario.repository.VehiculoRepository;
 import com.concesionario.service.VehiculoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -38,12 +41,23 @@ public class TrabajadorController {
     private VehiculoService vehiculoService;
 
     @GetMapping("/perfil_analisis")
-    public String perfilA(Model model) {
+    public String perfilA(Model model, Authentication authentication) {
         long totalClientes = usuarioRepository.count();
         long totalVehiculos = vehiculoRepository.count();
         long totalCitas = citaRepository.count();
         long totalTrabajadores = trabajadorRepository.count();
 
+        String nombreUsuario = "Analista";
+
+        if (authentication != null) {
+            String username = authentication.getName();
+            Optional<Trabajador> trabajador = trabajadorRepository.findByCorreo(username);
+            if (trabajador.isPresent()) {
+                nombreUsuario = trabajador.get().getNombre();
+            }
+        }
+
+        model.addAttribute("nombreUsuario", nombreUsuario);
         model.addAttribute("totalClientes", totalClientes);
         model.addAttribute("totalVehiculos", totalVehiculos);
         model.addAttribute("totalCitas", totalCitas);
@@ -60,10 +74,13 @@ public class TrabajadorController {
         long totalVehiculos = vehiculoRepository.count();
         long totalAnuncios = anuncios.size();
 
+
+
         model.addAttribute("vehiculos", vehiculos);
         model.addAttribute("anuncios", anuncios);
         model.addAttribute("totalVehiculos", totalVehiculos);
         model.addAttribute("totalAnuncios", totalAnuncios);
+
 
         return "Perfil_gestor";
     }

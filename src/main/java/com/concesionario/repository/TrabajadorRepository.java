@@ -10,4 +10,11 @@ public interface TrabajadorRepository extends MongoRepository<Trabajador, String
     Optional<Trabajador> findByIdentificacion(String identificacion);
     boolean existsByCorreo(String correo);
     boolean existsByIdentificacion(String identificacion);
+    // Buscar por correo
+
+
+    // O si necesitas buscar por otro campo
+    Trabajador findByNombre(String nombre);
+
+
 }
