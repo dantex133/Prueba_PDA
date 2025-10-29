@@ -148,7 +148,8 @@ public class UsuarioController {
         } else {
             cita.setTipo("Otros");
         }
-        List<Trabajador> trabajadores = TrabajadorRepository.findAll();
+        List<Trabajador> trabajadores = TrabajadorRepository.findByRolesContaining(Rol.TRB_ASESOR);
+
         model.addAttribute("trabajadores", trabajadores);
         model.addAttribute("cita", cita);
         model.addAttribute("vehiculos", vehiculos);

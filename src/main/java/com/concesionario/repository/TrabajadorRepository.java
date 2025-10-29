@@ -1,8 +1,11 @@
 package com.concesionario.repository;
 
+import com.concesionario.model.Rol;
 import com.concesionario.model.Trabajador;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface TrabajadorRepository extends MongoRepository<Trabajador, String> {
@@ -13,8 +16,8 @@ public interface TrabajadorRepository extends MongoRepository<Trabajador, String
     // Buscar por correo
 
 
-    // O si necesitas buscar por otro campo
-    Trabajador findByNombre(String nombre);
 
 
+
+    List<Trabajador> findByRolesContaining(Rol rol);
 }

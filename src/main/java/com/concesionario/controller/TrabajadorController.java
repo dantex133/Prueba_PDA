@@ -85,6 +85,13 @@ public class TrabajadorController {
         return "Perfil_gestor";
     }
 
+    @GetMapping("/perfil_asesor")
+    public String perfil4(Model model) {
+        return "perfil_asesor";
+    }
+
+
+
     // ==================== MÉTODOS PARA VEHÍCULOS ====================
 
     @PostMapping("/gestor/guardar-vehiculo")
@@ -256,4 +263,6 @@ public class TrabajadorController {
         redirectAttributes.addFlashAttribute("success", "Anuncio eliminado exitosamente");
         return "redirect:/perfil_gestor";
     }
+
+
 }
