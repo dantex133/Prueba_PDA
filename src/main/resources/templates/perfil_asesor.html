@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +11,52 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
   <style>
+
+    /* Estilos para estados de citas */
+.estado-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.estado-pendiente { background: #fef3c7; color: #92400e; }
+.estado-aprobada { background: #dcfce7; color: #166534; }
+.estado-rechazada { background: #fecaca; color: #dc2626; }
+.estado-contactado { background: #dbeafe; color: #1e40af; }
+
+/* Botones de gestión de citas */
+.btn-gestion-cita {
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 0.1rem;
+}
+
+.btn-aprobar { background: #10b981; color: white; }
+.btn-rechazar { background: #ef4444; color: white; }
+.btn-asignar-fecha { background: #3b82f6; color: white; }
+.btn-pendiente { background: #f59e0b; color: white; }
+.btn-notas { background: #8b5cf6; color: white; }
+
+.btn-gestion-cita:hover {
+    transform: translateY(-1px);
+    opacity: 0.9;
+}
+
+.btn-secondary {
+    background: #6b7280;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+}
     body {
         font-family: 'Manrope', sans-serif;
         background-color: #f6f7f8;
@@ -146,31 +192,51 @@
         color: white;
         padding: 0.5rem 1rem;
         border-radius: 0.375rem;
-        text-decoration: none;
-        margin-right: 0.5rem;
-        display: inline-block;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s ease;
     }
 
-    .btn-seguimiento {
-        background: #f59e0b;
-        color: white;
-        padding: 0.5rem 1rem;
-        border-radius: 0.375rem;
-        text-decoration: none;
-        display: inline-block;
+    .btn-contactar:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
+    }
+
+    .btn-contactar:hover:not(:disabled) {
+        background: #059669;
+        transform: translateY(-1px);
     }
 
     .estado-prospecto {
-        padding: 0.25rem 0.75rem;
+        padding: 0.5rem 1rem;
         border-radius: 1rem;
         font-size: 0.875rem;
         font-weight: 600;
+        display: inline-block;
     }
-    .estado-nuevo { background: #dbeafe; color: #1e40af; }
-    .estado-contactado { background: #fef3c7; color: #92400e; }
+
+    .estado-pendiente { background: #fef3c7; color: #92400e; }
+    .estado-contactado { background: #dbeafe; color: #1e40af; }
     .estado-testdrive { background: #dcfce7; color: #166534; }
     .estado-negociacion { background: #f3e8ff; color: #6b21a8; }
-    .estado-cerrado { background: #f1f5f9; color: #475569; }
+    .estado-aprobada { background: #dcfce7; color: #166534; }
+    .estado-cancelada { background: #fecaca; color: #dc2626; }
+
+    .loading {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #3b82f6;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
 
     .modal {
         display: none;
@@ -299,7 +365,7 @@
   <section id="sidebar">
     <a href="#" class="brand">
       <i class="fas fa-user-tie mr-2"></i>
-      <span>Carlos Méndez</span>
+      <span id="nombre-asesor">Cargando...</span>
     </a>
     <ul class="side-menu top">
       <li><a href="#bienvenida"><i class='fas fa-chart-line'></i><span>Dashboard</span></a></li>
@@ -315,23 +381,23 @@
   <main>
     <!-- Bienvenida ASESOR -->
     <section id="bienvenida">
-      <h1 class="text-3xl font-bold mb-4">Bienvenido, <span>Carlos Méndez</span></h1>
+      <h1 class="text-3xl font-bold mb-4">Bienvenido, <span id="nombre-bienvenida">Cargando...</span></h1>
       <p class="text-lg opacity-90">Panel de gestión comercial. Gestiona tus prospectos, agenda citas y alcanza tus metas de ventas.</p>
       <div class="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
         <div class="metric-card">
-          <div class="metric-value">12</div>
+          <div class="metric-value" id="total-prospectos">0</div>
           <div class="text-sm text-gray-600 dark:text-gray-300">Prospectos Activos</div>
         </div>
         <div class="metric-card">
-          <div class="metric-value">3</div>
+          <div class="metric-value" id="ventas-mes">0</div>
           <div class="text-sm text-gray-600 dark:text-gray-300">Ventas Este Mes</div>
         </div>
         <div class="metric-card">
-          <div class="metric-value">78%</div>
+          <div class="metric-value" id="tasa-conversion">0%</div>
           <div class="text-sm text-gray-600 dark:text-gray-300">Tasa de Conversión</div>
         </div>
         <div class="metric-card">
-          <div class="metric-value">$42,500</div>
+          <div class="metric-value" id="comisiones">$0</div>
           <div class="text-sm text-gray-600 dark:text-gray-300">Comisiones Pendientes</div>
         </div>
       </div>
@@ -351,7 +417,7 @@
             <i class="fas fa-plus mr-2"></i>Nuevo Prospecto
           </button>
         </div>
-        <table id="tabla-prospectos">
+        <table id="tabla-prospectos" class="display">
           <thead>
           <tr>
             <th>Cliente</th>
@@ -363,53 +429,12 @@
             <th>Acciones</th>
           </tr>
           </thead>
-          <tbody>
+          <tbody id="cuerpo-tabla-prospectos">
+          <!-- Los datos se cargarán dinámicamente aquí -->
           <tr>
-            <td>Ana Rodríguez</td>
-            <td>ana.rodriguez@email.com<br>+1 234 567 890</td>
-            <td>Toyota RAV4</td>
-            <td><span class="estado-prospecto estado-testdrive">Test Drive</span></td>
-            <td>15/10/2024</td>
-            <td>Test Drive - 18/10/2024</td>
-            <td>
-              <button class="btn-contactar">
-                <i class="fas fa-phone mr-1"></i>Contactar
-              </button>
-              <button class="btn-seguimiento">
-                <i class="fas fa-edit mr-1"></i>Seguimiento
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td>Luis Fernández</td>
-            <td>luis.fernandez@email.com<br>+1 234 567 891</td>
-            <td>Ford Mustang</td>
-            <td><span class="estado-prospecto estado-negociacion">Negociación</span></td>
-            <td>14/10/2024</td>
-            <td>Envío de oferta - 16/10/2024</td>
-            <td>
-              <button class="btn-contactar">
-                <i class="fas fa-phone mr-1"></i>Contactar
-              </button>
-              <button class="btn-seguimiento">
-                <i class="fas fa-edit mr-1"></i>Seguimiento
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td>María González</td>
-            <td>maria.gonzalez@email.com<br>+1 234 567 892</td>
-            <td>Honda CR-V</td>
-            <td><span class="estado-prospecto estado-contactado">Contactado</span></td>
-            <td>12/10/2024</td>
-            <td>Seguimiento - 17/10/2024</td>
-            <td>
-              <button class="btn-contactar">
-                <i class="fas fa-phone mr-1"></i>Contactar
-              </button>
-              <button class="btn-seguimiento">
-                <i class="fas fa-edit mr-1"></i>Seguimiento
-              </button>
+            <td colspan="7" class="text-center py-4">
+              <div class="loading mx-auto"></div>
+              <span class="ml-2">Cargando prospectos...</span>
             </td>
           </tr>
           </tbody>
@@ -478,183 +503,106 @@
     <!-- ===================== AGENDA SECTION ===================== -->
     <section id="agenda">
       <div class="head-title mb-6">
-        <h2 class="text-2xl font-bold">Mi Agenda</h2>
-        <p class="text-gray-600 dark:text-gray-300">Gestiona tus citas y actividades programadas</p>
+        <h2 class="text-2xl font-bold">Gestión de Citas</h2>
+        <p class="text-gray-600 dark:text-gray-300">Administra las citas asignadas a tus prospectos</p>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="prospecto-card">
-          <h3 class="font-bold text-lg mb-4">Próximas Citas</h3>
-          <div class="timeline">
-            <div class="timeline-item">
-              <h4 class="font-semibold">Test Drive - Ana Rodríguez</h4>
-              <p class="text-sm text-gray-600 dark:text-gray-300">Toyota RAV4 - 18/10/2024 - 10:00 AM</p>
-            </div>
-            <div class="timeline-item">
-              <h4 class="font-semibold">Reunión de Negociación - Luis Fernández</h4>
-              <p class="text-sm text-gray-600 dark:text-gray-300">Ford Mustang - 16/10/2024 - 3:00 PM</p>
-            </div>
-            <div class="timeline-item">
-              <h4 class="font-semibold">Seguimiento - María González</h4>
-              <p class="text-sm text-gray-600 dark:text-gray-300">Honda CR-V - 17/10/2024 - 11:30 AM</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="prospecto-card">
-          <h3 class="font-bold text-lg mb-4">Agregar Nueva Cita</h3>
-          <form>
-            <div class="form-group">
-              <label for="cita-cliente">Cliente</label>
-              <select id="cita-cliente" required>
-                <option value="">Seleccionar cliente</option>
-                <option value="1">Ana Rodríguez</option>
-                <option value="2">Luis Fernández</option>
-                <option value="3">María González</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="cita-fecha">Fecha</label>
-              <input type="date" id="cita-fecha" required>
-            </div>
-            <div class="form-group">
-              <label for="cita-hora">Hora</label>
-              <input type="time" id="cita-hora" required>
-            </div>
-            <div class="form-group">
-              <label for="cita-tipo">Tipo de Cita</label>
-              <select id="cita-tipo" required>
-                <option value="">Seleccionar tipo</option>
-                <option value="test-drive">Test Drive</option>
-                <option value="reunion">Reunión</option>
-                <option value="seguimiento">Seguimiento</option>
-                <option value="negociacion">Negociación</option>
-              </select>
-            </div>
-            <button type="submit" class="btn-asesor w-full">Agendar Cita</button>
-          </form>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===================== METAS SECTION ===================== -->
-    <section id="metas">
-      <div class="head-title mb-6">
-        <h2 class="text-2xl font-bold">Mis Metas y Comisiones</h2>
-        <p class="text-gray-600 dark:text-gray-300">Seguimiento de tus objetivos y comisiones</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="prospecto-card">
-          <h3 class="font-bold text-lg mb-4">Progreso Mensual</h3>
-          <div class="mb-4">
-            <div class="flex justify-between mb-1">
-              <span>Ventas: 3/8</span>
-              <span>37.5%</span>
-            </div>
-            <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-              <div class="bg-blue-600 h-2.5 rounded-full" style="width: 37.5%"></div>
-            </div>
-          </div>
-          <div class="mb-4">
-            <div class="flex justify-between mb-1">
-              <span>Test Drives: 5/12</span>
-              <span>41.7%</span>
-            </div>
-            <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-              <div class="bg-green-600 h-2.5 rounded-full" style="width: 41.7%"></div>
-            </div>
-          </div>
+      <div class="mb-6">
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
           <div>
-            <div class="flex justify-between mb-1">
-              <span>Prospectos: 12/25</span>
-              <span>48%</span>
-            </div>
-            <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-              <div class="bg-yellow-600 h-2.5 rounded-full" style="width: 48%"></div>
-            </div>
+            <h3 class="text-xl font-semibold">Mis Citas</h3>
           </div>
+          <select id="filtro-estado" class="w-full lg:w-48 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+            <option value="TODAS">Todas las citas</option>
+            <option value="Pendiente">Pendientes</option>
+            <option value="Aprobada">Aprobadas</option>
+            <option value="Rechazada">Rechazadas</option>
+            <option value="Contactado">Contactados</option>
+          </select>
         </div>
+      </div>
 
-        <div class="prospecto-card">
-          <h3 class="font-bold text-lg mb-4">Comisiones</h3>
-          <div class="mb-4">
-            <p class="text-gray-600 dark:text-gray-300 mb-2"><strong>Comisiones Este Mes:</strong> $3,250</p>
-            <p class="text-gray-600 dark:text-gray-300 mb-2"><strong>Comisiones Pendientes:</strong> $1,850</p>
-            <p class="text-gray-600 dark:text-gray-300 mb-2"><strong>Proyección Mensual:</strong> $5,100</p>
-            <p class="text-gray-600 dark:text-gray-300"><strong>Bono por Objetivo:</strong> $1,000</p>
-          </div>
-          <button class="btn-asesor w-full">
-            <i class="fas fa-file-invoice-dollar mr-2"></i>Ver Detalles de Comisiones
-          </button>
+      <div class="table-container">
+        <div class="overflow-x-auto">
+          <table id="tabla-citas" class="w-full min-w-full">
+            <thead class="bg-gray-50 dark:bg-gray-700">
+            <tr>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Cliente</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Tipo</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Auto</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Fecha Solicitud</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Comentario</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Estado</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Fecha Asignada</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Notas</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Acciones</th>
+            </tr>
+            </thead>
+            <tbody id="cuerpo-tabla-citas" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+            <!-- Los datos se cargarán dinámicamente aquí -->
+            <tr>
+              <td colspan="9" class="text-center py-8">
+                <div class="loading mx-auto"></div>
+                <span class="ml-2">Cargando citas...</span>
+              </td>
+            </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </section>
+
+    <!-- Modal para Asignar Fecha -->
+    <div id="modal-fecha" class="modal">
+      <div class="modal-content">
+        <span class="close text-2xl cursor-pointer float-right hover:text-gray-600 transition-colors" onclick="cerrarModal('modal-fecha')">&times;</span>
+        <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Asignar Fecha</h2>
+        <div class="space-y-6">
+          <div class="form-group">
+            <label for="fecha-asignacion">Fecha</label>
+            <input type="date" id="fecha-asignacion" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="hora-asignacion">Hora</label>
+            <input type="time" id="hora-asignacion" class="form-control">
+          </div>
+          <div class="flex flex-col lg:flex-row gap-4 pt-4">
+            <button onclick="confirmarFecha()" class="btn-asesor flex-1">Confirmar</button>
+            <button type="button" class="btn-secondary" onclick="cerrarModal('modal-fecha')">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para Notas -->
+    <div id="modal-notas" class="modal">
+      <div class="modal-content">
+        <span class="close text-2xl cursor-pointer float-right hover:text-gray-600 transition-colors" onclick="cerrarModal('modal-notas')">&times;</span>
+        <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Notas de Seguimiento</h2>
+        <div class="space-y-6">
+          <div class="form-group">
+            <label for="texto-notas">Notas</label>
+            <textarea id="texto-notas" class="form-control" rows="5" placeholder="Agregar notas de seguimiento..."></textarea>
+          </div>
+          <div class="flex flex-col lg:flex-row gap-4 pt-4">
+            <button onclick="guardarNotas()" class="btn-asesor flex-1">Guardar</button>
+            <button type="button" class="btn-secondary" onclick="cerrarModal('modal-notas')">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </main>
-</div>
-
-<!-- ===================== MODALES ===================== -->
-
-<!-- Modal para Nuevo Prospecto -->
-<div id="modal-prospecto" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="cerrarModal('modal-prospecto')">&times;</span>
-    <h2 class="text-2xl font-bold mb-4">Nuevo Prospecto</h2>
-    <form>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="form-group">
-          <label for="prospecto-nombre">Nombre</label>
-          <input type="text" id="prospecto-nombre" placeholder="Nombre del cliente" required>
-        </div>
-        <div class="form-group">
-          <label for="prospecto-apellido">Apellido</label>
-          <input type="text" id="prospecto-apellido" placeholder="Apellido del cliente" required>
-        </div>
-        <div class="form-group">
-          <label for="prospecto-email">Email</label>
-          <input type="email" id="prospecto-email" placeholder="Email del cliente" required>
-        </div>
-        <div class="form-group">
-          <label for="prospecto-telefono">Teléfono</label>
-          <input type="tel" id="prospecto-telefono" placeholder="Teléfono del cliente" required>
-        </div>
-        <div class="form-group">
-          <label for="prospecto-vehiculo">Vehículo de Interés</label>
-          <select id="prospecto-vehiculo" required>
-            <option value="">Seleccionar vehículo</option>
-            <option value="1">Toyota RAV4</option>
-            <option value="2">Ford Mustang</option>
-            <option value="3">Honda CR-V</option>
-            <option value="4">BMW X3</option>
-            <option value="5">Audi Q5</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="prospecto-estado">Estado</label>
-          <select id="prospecto-estado" required>
-            <option value="nuevo">Nuevo</option>
-            <option value="contactado">Contactado</option>
-            <option value="testdrive">Test Drive</option>
-            <option value="negociacion">Negociación</option>
-            <option value="cerrado">Cerrado</option>
-          </select>
-        </div>
-        <div class="form-group md:col-span-2">
-          <label for="prospecto-notas">Notas</label>
-          <textarea id="prospecto-notas" rows="3" placeholder="Información adicional del cliente"></textarea>
-        </div>
-      </div>
-      <div class="mt-6 flex justify-end space-x-4">
-        <button type="button" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-700" onclick="cerrarModal('modal-prospecto')">Cancelar</button>
-        <button type="submit" class="btn-asesor">Guardar Prospecto</button>
-      </div>
-    </form>
-  </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script>
+  // Variables globales
+  let tablaProspectos;
+  let tablaCitas;
+  let citaActualId = null;
+
   // Navegación entre secciones
   document.addEventListener('DOMContentLoaded', function() {
       document.querySelectorAll('main section').forEach(section => {
@@ -671,17 +619,449 @@
                   });
                   const targetId = this.getAttribute('href').substring(1);
                   document.getElementById(targetId).style.display = 'block';
+
+                  // Cargar datos específicos cuando se cambia de sección
+                  if (targetId === 'prospectos') {
+                      cargarProspectos();
+                  } else if (targetId === 'agenda') {
+                      cargarCitas();
+                  }
               }
           });
       });
 
-      // Inicializar DataTables
-      $('#tabla-prospectos').DataTable({
-          language: {
-              url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
-          }
-      });
+      // Cargar datos iniciales
+      cargarDatosIniciales();
   });
+
+  // Función para cargar datos iniciales del asesor
+  async function cargarDatosIniciales() {
+      try {
+          // Cargar información del asesor
+          const response = await fetch('/asesor/datos');
+          if (!response.ok) throw new Error('Error en la respuesta del servidor');
+
+          const datosAsesor = await response.json();
+
+          document.getElementById('nombre-asesor').textContent = datosAsesor.nombre;
+          document.getElementById('nombre-bienvenida').textContent = datosAsesor.nombre;
+          document.getElementById('total-prospectos').textContent = datosAsesor.totalProspectos;
+          document.getElementById('ventas-mes').textContent = datosAsesor.ventasMes;
+          document.getElementById('tasa-conversion').textContent = datosAsesor.tasaConversion + '%';
+          document.getElementById('comisiones').textContent = '$' + datosAsesor.comisiones.toLocaleString();
+
+      } catch (error) {
+          console.error('Error al cargar datos del asesor:', error);
+          mostrarNotificacion('Error al cargar datos del perfil', 'error');
+      }
+  }
+
+  // Función para cargar prospectos
+  async function cargarProspectos() {
+      try {
+          const response = await fetch('/asesor/prospectos');
+          if (!response.ok) throw new Error('Error en la respuesta del servidor');
+
+          const prospectos = await response.json();
+
+          const cuerpoTabla = document.getElementById('cuerpo-tabla-prospectos');
+          cuerpoTabla.innerHTML = '';
+
+          if (prospectos.length === 0) {
+              cuerpoTabla.innerHTML = `
+                  <tr>
+                      <td colspan="7" class="text-center py-4 text-gray-500">
+                          No hay prospectos asignados
+                      </td>
+                  </tr>
+              `;
+              return;
+          }
+
+          prospectos.forEach(prospecto => {
+              const fila = document.createElement('tr');
+
+              // Formatear fechas
+              const ultimoContacto = prospecto.ultimoContacto ?
+                  new Date(prospecto.ultimoContacto).toLocaleDateString('es-ES') : 'N/A';
+
+              const proximaAccion = prospecto.proximaAccion ?
+                  `Cita - ${new Date(prospecto.proximaAccion).toLocaleDateString('es-ES')}` : 'Sin acción programada';
+
+              // Determinar clase CSS para el estado
+              const claseEstado = obtenerClaseEstado(prospecto.estado);
+              const textoEstado = obtenerTextoEstado(prospecto.estado);
+
+              fila.innerHTML = `
+                  <td>${prospecto.nombreCompleto}</td>
+                  <td>${prospecto.email}<br>${prospecto.telefono || 'Sin teléfono'}</td>
+                  <td>${prospecto.vehiculoInteres || 'No especificado'}</td>
+                  <td><span class="estado-prospecto ${claseEstado}">${textoEstado}</span></td>
+                  <td>${ultimoContacto}</td>
+                  <td>${proximaAccion}</td>
+                  <td>
+                      <button onclick="contactarProspecto('${prospecto.citaId}')" class="btn-contactar" ${prospecto.estado === 'Contactado' ? 'disabled' : ''}>
+                          <i class="fas fa-phone mr-1"></i>${prospecto.estado === 'Contactado' ? 'Contactado' : 'Contactar'}
+                      </button>
+                  </td>
+              `;
+
+              cuerpoTabla.appendChild(fila);
+          });
+
+          // Reinicializar DataTables si existe
+          if ($.fn.DataTable.isDataTable('#tabla-prospectos')) {
+              tablaProspectos.destroy();
+          }
+
+          tablaProspectos = $('#tabla-prospectos').DataTable({
+              language: {
+                  url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+              },
+              pageLength: 10,
+              responsive: true
+          });
+
+      } catch (error) {
+          console.error('Error al cargar prospectos:', error);
+          mostrarNotificacion('Error al cargar los prospectos', 'error');
+      }
+  }
+
+  // ===================== GESTIÓN DE CITAS =====================
+
+  // Función para cargar citas
+  async function cargarCitas() {
+      try {
+          const response = await fetch('/asesor/citas');
+          if (!response.ok) throw new Error('Error en la respuesta del servidor');
+
+          const citas = await response.json();
+          const cuerpoTabla = document.getElementById('cuerpo-tabla-citas');
+          cuerpoTabla.innerHTML = '';
+
+          if (citas.length === 0) {
+              cuerpoTabla.innerHTML = `
+                  <tr>
+                      <td colspan="9" class="text-center py-8 text-gray-500">
+                          <div class="flex flex-col items-center justify-center">
+                              <i class="fas fa-calendar-times text-4xl mb-2 text-gray-300"></i>
+                              <p class="text-lg font-medium">No hay citas asignadas</p>
+                          </div>
+                      </td>
+                  </tr>
+              `;
+              return;
+          }
+
+          citas.forEach(cita => {
+              const fila = document.createElement('tr');
+              fila.setAttribute('data-id', cita.id);
+              fila.className = 'hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors';
+
+              // Formatear fechas
+              const fechaSolicitud = cita.fechaSolicitud ?
+                  new Date(cita.fechaSolicitud).toLocaleDateString('es-ES') : '-';
+
+              const fechaAsignada = cita.fechaAsignada ?
+                  new Date(cita.fechaAsignada).toLocaleDateString('es-ES') + ' ' +
+                  new Date(cita.fechaAsignada).toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'}) : '-';
+
+              fila.innerHTML = `
+                  <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">${cita.cliente || 'Sin nombre'}</td>
+                  <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">${cita.tipo}</td>
+                  <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">${cita.vehiculo}</td>
+                  <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">${fechaSolicitud}</td>
+                  <td class="px-4 py-4 text-sm text-gray-900 dark:text-white max-w-xs truncate">${cita.comentario}</td>
+                  <td class="px-4 py-4 whitespace-nowrap">
+                      <span class="estado-badge ${obtenerClaseEstadoCita(cita.estado)}">${cita.estado}</span>
+                  </td>
+                  <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">${fechaAsignada}</td>
+                  <td class="px-4 py-4 text-sm text-gray-900 dark:text-white max-w-xs truncate">${cita.notasAdmin}</td>
+                  <td class="px-4 py-4 whitespace-nowrap text-sm font-medium">
+                      <div class="flex flex-wrap gap-1" id="botones-cita-${cita.id}">
+                          ${generarBotonesCita(cita.estado, cita.id)}
+                      </div>
+                  </td>
+              `;
+
+              cuerpoTabla.appendChild(fila);
+          });
+
+          // Inicializar DataTables
+          if ($.fn.DataTable.isDataTable('#tabla-citas')) {
+              tablaCitas.destroy();
+          }
+
+          tablaCitas = $('#tabla-citas').DataTable({
+              language: {
+                  url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+              },
+              pageLength: 10,
+              responsive: true
+          });
+
+          // Configurar filtro
+          document.getElementById('filtro-estado').addEventListener('change', function() {
+              const estado = this.value;
+              filtrarCitasPorEstado(estado);
+          });
+
+          // Event listeners para botones de citas
+          document.addEventListener('click', function(e) {
+              if (e.target.classList.contains('btn-gestion-cita')) {
+                  const citaId = e.target.getAttribute('data-id');
+                  const accion = e.target.getAttribute('data-accion');
+                  citaActualId = citaId;
+
+                  manejarAccionCita(accion, e.target);
+              }
+          });
+
+      } catch (error) {
+          console.error('Error al cargar citas:', error);
+          mostrarNotificacion('Error al cargar las citas', 'error');
+      }
+  }
+
+  // Función para generar botones según el estado de la cita
+  function generarBotonesCita(estado, citaId) {
+      let botones = '';
+
+      switch(estado) {
+          case 'Pendiente':
+              botones = `
+                  <button class="btn-gestion-cita btn-aprobar" data-id="${citaId}" data-accion="aprobar">Aprobar</button>
+                  <button class="btn-gestion-cita btn-rechazar" data-id="${citaId}" data-accion="rechazar">Rechazar</button>
+                  <button class="btn-gestion-cita btn-notas" data-id="${citaId}" data-accion="notas">Notas</button>
+              `;
+              break;
+          case 'Aprobada':
+              botones = `
+                  <button class="btn-gestion-cita btn-asignar-fecha" data-id="${citaId}" data-accion="asignar-fecha">Asignar Fecha</button>
+                  <button class="btn-gestion-cita btn-pendiente" data-id="${citaId}" data-accion="pendiente">A Pendiente</button>
+                  <button class="btn-gestion-cita btn-notas" data-id="${citaId}" data-accion="notas">Notas</button>
+              `;
+              break;
+          case 'Rechazada':
+          case 'Contactado':
+              botones = `
+                  <button class="btn-gestion-cita btn-pendiente" data-id="${citaId}" data-accion="pendiente">A Pendiente</button>
+                  <button class="btn-gestion-cita btn-notas" data-id="${citaId}" data-accion="notas">Notas</button>
+              `;
+              break;
+          default:
+              botones = `<button class="btn-gestion-cita btn-notas" data-id="${citaId}" data-accion="notas">Notas</button>`;
+      }
+
+      return botones;
+  }
+
+  // Función para obtener clase CSS del estado de cita
+  function obtenerClaseEstadoCita(estado) {
+      const estados = {
+          'Pendiente': 'estado-pendiente',
+          'Aprobada': 'estado-aprobada',
+          'Rechazada': 'estado-rechazada',
+          'Contactado': 'estado-contactado'
+      };
+      return estados[estado] || 'estado-pendiente';
+  }
+
+  // Manejar acciones de citas
+  function manejarAccionCita(accion, boton) {
+      switch(accion) {
+          case 'aprobar':
+              cambiarEstadoCita('Aprobada');
+              break;
+          case 'rechazar':
+              cambiarEstadoCita('Rechazada');
+              break;
+          case 'asignar-fecha':
+              mostrarModal('modal-fecha');
+              break;
+          case 'pendiente':
+              cambiarEstadoCita('Pendiente');
+              break;
+          case 'notas':
+              cargarNotasActuales();
+              mostrarModal('modal-notas');
+              break;
+      }
+  }
+
+  // Cambiar estado de cita
+  async function cambiarEstadoCita(nuevoEstado) {
+      try {
+          const response = await fetch(`/asesor/citas/${citaActualId}/cambiar-estado`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded',
+              },
+              body: `estado=${nuevoEstado}`
+          });
+
+          if (response.ok) {
+              mostrarNotificacion(`Estado cambiado a ${nuevoEstado}`, 'success');
+              await cargarCitas(); // Recargar la tabla
+          } else {
+              throw new Error('Error en la respuesta del servidor');
+          }
+      } catch (error) {
+          console.error('Error al cambiar estado:', error);
+          mostrarNotificacion('Error al cambiar el estado', 'error');
+      }
+  }
+
+  // Cargar notas actuales de la cita
+  function cargarNotasActuales() {
+      const fila = document.querySelector(`tr[data-id="${citaActualId}"]`);
+      if (fila) {
+          const notasActuales = fila.querySelector('td:nth-child(8)').textContent;
+          document.getElementById('texto-notas').value = notasActuales !== 'Sin notas' ? notasActuales : '';
+      }
+  }
+
+  // Confirmar asignación de fecha
+  async function confirmarFecha() {
+      const fecha = document.getElementById('fecha-asignacion').value;
+      const hora = document.getElementById('hora-asignacion').value;
+
+      if (!fecha || !hora) {
+          mostrarNotificacion('Por favor selecciona fecha y hora', 'error');
+          return;
+      }
+
+      try {
+          const response = await fetch(`/asesor/citas/${citaActualId}/asignar-fecha`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded',
+              },
+              body: `fecha=${fecha}&hora=${hora}`
+          });
+
+          if (response.ok) {
+              mostrarNotificacion('Fecha asignada correctamente', 'success');
+              cerrarModal('modal-fecha');
+              await cargarCitas(); // Recargar la tabla
+          } else {
+              throw new Error('Error en la respuesta del servidor');
+          }
+      } catch (error) {
+          console.error('Error al asignar fecha:', error);
+          mostrarNotificacion('Error al asignar fecha', 'error');
+      }
+  }
+
+  // Guardar notas de la cita
+  async function guardarNotas() {
+      const notas = document.getElementById('texto-notas').value;
+
+      try {
+          const response = await fetch(`/asesor/citas/${citaActualId}/guardar-notas`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded',
+              },
+              body: `notas=${encodeURIComponent(notas)}`
+          });
+
+          if (response.ok) {
+              mostrarNotificacion('Notas guardadas correctamente', 'success');
+              cerrarModal('modal-notas');
+              await cargarCitas(); // Recargar la tabla
+          } else {
+              throw new Error('Error en la respuesta del servidor');
+          }
+      } catch (error) {
+          console.error('Error al guardar notas:', error);
+          mostrarNotificacion('Error al guardar notas', 'error');
+      }
+  }
+
+  // Filtrar citas por estado
+  function filtrarCitasPorEstado(estado) {
+      if (!tablaCitas) return;
+
+      if (estado === 'TODAS') {
+          tablaCitas.search('').draw();
+      } else {
+          tablaCitas.column(5).search(estado).draw();
+      }
+  }
+
+  // ===================== FUNCIONES EXISTENTES =====================
+
+  // Función para mapear estados a clases CSS
+  function obtenerClaseEstado(estado) {
+      const estados = {
+          'Pendiente': 'estado-pendiente',
+          'Contactado': 'estado-contactado',
+          'Test Drive': 'estado-testdrive',
+          'Negociación': 'estado-negociacion',
+          'Aprobada': 'estado-aprobada',
+          'Cancelada': 'estado-cancelada'
+      };
+      return estados[estado] || 'estado-pendiente';
+  }
+
+  // Función para mapear estados a texto legible
+  function obtenerTextoEstado(estado) {
+      const textos = {
+          'Pendiente': 'Pendiente',
+          'Contactado': 'Contactado',
+          'Test Drive': 'Test Drive',
+          'Negociación': 'Negociación',
+          'Aprobada': 'Aprobada',
+          'Cancelada': 'Cancelada'
+      };
+      return textos[estado] || estado;
+  }
+
+  // Función para contactar prospecto
+  async function contactarProspecto(citaId) {
+      try {
+          const response = await fetch('/asesor/prospectos/contactar', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded',
+              },
+              body: `citaId=${citaId}`
+          });
+
+          if (response.ok) {
+              mostrarNotificacion('Prospecto marcado como contactado', 'success');
+              // Recargar la tabla
+              await cargarProspectos();
+              await cargarDatosIniciales(); // Actualizar métricas
+          } else {
+              throw new Error('Error en la respuesta del servidor');
+          }
+      } catch (error) {
+          console.error('Error al contactar prospecto:', error);
+          mostrarNotificacion('Error al contactar el prospecto', 'error');
+      }
+  }
+
+  // Función para mostrar notificaciones
+  function mostrarNotificacion(mensaje, tipo) {
+      // Crear elemento de notificación
+      const notificacion = document.createElement('div');
+      notificacion.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
+          tipo === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+      }`;
+      notificacion.textContent = mensaje;
+
+      document.body.appendChild(notificacion);
+
+      // Remover después de 3 segundos
+      setTimeout(() => {
+          if (document.body.contains(notificacion)) {
+              document.body.removeChild(notificacion);
+          }
+      }, 3000);
+  }
 
   // Funciones para manejar los modales
   function mostrarModal(modalId) {

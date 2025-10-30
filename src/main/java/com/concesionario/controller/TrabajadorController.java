@@ -1,13 +1,18 @@
 package com.concesionario.controller;
 
+import com.concesionario.dto.ProspectoDTO;
+import com.concesionario.model.Cita;
 import com.concesionario.model.Trabajador;
 import com.concesionario.model.Vehiculo;
 import com.concesionario.repository.CitaRepository;
 import com.concesionario.repository.TrabajadorRepository;
 import com.concesionario.repository.UsuarioRepository;
 import com.concesionario.repository.VehiculoRepository;
+import com.concesionario.service.ProspectoService;
+import com.concesionario.service.TrabajadorDetailsService;
 import com.concesionario.service.VehiculoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,10 +21,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.security.Principal;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -39,6 +43,12 @@ public class TrabajadorController {
 
     @Autowired
     private VehiculoService vehiculoService;
+
+    @Autowired
+    private TrabajadorDetailsService trabajadorDetailsService; // ✅ AÑADIR ESTO
+
+    @Autowired
+    private ProspectoService prospectoService;
 
     @GetMapping("/perfil_analisis")
     public String perfilA(Model model, Authentication authentication) {
@@ -86,8 +96,193 @@ public class TrabajadorController {
     }
 
     @GetMapping("/perfil_asesor")
-    public String perfil4(Model model) {
-        return "perfil_asesor";
+    public String perfilAsesor(Model model, Principal principal) {
+        try {
+            Trabajador asesor = trabajadorDetailsService.findByCorreo(principal.getName());
+            model.addAttribute("asesorId", asesor.getId());
+            model.addAttribute("nombreAsesor", asesor.getNombre());
+
+            // ✅ Usar ProspectoService que ya tienes
+            long totalProspectos = prospectoService.obtenerProspectosParaAsesor(asesor.getId()).size();
+            model.addAttribute("totalProspectos", totalProspectos);
+
+            return "perfil_asesor";
+        } catch (Exception e) {
+            return "redirect:/login";
+        }
+    }
+
+    // ✅ MOVER ESTOS ENDPOINTS A UN CONTROLADOR API SEPARADO O MANTENERLOS AQUÍ PERO CON RUTAS CORRECTAS
+    @GetMapping("/asesor/prospectos")
+    @ResponseBody
+    public List<Map<String, Object>> obtenerProspectos(Principal principal) {
+        try {
+            Trabajador asesor = trabajadorDetailsService.findByCorreo(principal.getName());
+
+            // ✅ DEBUG MEJORADO: Ver datos del usuario embebido
+            List<Cita> citas = citaRepository.findByTrabajadorId(asesor.getId());
+            System.out.println("=== DEBUG PROSPECTOS MEJORADO ===");
+            System.out.println("Total citas: " + citas.size());
+            citas.forEach(cita -> {
+                System.out.println("Cita ID: " + cita.getId());
+                System.out.println("Usuario embebido: " + (cita.getUsuario() != null ? "Sí" : "No"));
+                if (cita.getUsuario() != null) {
+                    System.out.println("Nombre usuario: '" + cita.getUsuario().getNombre() + "'");
+                    System.out.println("Apellido usuario: '" + cita.getUsuario().getApellido() + "'");
+                    System.out.println("Email usuario: '" + cita.getUsuario().getCorreo() + "'");
+                }
+                System.out.println("Nombres cita: '" + cita.getNombres() + "'");
+                System.out.println("Apellidos cita: '" + cita.getApellidos() + "'");
+                System.out.println("Teléfono: '" + cita.getTelefono() + "'");
+                System.out.println("Vehículo embebido: " + (cita.getVehiculo() != null ?
+                        cita.getVehiculo().getMarca() + " " + cita.getVehiculo().getModelo() : "null"));
+                System.out.println("---");
+            });
+
+            return trabajadorDetailsService.obtenerProspectosParaAsesor(asesor.getId());
+        } catch (Exception e) {
+            throw new RuntimeException("Error al obtener prospectos: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/asesor/prospectos/contactar")
+    @ResponseBody
+    public ResponseEntity<?> marcarComoContactado(@RequestParam String citaId) {
+        try {
+            prospectoService.cambiarEstadoContactado(citaId);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error al actualizar estado: " + e.getMessage());
+        }
+    }
+
+    // ✅ AÑADIR ENDPOINT PARA DATOS DEL ASESOR (DASHBOARD)
+    @GetMapping("/asesor/datos")
+    @ResponseBody
+    public ResponseEntity<?> obtenerDatosAsesor(Principal principal) {
+        try {
+            Trabajador asesor = trabajadorDetailsService.findByCorreo(principal.getName());
+
+            // Obtener prospectos para calcular métricas
+            List<ProspectoDTO> prospectos = prospectoService.obtenerProspectosParaAsesor(asesor.getId());
+
+            // Calcular métricas
+            long totalProspectos = prospectos.size();
+            long ventasMes = prospectos.stream()
+                    .filter(p -> "Aprobada".equals(p.getEstado()))
+                    .count();
+            double tasaConversion = totalProspectos > 0 ?
+                    (ventasMes * 100.0) / totalProspectos : 0;
+            double comisiones = ventasMes * 850.0; // Ejemplo: $850 por venta
+
+            // Crear respuesta
+            java.util.Map<String, Object> response = new java.util.HashMap<>();
+            response.put("nombre", asesor.getNombre());
+            response.put("totalProspectos", totalProspectos);
+            response.put("ventasMes", ventasMes);
+            response.put("tasaConversion", Math.round(tasaConversion));
+            response.put("comisiones", comisiones);
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error al obtener datos: " + e.getMessage());
+        }
+    }
+
+    // ✅ AÑADIR ENDPOINT PARA CITAS DEL ASESOR
+    @GetMapping("/asesor/citas")
+    @ResponseBody
+    public List<Map<String, Object>> obtenerCitasAsesor(Principal principal) {
+        try {
+            Trabajador asesor = trabajadorDetailsService.findByCorreo(principal.getName());
+            List<Cita> citas = citaRepository.findByTrabajadorId(asesor.getId());
+
+            return citas.stream().map(cita -> {
+                Map<String, Object> citaMap = new HashMap<>();
+
+                // Nombre del cliente
+                String nombreCompleto = "";
+                if (cita.getUsuario() != null) {
+                    nombreCompleto = (cita.getUsuario().getNombre() != null ? cita.getUsuario().getNombre() : "") + " " +
+                            (cita.getUsuario().getApellido() != null ? cita.getUsuario().getApellido() : "");
+                }
+                citaMap.put("id", cita.getId());
+                citaMap.put("cliente", nombreCompleto.trim());
+                citaMap.put("tipo", cita.getTipo() != null ? cita.getTipo() : "No especificado");
+
+                // Vehículo
+                String vehiculo = "No especificado";
+                if (cita.getVehiculo() != null && cita.getVehiculo().getModelo() != null) {
+                    vehiculo = cita.getVehiculo().getMarca() + " " + cita.getVehiculo().getModelo();
+                } else if (cita.getNombreVehiculo() != null && !cita.getNombreVehiculo().isEmpty()) {
+                    vehiculo = cita.getNombreVehiculo();
+                }
+                citaMap.put("vehiculo", vehiculo);
+
+                // Fechas
+                citaMap.put("fechaSolicitud", cita.getFechaCreacion() != null ? cita.getFechaCreacion() : "");
+                citaMap.put("fechaAsignada", cita.getFechaAsignada() != null ? cita.getFechaAsignada() : "");
+
+                // Otros campos
+                citaMap.put("comentario", cita.getComentario() != null ? cita.getComentario() : "Sin comentario");
+                citaMap.put("estado", cita.getEstado() != null ? cita.getEstado() : "Pendiente");
+                citaMap.put("notasAdmin", cita.getNotasAdmin() != null ? cita.getNotasAdmin() : "Sin notas");
+
+                return citaMap;
+            }).collect(Collectors.toList());
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error al obtener citas: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/asesor/citas/{id}/cambiar-estado")
+    @ResponseBody
+    public ResponseEntity<?> cambiarEstadoCita(@PathVariable String id, @RequestParam String estado) {
+        try {
+            Cita cita = citaRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
+            cita.setEstado(estado);
+            citaRepository.save(cita);
+            return ResponseEntity.ok("OK");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/asesor/citas/{id}/asignar-fecha")
+    @ResponseBody
+    public ResponseEntity<?> asignarFechaCita(@PathVariable String id,
+                                              @RequestParam String fecha,
+                                              @RequestParam String hora) {
+        try {
+            Cita cita = citaRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
+
+            // Combinar fecha y hora
+            LocalDateTime fechaHora = LocalDateTime.parse(fecha + "T" + hora);
+            cita.setFechaAsignada(fechaHora);
+            citaRepository.save(cita);
+
+            return ResponseEntity.ok("OK");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/asesor/citas/{id}/guardar-notas")
+    @ResponseBody
+    public ResponseEntity<?> guardarNotasCita(@PathVariable String id, @RequestParam String notas) {
+        try {
+            Cita cita = citaRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
+            cita.setNotasAdmin(notas);
+            citaRepository.save(cita);
+            return ResponseEntity.ok("OK");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
     }
 
 
