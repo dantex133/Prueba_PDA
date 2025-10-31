@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <title>Error - Concesionario</title>
+  <style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        padding: 50px;
+        background: #f8f9fa;
+    }
+    .error-box {
+        background: white;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        display: inline-block;
+    }
+    h1 { color: #dc3545; }
+    .btn {
+        display: inline-block;
+        padding: 10px 20px;
+        margin: 10px;
+        background: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+<div class="error-box">
+  <h1>¡Ups! Algo salió mal</h1>
+  <p>Hemos encontrado un error inesperado.</p>
+  <div th:if="${error}">
+    <p><strong>Detalles:</strong> <span th:text="${error}"></span></p>
+  </div>
+  <a href="/" class="btn">Ir al Inicio</a>
+  <a href="javascript:history.back()" class="btn">Volver</a>
+</div>
+</body>
+</html>

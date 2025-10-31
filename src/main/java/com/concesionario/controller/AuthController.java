@@ -21,6 +21,11 @@ import java.util.Optional;
 @Controller
 public class AuthController {
 
+    @GetMapping("/error-page")
+    public String errorPage() {
+        return "error"; // Devuelve src/main/resources/templates/error.html
+    }
+
     @Autowired
     private AdministradorRepository administradorRepository;
 
