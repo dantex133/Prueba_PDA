@@ -343,6 +343,35 @@
         .main-container { flex-direction: column; }
         #sidebar { display: none; }
     }
+     /* Estilos para los badges de categoría de vehículos */
+.bg-blue-100 { background-color: #dbeafe; }
+.text-blue-800 { color: #1e40af; }
+.bg-purple-100 { background-color: #f3e8ff; }
+.text-purple-800 { color: #6b21a8; }
+.bg-green-100 { background-color: #dcfce7; }
+.text-green-800 { color: #166534; }
+.bg-yellow-100 { background-color: #fef9c3; }
+.text-yellow-800 { color: #854d0e; }
+.bg-red-100 { background-color: #fee2e2; }
+.text-red-800 { color: #991b1b; }
+.bg-indigo-100 { background-color: #e0e7ff; }
+.text-indigo-800 { color: #3730a3; }
+.bg-gray-100 { background-color: #f3f4f6; }
+.text-gray-800 { color: #374151; }
+
+/* Asegurar que los filtros se vean bien */
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    background: white;
+}
+.dark .form-control {
+    background: #374151;
+    border-color: #4b5563;
+    color: white;
+}
   </style>
 </head>
 <body class="dark:bg-background-dark">
@@ -449,54 +478,40 @@
         <p class="text-gray-600 dark:text-gray-300">Explora los vehículos disponibles para ofrecer a tus clientes</p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div class="prospecto-card">
-          <div class="flex justify-between items-start mb-4">
-            <h3 class="font-bold text-lg">Toyota RAV4</h3>
-            <span class="text-sm font-semibold bg-blue-100 text-blue-800 px-2 py-1 rounded">SUV</span>
-          </div>
-          <img src="https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Toyota RAV4" class="w-full h-48 object-cover rounded-lg mb-4">
-          <div class="mb-4">
-            <p class="text-gray-600 dark:text-gray-300 mb-2"><strong>Precio:</strong> $32,500</p>
-            <p class="text-gray-600 dark:text-gray-300 mb-2"><strong>Año:</strong> 2024</p>
-            <p class="text-gray-600 dark:text-gray-300"><strong>Disponibilidad:</strong> En stock</p>
-          </div>
-          <button class="btn-asesor w-full">
-            <i class="fas fa-share mr-2"></i>Compartir con Cliente
-          </button>
-        </div>
+      <!-- Filtros -->
+      <div class="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+        <select id="filtro-tipo" class="form-control" onchange="filtrarVehiculos()">
+          <option value="TODOS">Todos los tipos</option>
+          <option value="SUV">SUV</option>
+          <option value="Deportivo">Deportivo</option>
+          <option value="Sedán">Sedán</option>
+          <option value="Hatchback">Hatchback</option>
+          <option value="Pickup">Pickup</option>
+        </select>
 
-        <div class="prospecto-card">
-          <div class="flex justify-between items-start mb-4">
-            <h3 class="font-bold text-lg">Ford Mustang</h3>
-            <span class="text-sm font-semibold bg-purple-100 text-purple-800 px-2 py-1 rounded">Deportivo</span>
-          </div>
-          <img src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Ford Mustang" class="w-full h-48 object-cover rounded-lg mb-4">
-          <div class="mb-4">
-            <p class="text-gray-600 dark:text-gray-300 mb-2"><strong>Precio:</strong> $45,200</p>
-            <p class="text-gray-600 dark:text-gray-300 mb-2"><strong>Año:</strong> 2024</p>
-            <p class="text-gray-600 dark:text-gray-300"><strong>Disponibilidad:</strong> En stock</p>
-          </div>
-          <button class="btn-asesor w-full">
-            <i class="fas fa-share mr-2"></i>Compartir con Cliente
-          </button>
-        </div>
+        <select id="filtro-marca" class="form-control" onchange="filtrarVehiculos()">
+          <option value="TODAS">Todas las marcas</option>
+          <!-- Las marcas se cargarán dinámicamente -->
+        </select>
 
-        <div class="prospecto-card">
-          <div class="flex justify-between items-start mb-4">
-            <h3 class="font-bold text-lg">Honda CR-V</h3>
-            <span class="text-sm font-semibold bg-blue-100 text-blue-800 px-2 py-1 rounded">SUV</span>
-          </div>
-          <img src="https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Honda CR-V" class="w-full h-48 object-cover rounded-lg mb-4">
-          <div class="mb-4">
-            <p class="text-gray-600 dark:text-gray-300 mb-2"><strong>Precio:</strong> $29,800</p>
-            <p class="text-gray-600 dark:text-gray-300 mb-2"><strong>Año:</strong> 2024</p>
-            <p class="text-gray-600 dark:text-gray-300"><strong>Disponibilidad:</strong> En stock</p>
-          </div>
-          <button class="btn-asesor w-full">
-            <i class="fas fa-share mr-2"></i>Compartir con Cliente
-          </button>
+        <input type="text" id="busqueda-modelo" class="form-control" placeholder="Buscar por modelo..." onkeyup="filtrarVehiculos()">
+
+        <button onclick="resetearFiltros()" class="btn-secondary">Limpiar Filtros</button>
+      </div>
+
+      <div id="contenedor-vehiculos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Los vehículos se cargarán dinámicamente aquí -->
+        <div class="text-center py-8 col-span-3">
+          <div class="loading mx-auto"></div>
+          <span class="ml-2">Cargando vehículos...</span>
         </div>
+      </div>
+
+      <!-- Mensaje cuando no hay vehículos -->
+      <div id="sin-vehiculos" class="hidden text-center py-8">
+        <i class="fas fa-car text-4xl mb-2 text-gray-300"></i>
+        <p class="text-lg font-medium">No se encontraron vehículos</p>
+        <p class="text-gray-500">Intenta con otros filtros de búsqueda</p>
       </div>
     </section>
 
@@ -1084,6 +1099,241 @@
           window.location.href = '/logout';
       }
   }
+</script>
+<script>
+  // ===================== GESTIÓN DE VEHÍCULOS =====================
+
+// Variables globales para vehículos
+let vehiculosData = [];
+let marcasDisponibles = [];
+let categoriasDisponibles = [];
+
+// Función para cargar vehículos
+async function cargarVehiculos() {
+    try {
+        const response = await fetch('/asesor/vehiculos');
+        if (!response.ok) throw new Error('Error en la respuesta del servidor');
+
+        vehiculosData = await response.json();
+
+        // Cargar marcas y categorías
+        await cargarFiltros();
+
+        // Mostrar vehículos
+        mostrarVehiculos(vehiculosData);
+
+    } catch (error) {
+        console.error('Error al cargar vehículos:', error);
+        mostrarNotificacion('Error al cargar los vehículos', 'error');
+    }
+}
+
+// Función para cargar filtros
+async function cargarFiltros() {
+    try {
+        // Cargar marcas
+        const responseMarcas = await fetch('/asesor/vehiculos/marcas');
+        marcasDisponibles = await responseMarcas.json();
+
+        // Cargar categorías
+        const responseCategorias = await fetch('/asesor/vehiculos/categorias');
+        categoriasDisponibles = await responseCategorias.json();
+
+        // Llenar select de marcas
+        const selectMarca = document.getElementById('filtro-marca');
+        selectMarca.innerHTML = '<option value="TODAS">Todas las marcas</option>';
+        marcasDisponibles.forEach(marca => {
+            selectMarca.innerHTML += `<option value="${marca}">${marca}</option>`;
+        });
+
+        // Llenar select de categorías
+        const selectCategoria = document.getElementById('filtro-tipo');
+        selectCategoria.innerHTML = '<option value="TODOS">Todos los tipos</option>';
+        categoriasDisponibles.forEach(categoria => {
+            selectCategoria.innerHTML += `<option value="${categoria}">${categoria}</option>`;
+        });
+
+    } catch (error) {
+        console.error('Error al cargar filtros:', error);
+    }
+}
+
+// Función para mostrar vehículos en la grid
+function mostrarVehiculos(vehiculos) {
+    const contenedor = document.getElementById('contenedor-vehiculos');
+    const sinVehiculos = document.getElementById('sin-vehiculos');
+
+    if (vehiculos.length === 0) {
+        contenedor.classList.add('hidden');
+        sinVehiculos.classList.remove('hidden');
+        return;
+    }
+
+    contenedor.classList.remove('hidden');
+    sinVehiculos.classList.add('hidden');
+
+    contenedor.innerHTML = '';
+
+    vehiculos.forEach(vehiculo => {
+        const vehiculoCard = crearCardVehiculo(vehiculo);
+        contenedor.appendChild(vehiculoCard);
+    });
+}
+
+// Función para crear card de vehículo
+function crearCardVehiculo(vehiculo) {
+    const card = document.createElement('div');
+    card.className = 'prospecto-card';
+
+    // Determinar clase del badge según categoría
+    const claseBadge = obtenerClaseBadgeCategoria(vehiculo.categoria);
+
+    // Formatear precio
+    const precioFormateado = new Intl.NumberFormat('es-ES', {
+        style: 'currency',
+        currency: 'USD'
+    }).format(vehiculo.precio);
+
+    // Imagen por defecto si no hay
+    const imagenUrl = vehiculo.imagenUrl || 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80';
+
+    card.innerHTML = `
+        <div class="flex justify-between items-start mb-4">
+            <h3 class="font-bold text-lg">${vehiculo.marca} ${vehiculo.modelo}</h3>
+            <span class="text-sm font-semibold ${claseBadge} px-2 py-1 rounded">${vehiculo.categoria || 'Sin categoría'}</span>
+        </div>
+        <img src="${imagenUrl}" alt="${vehiculo.marca} ${vehiculo.modelo}"
+             class="w-full h-48 object-cover rounded-lg mb-4">
+        <div class="mb-4">
+            <p class="text-gray-600 dark:text-gray-300 mb-2"><strong>Precio:</strong> ${precioFormateado}</p>
+            <p class="text-gray-600 dark:text-gray-300 mb-2"><strong>Año:</strong> ${vehiculo.año}</p>
+            <p class="text-gray-600 dark:text-gray-300 mb-2"><strong>Motor:</strong> ${vehiculo.motor || 'No especificado'}</p>
+            <p class="text-gray-600 dark:text-gray-300"><strong>Transmisión:</strong> ${vehiculo.transmision || 'No especificado'}</p>
+        </div>
+        <button class="btn-asesor w-full" onclick="compartirVehiculo('${vehiculo.id}')">
+            <i class="fas fa-share mr-2"></i>Compartir con Cliente
+        </button>
+    `;
+
+    return card;
+}
+
+// Función para obtener clase CSS según categoría
+function obtenerClaseBadgeCategoria(categoria) {
+    const clases = {
+        'SUV': 'bg-blue-100 text-blue-800',
+        'Deportivo': 'bg-purple-100 text-purple-800',
+        'Sedán': 'bg-green-100 text-green-800',
+        'Hatchback': 'bg-yellow-100 text-yellow-800',
+        'Pickup': 'bg-red-100 text-red-800',
+        'Camioneta': 'bg-indigo-100 text-indigo-800'
+    };
+    return clases[categoria] || 'bg-gray-100 text-gray-800';
+}
+
+// Función para filtrar vehículos
+function filtrarVehiculos() {
+    const tipo = document.getElementById('filtro-tipo').value;
+    const marca = document.getElementById('filtro-marca').value;
+    const busqueda = document.getElementById('busqueda-modelo').value.toLowerCase();
+
+    let vehiculosFiltrados = vehiculosData;
+
+    // Filtrar por tipo
+    if (tipo !== 'TODOS') {
+        vehiculosFiltrados = vehiculosFiltrados.filter(v => v.categoria === tipo);
+    }
+
+    // Filtrar por marca
+    if (marca !== 'TODAS') {
+        vehiculosFiltrados = vehiculosFiltrados.filter(v => v.marca === marca);
+    }
+
+    // Filtrar por búsqueda
+    if (busqueda) {
+        vehiculosFiltrados = vehiculosFiltrados.filter(v =>
+            v.modelo.toLowerCase().includes(busqueda) ||
+            v.marca.toLowerCase().includes(busqueda)
+        );
+    }
+
+    mostrarVehiculos(vehiculosFiltrados);
+}
+
+// Función para resetear filtros
+function resetearFiltros() {
+    document.getElementById('filtro-tipo').value = 'TODOS';
+    document.getElementById('filtro-marca').value = 'TODAS';
+    document.getElementById('busqueda-modelo').value = '';
+    mostrarVehiculos(vehiculosData);
+}
+
+// Función para compartir vehículo (placeholder)
+// Función para compartir vehículo con todos los clientes
+async function compartirVehiculo(vehiculoId) {
+    if (!confirm('¿Estás seguro de que quieres enviar este vehículo por correo a TODOS los clientes?')) {
+        return;
+    }
+
+    // Guardar referencia al botón ANTES de async
+    const boton = event.target;
+    const textoOriginal = boton.innerHTML;
+
+    try {
+        // Mostrar loading
+        boton.innerHTML = '<div class="loading mx-auto"></div> Enviando...';
+        boton.disabled = true;
+
+        const response = await fetch(`/asesor/vehiculos/${vehiculoId}/compartir`, {
+            method: 'POST'
+            // Quita headers si no son necesarios
+        });
+
+        const resultado = await response.json();
+
+        if (resultado.success) {
+            mostrarNotificacion('✅ ' + resultado.message, 'success');
+        } else {
+            mostrarNotificacion('❌ ' + resultado.message, 'error');
+        }
+
+    } catch (error) {
+        console.error('Error al compartir vehículo:', error);
+        mostrarNotificacion('❌ Error al enviar la promoción', 'error');
+    } finally {
+        // Restaurar botón SIEMPRE
+        boton.innerHTML = '<i class="fas fa-share mr-2"></i>Compartir con Cliente';
+        boton.disabled = false;
+    }
+}
+
+// Modificar la navegación para cargar vehículos
+document.addEventListener('DOMContentLoaded', function() {
+
+
+    // Añadir este caso en el event listener de navegación
+    document.querySelectorAll('.side-menu a').forEach(link => {
+        link.addEventListener('click', function(e) {
+            if (this.getAttribute('href').startsWith('#')) {
+                e.preventDefault();
+                document.querySelectorAll('main section').forEach(section => {
+                    section.style.display = 'none';
+                });
+                const targetId = this.getAttribute('href').substring(1);
+                document.getElementById(targetId).style.display = 'block';
+
+                // Cargar datos específicos cuando se cambia de sección
+                if (targetId === 'prospectos') {
+                    cargarProspectos();
+                } else if (targetId === 'agenda') {
+                    cargarCitas();
+                } else if (targetId === 'vehiculos') {
+                    cargarVehiculos(); // ← AÑADIR ESTA LÍNEA
+                }
+            }
+        });
+    });
+});
 </script>
 </body>
 </html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" class="dark">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      class="dark" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -823,6 +824,100 @@
             }
         }
     </style>
+    <style>
+        /* Estilos para el dropdown de notificaciones */
+.notification-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 300px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border: 1px solid #e0e0e0;
+    display: none;
+    z-index: 1000;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.notification-dropdown.show {
+    display: block;
+}
+
+.notification-list {
+    padding: 10px;
+}
+
+.notification-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 10px;
+    border-bottom: 1px solid #f0f0f0;
+    gap: 10px;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-content strong {
+    color: #333;
+    font-size: 14px;
+}
+
+.notification-content p {
+    margin: 5px 0;
+    color: #666;
+    font-size: 13px;
+}
+
+.notification-content small {
+    color: #999;
+    font-size: 11px;
+}
+
+.mark-read {
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+.mark-read:hover {
+    background: #f8f9fa;
+}
+
+.no-notifications {
+    text-align: center;
+    padding: 20px;
+    color: #999;
+    font-style: italic;
+}
+
+/* Estilo para el contador de notificaciones */
+.notification .num {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: #ff4757;
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+}
+    </style>
     <script>
         tailwind.config = {
             darkMode: "class",
@@ -930,11 +1025,15 @@
                             <i class='bx bxs-bell text-xl'></i>
                             <span class="notification-badge" id="notification-count">0</span>
                         </button>
-                        <div class="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 hidden z-50" id="notification-dropdown">
-                            <div class="p-4 max-h-96 overflow-y-auto" id="notification-list">
-                                <div class="text-center text-gray-500 dark:text-gray-400 py-4">
-                                    No hay notificaciones
-                                </div>
+                        <div class="notification-dropdown" id="notification-dropdown">
+                            <div class="notification-header" style="padding: 10px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center;">
+                                <strong>Notificaciones</strong>
+                                <button onclick="marcarTodasLeidas()" style="background: none; border: none; color: #007bff; cursor: pointer; font-size: 12px;">
+                                    Marcar todas como leídas
+                                </button>
+                            </div>
+                            <div class="notification-list" id="notification-list">
+                                <!-- Las notificaciones aparecerán aquí -->
                             </div>
                         </div>
                     </div>
@@ -2345,6 +2444,109 @@ async function cargarDatosAnuncio(id) {
             }, 300);
         }, 3000);
     }
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Cargar notificaciones al iniciar
+        cargarNotificaciones();
+
+        // Configurar el evento click para la campana de notificaciones
+        const notificationBell = document.getElementById('notification-bell');
+        const notificationDropdown = document.getElementById('notification-dropdown');
+
+        if (notificationBell && notificationDropdown) {
+            notificationBell.addEventListener('click', function(e) {
+                e.stopPropagation();
+                notificationDropdown.classList.toggle('show');
+                cargarNotificaciones(); // Recargar al abrir
+            });
+
+            // Cerrar dropdown al hacer clic fuera
+            document.addEventListener('click', function() {
+                notificationDropdown.classList.remove('show');
+            });
+        }
+
+        // Función para cargar notificaciones
+        function cargarNotificaciones() {
+            fetch('/admin/notificaciones')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Notificaciones recibidas:', data);
+                    actualizarNotificaciones(data);
+                })
+                .catch(error => {
+                    console.error('Error al cargar notificaciones:', error);
+                });
+        }
+
+        // Función para actualizar la interfaz de notificaciones
+        function actualizarNotificaciones(notificaciones) {
+            const notificationList = document.getElementById('notification-list');
+            const notificationCount = document.getElementById('notification-count');
+
+            // Actualizar contador
+            notificationCount.textContent = notificaciones.length;
+
+            // Actualizar lista
+            if (notificaciones.length === 0) {
+                notificationList.innerHTML = '<div class="no-notifications">No hay notificaciones</div>';
+            } else {
+                notificationList.innerHTML = notificaciones.map(cita => `
+                    <div class="notification-item" data-id="${cita.id}">
+                        <div class="notification-content">
+                            <strong>${cita.nombres} ${cita.apellidos}</strong>
+                            <p>Solicitud de ${cita.tipo}</p>
+                            <small>${new Date(cita.fechaCreacion).toLocaleString()}</small>
+                        </div>
+                        <button class="mark-read" onclick="marcarComoLeida('${cita.id}')">
+                            <i class='bx bx-check'></i>
+                        </button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Función para marcar como leída (debe ser global)
+        window.marcarComoLeida = function(citaId) {
+            fetch(`/admin/marcar-leida/${citaId}`, {
+                method: 'POST'
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Remover la notificación de la lista
+                    const notificationItem = document.querySelector(`[data-id="${citaId}"]`);
+                    if (notificationItem) {
+                        notificationItem.remove();
+                    }
+                    // Recargar contador
+                    cargarNotificaciones();
+                }
+            })
+            .catch(error => {
+                console.error('Error al marcar como leída:', error);
+            });
+        };
+
+        // También puedes agregar un botón para marcar todas como leídas
+        window.marcarTodasLeidas = function() {
+            fetch('/admin/marcar-todas-leidas', {
+                method: 'POST'
+            })
+            .then(response => {
+                if (response.ok) {
+                    cargarNotificaciones();
+                }
+            })
+            .catch(error => {
+                console.error('Error al marcar todas como leídas:', error);
+            });
+        };
+
+        // Cargar notificaciones cada 30 segundos
+        setInterval(cargarNotificaciones, 30000);
+    });
 </script>
 </body>
 </html>

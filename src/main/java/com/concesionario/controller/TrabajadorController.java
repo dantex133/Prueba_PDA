@@ -8,6 +8,7 @@ import com.concesionario.repository.CitaRepository;
 import com.concesionario.repository.TrabajadorRepository;
 import com.concesionario.repository.UsuarioRepository;
 import com.concesionario.repository.VehiculoRepository;
+import com.concesionario.service.EmailPromocionalService;
 import com.concesionario.service.ProspectoService;
 import com.concesionario.service.TrabajadorDetailsService;
 import com.concesionario.service.VehiculoService;
@@ -29,6 +30,8 @@ import java.util.stream.Collectors;
 @Controller
 public class TrabajadorController {
 
+    @Autowired
+    private EmailPromocionalService emailPromocionalService;
     @Autowired
     private UsuarioRepository usuarioRepository;
 
@@ -282,6 +285,98 @@ public class TrabajadorController {
             return ResponseEntity.ok("OK");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+    // ==================== ENDPOINTS PARA VEHÍCULOS DEL ASESOR ====================
+
+    @GetMapping("/asesor/vehiculos")
+    @ResponseBody
+    public List<Map<String, Object>> obtenerVehiculosParaAsesor() {
+        try {
+            List<Vehiculo> vehiculos = vehiculoService.obtenerTodos();
+
+            return vehiculos.stream().map(vehiculo -> {
+                Map<String, Object> vehiculoMap = new HashMap<>();
+                vehiculoMap.put("id", vehiculo.getId());
+                vehiculoMap.put("marca", vehiculo.getMarca());
+                vehiculoMap.put("modelo", vehiculo.getModelo());
+                vehiculoMap.put("año", vehiculo.getAño());
+                vehiculoMap.put("precio", vehiculo.getPrecio());
+                vehiculoMap.put("categoria", vehiculo.getCategoria());
+                vehiculoMap.put("imagenUrl", vehiculo.getImagenUrl());
+                vehiculoMap.put("motor", vehiculo.getMotor());
+                vehiculoMap.put("transmision", vehiculo.getTransmision());
+                vehiculoMap.put("combustible", vehiculo.getCombustible());
+                vehiculoMap.put("pasajeros", vehiculo.getPasajeros());
+                vehiculoMap.put("descripcion", vehiculo.getDescripcion());
+                vehiculoMap.put("colores", vehiculo.getColores() != null ? vehiculo.getColores() : new ArrayList<>());
+                vehiculoMap.put("destacado", vehiculo.isDestacado());
+
+                return vehiculoMap;
+            }).collect(Collectors.toList());
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error al obtener vehículos: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/asesor/vehiculos/marcas")
+    @ResponseBody
+    public List<String> obtenerMarcasDisponibles() {
+        try {
+            List<Vehiculo> vehiculos = vehiculoService.obtenerTodos();
+            return vehiculos.stream()
+                    .map(Vehiculo::getMarca)
+                    .distinct()
+                    .sorted()
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new RuntimeException("Error al obtener marcas: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/asesor/vehiculos/categorias")
+    @ResponseBody
+    public List<String> obtenerCategoriasDisponibles() {
+        try {
+            List<Vehiculo> vehiculos = vehiculoService.obtenerTodos();
+            return vehiculos.stream()
+                    .map(Vehiculo::getCategoria)
+                    .filter(categoria -> categoria != null && !categoria.isEmpty())
+                    .distinct()
+                    .sorted()
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new RuntimeException("Error al obtener categorías: " + e.getMessage());
+        }
+    }
+    // En tu TrabajadorController, añade este método:
+    @PostMapping("/asesor/vehiculos/{id}/compartir")
+    @ResponseBody
+    public ResponseEntity<?> compartirVehiculoConClientes(@PathVariable String id, Principal principal) {
+        try {
+            // Verificar que el asesor está autenticado
+            Trabajador asesor = trabajadorDetailsService.findByCorreo(principal.getName());
+
+            System.out.println("🔄 Iniciando envío masivo por asesor: " + asesor.getNombre());
+
+            // Enviar promoción masiva
+            emailPromocionalService.enviarPromocionVehiculo(id);
+
+            // Registrar la acción
+            System.out.println("✅ Promoción masiva completada por asesor: " + asesor.getNombre());
+
+            return ResponseEntity.ok(Map.of(
+                    "success", true,
+                    "message", "Promoción enviada exitosamente a todos los clientes"
+            ));
+
+        } catch (Exception e) {
+            System.err.println("❌ Error en envío masivo: " + e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of(
+                    "success", false,
+                    "message", "Error al enviar la promoción: " + e.getMessage()
+            ));
         }
     }
 
