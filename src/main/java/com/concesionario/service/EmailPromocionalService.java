@@ -123,7 +123,7 @@ public class EmailPromocionalService {
                 "<img src='" + imagenUrl + "' alt='" + vehiculo.getMarca() + " " + vehiculo.getModelo() + "' class='vehicle-image'>" +
                 "<div class='content'>" +
                 "<h2>" + vehiculo.getMarca() + " " + vehiculo.getModelo() + "</h2>" +
-                "<div class='price'>$" + String.format("%.2f", vehiculo.getPrecio()) + " USD</div>" +
+                "<div class='price'>$" + String.format("%.2f", vehiculo.getPrecio()) + " COP</div>" +
                 "<p>Hola <strong>" + nombreUsuario + "</strong>,</p>" +
                 "<p>Te presentamos esta increíble oportunidad:</p>" +
                 "<p><strong>Especificaciones:</strong><br>" +
