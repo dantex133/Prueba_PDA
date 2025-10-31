@@ -2,42 +2,88 @@
 <html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Error - Concesionario</title>
   <style>
     body {
-        font-family: Arial, sans-serif;
-        text-align: center;
-        padding: 50px;
-        background: #f8f9fa;
+        font-family: 'Arial', sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
-    .error-box {
+    .error-container {
         background: white;
         padding: 40px;
         border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        display: inline-block;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        max-width: 500px;
+        width: 90%;
+        text-align: center;
     }
-    h1 { color: #dc3545; }
+    .error-icon {
+        font-size: 60px;
+        margin-bottom: 20px;
+    }
+    h1 {
+        color: #d9534f;
+        margin-bottom: 20px;
+    }
+    .error-details {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 20px 0;
+        text-align: left;
+        font-size: 14px;
+    }
     .btn {
         display: inline-block;
-        padding: 10px 20px;
+        padding: 12px 24px;
         margin: 10px;
         background: #007bff;
         color: white;
         text-decoration: none;
         border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+    }
+    .btn-secondary {
+        background: #6c757d;
+    }
+    .btn:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
     }
   </style>
 </head>
 <body>
-<div class="error-box">
+<div class="error-container">
+  <div class="error-icon">⚠️</div>
   <h1>¡Ups! Algo salió mal</h1>
-  <p>Hemos encontrado un error inesperado.</p>
-  <div th:if="${error}">
-    <p><strong>Detalles:</strong> <span th:text="${error}"></span></p>
+  <p>Hemos encontrado un error inesperado en el sistema.</p>
+
+  <div class="error-details">
+    <strong>Estado:</strong> <span th:text="${status}">500</span><br>
+    <strong>Mensaje:</strong> <span th:text="${errorMessage}">Internal Server Error</span><br>
+    <strong>Excepción:</strong> <span th:text="${exception}">No disponible</span><br>
+    <strong>Ruta:</strong> <span th:text="${path}">/usuario/cita</span><br>
+    <strong>Timestamp:</strong> <span th:text="${timestamp}">2025-10-30T19:59:09</span>
   </div>
-  <a href="/" class="btn">Ir al Inicio</a>
-  <a href="javascript:history.back()" class="btn">Volver</a>
+
+  <div>
+    <a href="/" class="btn">Ir al Inicio</a>
+    <button onclick="history.back()" class="btn btn-secondary">Volver Atrás</button>
+    <button onclick="location.reload()" class="btn btn-secondary">Reintentar</button>
+  </div>
+
+  <div style="margin-top: 20px; font-size: 12px; color: #6c757d;">
+    Si el problema persiste, contacte al administrador del sistema.
+  </div>
 </div>
 </body>
 </html>
